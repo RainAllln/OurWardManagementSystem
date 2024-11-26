@@ -1,5 +1,12 @@
 package team.jnu.wardsystem;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Department {
   private int department_id;
   private String department_name;
