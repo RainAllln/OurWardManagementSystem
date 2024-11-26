@@ -10,20 +10,17 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Patient {
-    private String name;
-    private int id;
-    private String gender;
-    private int age;
-    private String notes;
-    private Date admmision_date;
-    private String phone;
-    private int bed_id;
-    private int ward_id;
-    private int nurse_id;
-    private int doctor_id;
-    private double paid_amount;
-
-
-
+  private String name;
+  private int id;
+  private String gender;
+  private int age;
+  private String notes;
+  private Date admmision_date;
+  private String phone;
+  private int bed_id;
+  private int ward_id;
+  private int nurse_id;
+  private int doctor_id;
+  private double paid_amount;
 
 }
