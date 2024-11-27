@@ -14,5 +14,4 @@ public class Doctor {
   private String phone;
   private String position;
   private int department_id;
-  int aa;
 }
