@@ -1,4 +1,4 @@
-package team.jnu.wardsystem;
+package team.jnu.wardsystem.pojo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

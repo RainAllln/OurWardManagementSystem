@@ -1,4 +1,4 @@
-package team.jnu.wardsystem;
+package team.jnu.wardsystem.pojo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,9 +7,11 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Ward {
-  private int ward_id;
+public class Department {
   private int department_id;
-  private double cost;
-  private String ward_type;
+  private String department_name;
+  private String notes;
+  private int head_id;
+  private String tel;
+
 }
