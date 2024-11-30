@@ -1,13 +1,16 @@
 package team.jnu.wardsystem.ui;
 
+import team.jnu.wardsystem.pojo.User;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
 public class LoginUI extends JFrame implements ActionListener{
-    private JTextField userText;
-    private JPasswordField passwordText;
-    private JButton loginButton;
+    private JTextField userText;    //用户名输入框
+    private JPasswordField passwordText;    //密码输入框
+    private JButton loginButton;    //登录按钮
+    private User user;   //对应的用户
 
     // 构造函数
     public LoginUI() {
@@ -80,6 +83,7 @@ public class LoginUI extends JFrame implements ActionListener{
             String username = userText.getText();
             String password = new String(passwordText.getPassword());
             //判断用户名密码是否匹配
+
         }
     }
 }
