@@ -15,7 +15,6 @@ public class LoginUI extends JFrame implements ActionListener{
     // 构造函数
     public LoginUI() {
         super("登录界面");
-        this.setTitle("登录界面");
         this.setSize(400, 300);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null); // 居中显示
@@ -83,7 +82,13 @@ public class LoginUI extends JFrame implements ActionListener{
             String username = userText.getText();
             String password = new String(passwordText.getPassword());
             //判断用户名密码是否匹配
-
+            String LoginMsg = user.Login(username, password); //如果登录成功，那么user对象中就保存了用户名，密码，id等信息,并且获取登录信息
+            if(LoginMsg.equals("登录成功")) {
+                JOptionPane.showMessageDialog(this, LoginMsg);
+                this.dispose();    //关闭登录界面
+            } else {
+                JOptionPane.showMessageDialog(this, LoginMsg);
+            }
         }
     }
 }

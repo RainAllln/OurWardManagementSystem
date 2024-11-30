@@ -4,6 +4,5 @@
 <mapper namespace="team.jnu.wardsystem.mapper.UserMapper">
     <select id="selectAll" resultType="User"> select * from users; </select>
     <select id="selectByUserName" resultType="User"> select * from users where user_name=#{user_name}; </select>
-    <select id="confirmPassword" resultType="string"> select password from users where user_name=#{user_name} </select>
 
 </mapper>

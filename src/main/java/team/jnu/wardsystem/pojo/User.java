@@ -68,14 +68,14 @@ public class User {
         sqlSession.close(); //关闭连接
 
         if (confirmPassword.equals(getMD5Str(password))) {
-            user_id = finded_user.getUser_id();
+            user_id = finded_user.getUser_id();     //获得用户id
             return "登录成功";
         } else {
             return "密码错误";
         }
     }
 
-    public static String getMD5Str(String str) {
+    private static String getMD5Str(String str) {
         //字符串转md5码
         byte[] digest = null;
         try {
