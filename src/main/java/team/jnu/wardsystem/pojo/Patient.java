@@ -9,7 +9,7 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Patient {
+public class Patient extends User{
   private String name;
   private int id;
   private String gender;

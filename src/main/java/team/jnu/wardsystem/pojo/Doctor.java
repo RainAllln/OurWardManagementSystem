@@ -7,11 +7,12 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Doctor {
+public class Doctor extends User{
   private String doctor_name;
   private int doctor_id;
   private String gender;
   private String phone;
   private String position;
   private int department_id;
+
 }
