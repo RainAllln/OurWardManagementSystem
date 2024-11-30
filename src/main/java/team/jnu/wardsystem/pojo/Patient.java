@@ -22,5 +22,4 @@ public class Patient {
   private int nurse_id;
   private int doctor_id;
   private double paid_amount;
-
 }
