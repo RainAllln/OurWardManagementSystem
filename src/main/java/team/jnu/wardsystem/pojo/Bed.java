@@ -13,5 +13,4 @@ public class Bed {
   private boolean in_use;
   private boolean clean;
   private int nurse_id;
-
 }

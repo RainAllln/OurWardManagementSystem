@@ -13,5 +13,4 @@ public class Department {
   private String notes;
   private int head_id;
   private String tel;
-
 }
