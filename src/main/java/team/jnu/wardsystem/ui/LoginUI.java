@@ -1,5 +1,6 @@
 package team.jnu.wardsystem.ui;
 
+import lombok.Getter;
 import team.jnu.wardsystem.pojo.User;
 
 import javax.swing.*;
@@ -11,6 +12,8 @@ public class LoginUI extends JFrame implements ActionListener {
     private JTextField userText;         // 用户名输入框
     private JPasswordField passwordText; // 密码输入框
     private JButton loginButton;         // 登录按钮
+
+    @Getter
     private User user;                   // 对应的用户
 
     // 构造函数
