@@ -1,25 +1,19 @@
 package team.jnu.wardsystem.ui;
+
 import team.jnu.wardsystem.pojo.Doctor;
 import team.jnu.wardsystem.pojo.Patient;
 import team.jnu.wardsystem.pojo.Equipment;
+
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableCellEditor;
 import java.awt.*;
 import java.awt.event.*;
-    //左边一排菜单栏
-    //右边主界面
-    //左边可以选择的功能有：查看个人信息，查看所属病人信息以及对应的病床信息，查看所有设备信息
-    //查看个人信息，右边页面更新为医生的用户名，密码（星号），姓名，性别，职位，手机号，所属科室，其中手机号和密码右边有按钮，点击后可以修改信息
-    /*
-    查看病人所属信息，右边页面变成一个表格，里面是所属的全部病人的姓名，性别，年龄，病床号和对应病房
-    右键单击表格中的病人的信息可以选择查看详情，详情里面有所有信息和备注
-    右键单击表格中的病人床位一栏可以更改，可以弹出一个界面，界面里面有其他对应科室对应性别的空床和对应的病房号信息，可以双击选择（或者其他选择方式），更改完自动更新病房
-    */
-    /*
-    查看所有设备信息，右边页面变成一个表格，里面是所有设备的信息，包括设备编号，设备类型，设备被哪个病床所用
-    右键单击表格选中设备可以分配设备，会弹出一个选择框，里面有管理的所有病人的姓名和id，选择病人来使用
-     */
+import java.util.List;
 
+// DoctorUI类实现医生界面，包括个人信息、病人信息和设备信息
 public class DoctorUI extends JFrame implements ActionListener {
     private Doctor doctor; // 当前登录的医生
     private JPanel menuPanel;
@@ -52,7 +46,7 @@ public class DoctorUI extends JFrame implements ActionListener {
 
     // 构造函数
     public DoctorUI(Doctor doctor) {
-        super("医生界面");
+        super("尊敬的 " + doctor.getDoctor_name() + " 医生，欢迎您！");
         this.doctor = doctor;
         this.setSize(1200, 800);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -61,17 +55,20 @@ public class DoctorUI extends JFrame implements ActionListener {
         // 初始化菜单和主面板
         initMenu();
         initMainPanel();
+        setButtonColor(personalInfoButton); // 默认选中个人信息模块
 
         this.setVisible(true);
     }
 
+    // 初始化左边的菜单栏
     private void initMenu() {
         menuPanel = new JPanel();
         menuPanel.setLayout(new GridLayout(3, 1, 10, 10));
+        menuPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        personalInfoButton = new JButton("查看个人信息");
-        patientInfoButton = new JButton("查看所属病人信息");
-        equipmentInfoButton = new JButton("查看所有设备信息");
+        personalInfoButton = new JButton("个人信息");
+        patientInfoButton = new JButton("所有病人信息");
+        equipmentInfoButton = new JButton("所有设备信息");
 
         personalInfoButton.addActionListener(this);
         patientInfoButton.addActionListener(this);
@@ -84,6 +81,7 @@ public class DoctorUI extends JFrame implements ActionListener {
         this.add(menuPanel, BorderLayout.WEST);
     }
 
+    // 初始化右边的主面板
     private void initMainPanel() {
         mainPanel = new JPanel();
         cardLayout = new CardLayout();
@@ -97,10 +95,11 @@ public class DoctorUI extends JFrame implements ActionListener {
         this.add(mainPanel, BorderLayout.CENTER);
     }
 
+    // 初始化个人信息面板
     private JPanel initPersonalInfoPanel() {
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10,10,10,10);
+        gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         // 标签和文本框
@@ -111,7 +110,7 @@ public class DoctorUI extends JFrame implements ActionListener {
 
         JLabel passwordLabel = new JLabel("密码:");
         passwordField = new JPasswordField(20);
-        passwordField.setText("******");
+        passwordField.setText(doctor.getPassword());
         passwordField.setEditable(false);
         editPasswordButton = new JButton("修改");
         editPasswordButton.addActionListener(this);
@@ -193,47 +192,70 @@ public class DoctorUI extends JFrame implements ActionListener {
         return panel;
     }
 
+    // 初始化病人信息面板
     private JPanel initPatientInfoPanel() {
         JPanel panel = new JPanel(new BorderLayout());
 
         // 表格模型
-        String[] columns = {"姓名", "性别", "年龄", "病床号", "病房"};
-        patientTableModel = new DefaultTableModel(columns, 0);
+        String[] columns = {"姓名", "性别", "年龄", "病床号", "病房", "操作"};
+        patientTableModel = new DefaultTableModel(columns, 0) {
+            // 使表格不可编辑除了"操作"列
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return column == 5;
+            }
+        };
         patientTable = new JTable(patientTableModel);
         loadPatientData();
 
-        // 右键菜单
-        JPopupMenu popupMenu = new JPopupMenu();
-        JMenuItem viewDetails = new JMenuItem("查看详情");
-        JMenuItem changeBed = new JMenuItem("更改床位");
-        viewDetails.addActionListener(this);
-        changeBed.addActionListener(this);
-        popupMenu.add(viewDetails);
-        popupMenu.add(changeBed);
+        // 设置单元格渲染器，使文字居中
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        for (int i = 0; i < patientTable.getColumnCount(); i++) {
+            patientTable.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+        }
 
-        patientTable.setComponentPopupMenu(popupMenu);
+        // 设置"操作"列的渲染器和编辑器
+        patientTable.getColumn("操作").setCellRenderer(new ButtonRenderer());
+        patientTable.getColumn("操作").setCellEditor(new ButtonEditor(new JCheckBox(), patientTable, patientTableModel, "patient"));
+
+        // 设置表格行高
+        patientTable.setRowHeight(30);
 
         panel.add(new JScrollPane(patientTable), BorderLayout.CENTER);
 
         return panel;
     }
 
+    // 初始化设备信息面板
     private JPanel initEquipmentInfoPanel() {
         JPanel panel = new JPanel(new BorderLayout());
 
         // 表格模型
-        String[] columns = {"设备编号", "设备类型", "使用病床"};
-        equipmentTableModel = new DefaultTableModel(columns, 0);
+        String[] columns = {"设备编号", "设备类型", "使用病床", "操作"};
+        equipmentTableModel = new DefaultTableModel(columns, 0) {
+            // 使表格不可编辑除了"操作"列
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return column == 3;
+            }
+        };
         equipmentTable = new JTable(equipmentTableModel);
         loadEquipmentData();
 
-        // 右键菜单
-        JPopupMenu popupMenu = new JPopupMenu();
-        JMenuItem assignEquipment = new JMenuItem("分配设备");
-        assignEquipment.addActionListener(this);
-        popupMenu.add(assignEquipment);
+        // 设置单元格渲染器，使文字居中
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        for (int i = 0; i < equipmentTable.getColumnCount(); i++) {
+            equipmentTable.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+        }
 
-        equipmentTable.setComponentPopupMenu(popupMenu);
+        // 设置"操作"列的渲染器和编辑器
+        equipmentTable.getColumn("操作").setCellRenderer(new ButtonRenderer());
+        equipmentTable.getColumn("操作").setCellEditor(new ButtonEditor(new JCheckBox(), equipmentTable, equipmentTableModel, "equipment"));
+
+        // 设置表格行高
+        equipmentTable.setRowHeight(30);
 
         panel.add(new JScrollPane(equipmentTable), BorderLayout.CENTER);
 
@@ -241,23 +263,227 @@ public class DoctorUI extends JFrame implements ActionListener {
     }
 
     private void loadPatientData() {
-        // TODO: 从数据库加载病人数据
+        // 示例数据
+        patientTableModel.addRow(new Object[]{"张三", "男", 25, 1, 1});
+
+        // 将数据添加到表格模型
+//        List<Patient> patients=doctor.getPatientList();
+//        for (Patient patient : patients) {
+//            patientTableModel.addRow(new Object[]{
+//                    patient.getName(),
+//                    patient.getGender(),
+//                    patient.getAge(),
+//                    patient.getBed_id(),
+//                    patient.getWard_id()
+//            });
+//        }
     }
 
     private void loadEquipmentData() {
-        // TODO: 从数据库加载设备数据
+
+        equipmentTableModel.addRow(new Object[]{1, 1, 1});
+        // 将数据添加到表格模型
+//        List<Equipment> equipments=doctor.getEquipmentList();
+//        for (Equipment equipment : equipments) {
+//            equipmentTableModel.addRow(new Object[]{
+//                    equipment.getEquipment_id(),
+//                    equipment.getEquipment_type(),
+//                    equipment.getBed_id()
+//            });
+//        }
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
-        if(source == personalInfoButton) {
+        if (source == personalInfoButton) {
             cardLayout.show(mainPanel, "personalInfo");
-        } else if(source == patientInfoButton) {
+            setButtonColor(personalInfoButton);
+        } else if (source == patientInfoButton) {
             cardLayout.show(mainPanel, "patientInfo");
-        } else if(source == equipmentInfoButton) {
+            setButtonColor(patientInfoButton);
+        } else if (source == equipmentInfoButton) {
             cardLayout.show(mainPanel, "equipmentInfo");
+            setButtonColor(equipmentInfoButton);
+        } else if (source == editPasswordButton) {
+            // 处理修改密码
+            JPasswordField newPasswordField = new JPasswordField(20);
+            int option = JOptionPane.showConfirmDialog(this, newPasswordField, "请输入新密码:", JOptionPane.OK_CANCEL_OPTION);
+            if (option == JOptionPane.OK_OPTION) {
+                String newPassword = new String(newPasswordField.getPassword());
+                if (!newPassword.trim().isEmpty()) {
+                    passwordField.setText(newPassword);
+                    doctor.setPassword(newPassword); // 假设 Doctor 类有 setPassword 方法
+                    JOptionPane.showMessageDialog(this, "密码已更新");
+                } else {
+                    JOptionPane.showMessageDialog(this, "密码不能为空");
+                }
+            }
+        } else if (source == editPhoneButton) {
+            // 处理修改手机号
+            String newPhone = JOptionPane.showInputDialog(this, "请输入新手机号:");
+            if (newPhone != null && !newPhone.trim().isEmpty()) {
+                phoneField.setText(newPhone);
+                doctor.setPhone(newPhone);
+                JOptionPane.showMessageDialog(this, "手机号已更新");
+            } else {
+                JOptionPane.showMessageDialog(this, "手机号不能为空");
+            }
         }
+
         // TODO: 处理其他按钮和菜单项的事件
+    }
+
+    // 设置菜单按钮的背景颜色，激活当前模块
+    private void setButtonColor(JButton activeButton) {
+        personalInfoButton.setBackground(null);
+        patientInfoButton.setBackground(null);
+        equipmentInfoButton.setBackground(null);
+        activeButton.setBackground(Color.orange);
+    }
+
+    // 自定义渲染器类，用于在 "操作" 列中渲染两个按钮
+    class ButtonRenderer extends JPanel implements TableCellRenderer {
+        private JButton editButton = new JButton("编辑");
+        private JButton deleteButton = new JButton("删除");
+
+        public ButtonRenderer() {
+            setLayout(new FlowLayout(FlowLayout.CENTER, 5, 0));
+            add(editButton);
+            add(deleteButton);
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            return this;
+        }
+    }
+
+    // 自定义编辑器类，用于在 "操作" 列中处理按钮点击事件
+    class ButtonEditor extends AbstractCellEditor implements TableCellEditor {
+        private JPanel panel = new JPanel();
+        private JButton editButton = new JButton("编辑");
+        private JButton deleteButton = new JButton("删除");
+        private JTable table;
+        private DefaultTableModel model;
+        private String type; // "patient" 或 "equipment"
+
+        public ButtonEditor(JCheckBox checkBox, JTable table, DefaultTableModel model, String type) {
+            this.table = table;
+            this.model = model;
+            this.type = type;
+            panel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 0));
+            panel.add(editButton);
+            panel.add(deleteButton);
+
+            // 编辑按钮事件
+            editButton.addActionListener(e -> {
+                int row = table.getSelectedRow();
+                if (row >= 0) {
+                    if (type.equals("patient")) {
+                        editPatient(row);
+                    } else if (type.equals("equipment")) {
+                        editEquipment(row);
+                    }
+                }
+                fireEditingStopped();
+            });
+
+            // 删除按钮事件
+            deleteButton.addActionListener(e -> {
+                int row = table.getSelectedRow();
+                if (row >= 0) {
+                    int confirm = JOptionPane.showConfirmDialog(DoctorUI.this, "确定要删除此条记录吗？", "确认删除", JOptionPane.YES_NO_OPTION);
+                    if (confirm == JOptionPane.YES_OPTION) {
+                        model.removeRow(row);
+                        JOptionPane.showMessageDialog(DoctorUI.this, "记录已删除");
+                    }
+                }
+                fireEditingStopped();
+            });
+        }
+
+        // 弹出编辑病人信息的对话框
+        // 修改 editPatient 方法中的类型转换
+        private void editPatient(int row) {
+            String name = (String) model.getValueAt(row, 0);
+            String gender = (String) model.getValueAt(row, 1);
+            Integer age = (Integer) model.getValueAt(row, 2);
+            String bedNumber = model.getValueAt(row, 3).toString(); // 修改这里
+            String ward = model.getValueAt(row, 4).toString();       // 修改这里
+
+            JTextField nameField = new JTextField(name);
+            JTextField genderField = new JTextField(gender);
+            JTextField ageField = new JTextField(age.toString());
+            JTextField bedField = new JTextField(bedNumber);
+            JTextField wardField = new JTextField(ward);
+
+            JPanel editPanel = new JPanel(new GridLayout(5, 2, 10, 10));
+            editPanel.add(new JLabel("姓名:"));
+            editPanel.add(nameField);
+            editPanel.add(new JLabel("性别:"));
+            editPanel.add(genderField);
+            editPanel.add(new JLabel("年龄:"));
+            editPanel.add(ageField);
+            editPanel.add(new JLabel("病床号:"));
+            editPanel.add(bedField);
+            editPanel.add(new JLabel("病房:"));
+            editPanel.add(wardField);
+
+            int result = JOptionPane.showConfirmDialog(DoctorUI.this, editPanel, "编辑病人信息", JOptionPane.OK_CANCEL_OPTION);
+            if (result == JOptionPane.OK_OPTION) {
+                // 更新表格数据
+                model.setValueAt(nameField.getText(), row, 0);
+                model.setValueAt(genderField.getText(), row, 1);
+                try {
+                    int newAge = Integer.parseInt(ageField.getText());
+                    model.setValueAt(newAge, row, 2);
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(DoctorUI.this, "年龄必须为整数", "输入错误", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                model.setValueAt(bedField.getText(), row, 3);
+                model.setValueAt(wardField.getText(), row, 4);
+                JOptionPane.showMessageDialog(DoctorUI.this, "病人信息已更新");
+            }
+        }
+
+        // 修改 editEquipment 方法中的类型转换
+        private void editEquipment(int row) {
+            String equipmentId = model.getValueAt(row, 0).toString();    // 修改这里
+            String equipmentType = model.getValueAt(row, 1).toString();
+            String bedNumber = model.getValueAt(row, 2).toString();
+
+            JTextField idField = new JTextField(equipmentId);
+            JTextField typeField = new JTextField(equipmentType);
+            JTextField bedField = new JTextField(bedNumber);
+
+            JPanel editPanel = new JPanel(new GridLayout(3, 2, 10, 10));
+            editPanel.add(new JLabel("设备编号:"));
+            editPanel.add(idField);
+            editPanel.add(new JLabel("设备类型:"));
+            editPanel.add(typeField);
+            editPanel.add(new JLabel("使用病床:"));
+            editPanel.add(bedField);
+
+            int result = JOptionPane.showConfirmDialog(DoctorUI.this, editPanel, "编辑设备信息", JOptionPane.OK_CANCEL_OPTION);
+            if (result == JOptionPane.OK_OPTION) {
+                // 更新表格数据
+                model.setValueAt(idField.getText(), row, 0);
+                model.setValueAt(typeField.getText(), row, 1);
+                model.setValueAt(bedField.getText(), row, 2);
+                JOptionPane.showMessageDialog(DoctorUI.this, "设备信息已更新");
+            }
+        }
+
+        @Override
+        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+            return panel;
+        }
+
+        @Override
+        public Object getCellEditorValue() {
+            return "";
+        }
     }
 }
