@@ -37,6 +37,7 @@ public class Nurse extends User{
     this.phone = phone;
     this.position = position;
     this.department_id = department_id;
+
   }
 
   public void setPassword(String password, String oldPassword) {
@@ -51,6 +52,7 @@ public class Nurse extends User{
     }
   }
 
+
 //  public void setPhone(String phone) {
 //    if (phone != null && !phone.trim().isEmpty()) {
 //      this.phone = phone;
@@ -58,6 +60,14 @@ public class Nurse extends User{
 //      throw new IllegalArgumentException("手机号不能为空");
 //    }
 //  }
+
+  public void setPhone(String phone) {
+    if (phone != null && !phone.trim().isEmpty()) {
+      this.phone = phone;
+    } else {
+      throw new IllegalArgumentException("手机号不能为空");
+    }
+  }
 
 }
 

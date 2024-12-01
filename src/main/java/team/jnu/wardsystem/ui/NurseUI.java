@@ -52,6 +52,7 @@ public class NurseUI extends JFrame implements ActionListener {
     // 构造函数，传入护士信息
     public NurseUI(Nurse nurse) {
         super("尊敬的 " + nurse.getNurse_name() + " 护士，欢迎您！");
+
         this.nurse = nurse;
         this.setSize(1200, 800);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -122,7 +123,9 @@ public class NurseUI extends JFrame implements ActionListener {
 
         JLabel nameLabel = new JLabel("姓名:");
         nameField = new JTextField(20);
+
         nameField.setText(nurse.getNurse_name());
+
         nameField.setEditable(false);
 
         JLabel genderLabel = new JLabel("性别:");
