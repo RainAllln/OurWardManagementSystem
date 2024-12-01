@@ -12,7 +12,7 @@ public class App {
     //用户id一共5位数,如果用户id为10000说明是病人，20000为医生，30000为护士
 //    if(user.getUser_id()/10000 == 1){
 //      //病人
-//      new PatientUI((Package)user);
+//      new PatientUI((Patient)user);
 //    }else if(user.getUser_id()/10000 == 2){
 //      //医生
 //      new DoctorUI((Doctor)user);
