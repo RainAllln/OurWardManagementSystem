@@ -8,5 +8,5 @@ public interface UserMapper {
 
     List<User> selectAll();
     User selectByUserName(String user_name);
-
+    void updatePassword(int user_id, String password);
 }

@@ -16,40 +16,30 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
 
-
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class User {
-    @Getter
-    @Setter
     private String username;
-
-    @Getter
-    @Setter
     private String password;
-
-    @Getter
-    @Setter
     private int user_id;
-    private final String resource;
-    private final InputStream inputStream;
-    private final SqlSessionFactory sqlSessionFactory;
 
-    public User(String username, String password){
-        this.username = username;
-        this.password = password;
-        try {
-            this.resource = "mybatis-config.xml";
-            this.inputStream = Resources.getResourceAsStream(resource);
-            this.sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    /*
+    final修饰的变量必须在声明时或构造函数中初始化，初始化后不能再修改
+    由于Patient,Doctor,Nurse都继承了User类，所以这里的变量是所有用户共享的
+    每次使用的时候只需要让sqlSessionFactory.openSession()之后再获取mapper接口即可
+    记得关闭连接
+     */
+    private static final String resource;   //静态变量，所有对象公用一个变量
+    private static final InputStream inputStream;
+    private static final SqlSessionFactory sqlSessionFactory;
 
-    public User(){
+    static{
         try {
-            this.resource = "mybatis-config.xml";
-            this.inputStream = Resources.getResourceAsStream(resource);
-            this.sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+            resource = "mybatis-config.xml";
+            inputStream = Resources.getResourceAsStream(resource);
+            sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -85,9 +75,19 @@ public class User {
             e.printStackTrace();
         }
         //16是表示转换为16进制数
-        String md5Str = new BigInteger(1, digest).toString(16);
-        return md5Str;
+        return new BigInteger(1, digest).toString(16);
     }
 
+    public void updatePassword(String newPassword){
+        //更新密码
+        SqlSession sqlSession = sqlSessionFactory.openSession();     //打开链接
+        UserMapper userMapper = sqlSession.getMapper(UserMapper.class); //获取mapper接口
+
+        password = getMD5Str(newPassword);
+        userMapper.updatePassword(user_id,password);
+
+        sqlSession.commit(); //提交
+        sqlSession.close(); //关闭连接
+    }
 
 }

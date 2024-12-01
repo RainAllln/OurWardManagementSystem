@@ -18,7 +18,7 @@ public class LoginUI extends JFrame implements ActionListener{
         this.setSize(400, 300);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null); // 居中显示
-
+        user = new User();
         LoginFrame();
     }
 

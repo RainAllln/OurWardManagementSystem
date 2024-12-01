@@ -4,5 +4,5 @@
 <mapper namespace="team.jnu.wardsystem.mapper.UserMapper">
     <select id="selectAll" resultType="User"> select * from users; </select>
     <select id="selectByUserName" resultType="User"> select * from users where user_name=#{user_name}; </select>
-
+    <update id="updatePassword">update users set password=#{password} where id=#{user_id} </update>
 </mapper>
