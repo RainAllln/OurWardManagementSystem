@@ -2,9 +2,14 @@ package team.jnu.wardsystem.pojo;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import team.jnu.wardsystem.mapper.UserMapper;
+
 import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+
+import static team.jnu.wardsystem.pojo.User.sqlSessionFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,19 +26,9 @@ public class Doctor extends User{
   private int department_id;
   private List<Patient> patientList;
   private List<Equipment> equipmentList;
-  private static String resource;   //静态变量，所有对象共享
-  private static InputStream inputStream;
-  private static SqlSessionFactory sqlSessionFactory;
 
-  static {  //静态初始化块
-    try {
-      resource = "mybatis-config.xml";
-      inputStream = Resources.getResourceAsStream(resource);
-      sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-  }
+
+
 
   public Doctor(String doctor_name, int doctor_id, String gender, String phone, String position, int department_id) {
     //数据库对应数据的构造函数

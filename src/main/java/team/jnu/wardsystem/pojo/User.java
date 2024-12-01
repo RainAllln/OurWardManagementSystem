@@ -31,9 +31,9 @@ public class User {
     每次使用的时候只需要让sqlSessionFactory.openSession()之后再获取mapper接口即可
     记得关闭连接
      */
-    private static final String resource;   //静态变量，所有对象公用一个变量
-    private static final InputStream inputStream;
-    private static final SqlSessionFactory sqlSessionFactory;
+    protected static final String resource;   //静态变量，所有对象公用一个变量
+    protected static final InputStream inputStream;
+    protected static final SqlSessionFactory sqlSessionFactory;
 
     static{
         try {
