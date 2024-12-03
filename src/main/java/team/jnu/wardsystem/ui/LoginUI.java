@@ -1,6 +1,7 @@
 package team.jnu.wardsystem.ui;
 
 import lombok.Getter;
+import team.jnu.wardsystem.pojo.Doctor;
 import team.jnu.wardsystem.pojo.User;
 
 import javax.swing.*;
@@ -110,8 +111,20 @@ public class LoginUI extends JFrame implements ActionListener {
             if (LoginMsg.equals("登录成功")) {
                 JOptionPane.showMessageDialog(this, LoginMsg);
                 this.dispose(); // 关闭登录界面
-                // 可以在这里打开主界面，例如：
-                // new DoctorUI((Doctor) user).setVisible(true);
+                // 可以在这里打开主界面，例如
+                if(user.getUser_id() / 10000 == 1) {
+                    // 病人
+                } else if(user.getUser_id() / 10000 == 2) {
+                    // 医生
+                    Doctor doctor = Doctor.searchDoctorById(user.getUser_id());
+                    doctor.setUser_id(user.getUser_id());
+                    doctor.setUsername(username);
+                    doctor.setPassword(password);
+                    new DoctorUI(doctor);
+                } else if(user.getUser_id() / 10000 == 3) {
+                    // 护士
+                }
+
             } else {
                 JOptionPane.showMessageDialog(this, LoginMsg);
             }

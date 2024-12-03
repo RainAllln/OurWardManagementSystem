@@ -10,7 +10,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Patient extends User{
-  private String name;
+  private String patient_name;
   private int id;
   private String gender;
   private int age;

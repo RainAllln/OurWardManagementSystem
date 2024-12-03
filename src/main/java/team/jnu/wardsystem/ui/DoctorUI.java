@@ -15,6 +15,8 @@ import java.util.List;
 
 // DoctorUI类实现医生界面，包括个人信息、病人信息和设备信息
 public class DoctorUI extends JFrame implements ActionListener {
+    private boolean patient_add =false;
+    private boolean equipment_add=false;
     private Doctor doctor; // 当前登录的医生
     private JPanel menuPanel;
     private JPanel mainPanel;
@@ -46,7 +48,7 @@ public class DoctorUI extends JFrame implements ActionListener {
 
     // 构造函数
     public DoctorUI(Doctor doctor) {
-        super("尊敬的 " + doctor.getDoctor_name() + " 医生，欢迎您！");
+        super("尊敬的 " + doctor.getDoctor_name() + "，欢迎您！");
         this.doctor = doctor;
         this.setSize(1200, 800);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -56,7 +58,6 @@ public class DoctorUI extends JFrame implements ActionListener {
         initMenu();
         initMainPanel();
         setButtonColor(personalInfoButton); // 默认选中个人信息模块
-
         this.setVisible(true);
     }
 
@@ -87,10 +88,10 @@ public class DoctorUI extends JFrame implements ActionListener {
         cardLayout = new CardLayout();
         mainPanel.setLayout(cardLayout);
 
-        // 初始化各个功能面板
+        // 初始化个人信息功能面板
         mainPanel.add(initPersonalInfoPanel(), "personalInfo");
-        mainPanel.add(initPatientInfoPanel(), "patientInfo");
-        mainPanel.add(initEquipmentInfoPanel(), "equipmentInfo");
+        //mainPanel.add(initPatientInfoPanel(), "patientInfo");
+        //mainPanel.add(initEquipmentInfoPanel(), "equipmentInfo");
 
         this.add(mainPanel, BorderLayout.CENTER);
     }
@@ -139,7 +140,7 @@ public class DoctorUI extends JFrame implements ActionListener {
 
         JLabel departmentLabel = new JLabel("所属科室:");
         departmentField = new JTextField(20);
-        departmentField.setText(String.valueOf(doctor.getDepartmentId()));
+        departmentField.setText(doctor.getDepartment_name());
         departmentField.setEditable(false);
 
         // 添加到面板
@@ -197,12 +198,12 @@ public class DoctorUI extends JFrame implements ActionListener {
         JPanel panel = new JPanel(new BorderLayout());
 
         // 表格模型
-        String[] columns = {"姓名", "性别", "年龄", "病床号", "病房", "操作"};
+        String[] columns = {"姓名", "性别", "年龄", "病床号", "病房","电话","备注", "操作"};
         patientTableModel = new DefaultTableModel(columns, 0) {
             // 使表格不可编辑除了"操作"列
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column == 5;
+                return column == 7;
             }
         };
         patientTable = new JTable(patientTableModel);
@@ -263,34 +264,37 @@ public class DoctorUI extends JFrame implements ActionListener {
     }
 
     private void loadPatientData() {
-        // 示例数据
-        patientTableModel.addRow(new Object[]{"张三", "男", 25, 1, 1});
-
-        // 将数据添加到表格模型
-//        List<Patient> patients=doctor.getPatientList();
-//        for (Patient patient : patients) {
-//            patientTableModel.addRow(new Object[]{
-//                    patient.getName(),
-//                    patient.getGender(),
-//                    patient.getAge(),
-//                    patient.getBed_id(),
-//                    patient.getWard_id()
-//            });
-//        }
+        // 将病人数据添加到表格
+        if(doctor.getPatientList()==null){
+            doctor.searchAllPatient(doctor.getDoctor_id());
+        }
+        List<Patient> patients=doctor.getPatientList();
+        for (Patient patient : patients) {
+            patientTableModel.addRow(new Object[]{
+                    patient.getPatient_name(),
+                    patient.getGender(),
+                    patient.getAge(),
+                    patient.getBed_id(),
+                    patient.getWard_id(),
+                    patient.getPhone(),
+                    patient.getNotes()
+            });
+        }
     }
 
     private void loadEquipmentData() {
-
-        equipmentTableModel.addRow(new Object[]{1, 1, 1});
-        // 将数据添加到表格模型
-//        List<Equipment> equipments=doctor.getEquipmentList();
-//        for (Equipment equipment : equipments) {
-//            equipmentTableModel.addRow(new Object[]{
-//                    equipment.getEquipment_id(),
-//                    equipment.getEquipment_type(),
-//                    equipment.getBed_id()
-//            });
-//        }
+        // 将设备数据添加到表格
+        if(doctor.getEquipmentList()==null){
+            doctor.searchAllEquipment();
+        }
+        List<Equipment> equipments=doctor.getEquipmentList();
+        for (Equipment equipment : equipments) {
+            equipmentTableModel.addRow(new Object[]{
+                    equipment.getEquipment_id(),
+                    equipment.getEquipment_type(),
+                    equipment.getBed_id()
+            });
+        }
     }
 
     @Override
@@ -300,9 +304,17 @@ public class DoctorUI extends JFrame implements ActionListener {
             cardLayout.show(mainPanel, "personalInfo");
             setButtonColor(personalInfoButton);
         } else if (source == patientInfoButton) {
+            if(!patient_add){//点击才能加载数据
+                mainPanel.add(initPatientInfoPanel(), "patientInfo");
+                patient_add=true;
+            }
             cardLayout.show(mainPanel, "patientInfo");
             setButtonColor(patientInfoButton);
         } else if (source == equipmentInfoButton) {
+            if(!equipment_add){//点击才能加载数据
+                mainPanel.add(initEquipmentInfoPanel(), "equipmentInfo");
+                equipment_add=true;
+            }
             cardLayout.show(mainPanel, "equipmentInfo");
             setButtonColor(equipmentInfoButton);
         } else if (source == editPasswordButton) {
@@ -312,8 +324,12 @@ public class DoctorUI extends JFrame implements ActionListener {
             if (option == JOptionPane.OK_OPTION) {
                 String newPassword = new String(newPasswordField.getPassword());
                 if (!newPassword.trim().isEmpty()) {
+                    if(doctor.getPassword().equals(newPassword)){
+                        JOptionPane.showMessageDialog(this, "新密码不能与旧密码相同");
+                        return;
+                    }
                     passwordField.setText(newPassword);
-                    doctor.setPassword(newPassword); // 假设 Doctor 类有 setPassword 方法
+                    doctor.updatePassword(newPassword);
                     JOptionPane.showMessageDialog(this, "密码已更新");
                 } else {
                     JOptionPane.showMessageDialog(this, "密码不能为空");
@@ -323,14 +339,17 @@ public class DoctorUI extends JFrame implements ActionListener {
             // 处理修改手机号
             String newPhone = JOptionPane.showInputDialog(this, "请输入新手机号:");
             if (newPhone != null && !newPhone.trim().isEmpty()) {
+                if(doctor.getPhone().equals(newPhone)){
+                    JOptionPane.showMessageDialog(this, "新手机号不能与旧手机号相同");
+                    return;
+                }
                 phoneField.setText(newPhone);
-                doctor.setPhone(newPhone);
+                doctor.updatePhone(newPhone);
                 JOptionPane.showMessageDialog(this, "手机号已更新");
             } else {
                 JOptionPane.showMessageDialog(this, "手机号不能为空");
             }
         }
-
         // TODO: 处理其他按钮和菜单项的事件
     }
 
@@ -380,6 +399,7 @@ public class DoctorUI extends JFrame implements ActionListener {
             editButton.addActionListener(e -> {
                 int row = table.getSelectedRow();
                 if (row >= 0) {
+                    System.out.println("编辑第 " + row + " 行");
                     if (type.equals("patient")) {
                         editPatient(row);
                     } else if (type.equals("equipment")) {
@@ -409,16 +429,21 @@ public class DoctorUI extends JFrame implements ActionListener {
             String name = (String) model.getValueAt(row, 0);
             String gender = (String) model.getValueAt(row, 1);
             Integer age = (Integer) model.getValueAt(row, 2);
-            String bedNumber = model.getValueAt(row, 3).toString(); // 修改这里
-            String ward = model.getValueAt(row, 4).toString();       // 修改这里
+            String bedNumber = model.getValueAt(row, 3).toString();
+            String ward = model.getValueAt(row, 4).toString();
+            String phone = model.getValueAt(row, 5).toString();
+            String notes = (String)model.getValueAt(row, 6);
+
 
             JTextField nameField = new JTextField(name);
             JTextField genderField = new JTextField(gender);
             JTextField ageField = new JTextField(age.toString());
             JTextField bedField = new JTextField(bedNumber);
             JTextField wardField = new JTextField(ward);
+            JTextField phoneField = new JTextField(phone);
+            JTextField notesField = new JTextField(notes);
 
-            JPanel editPanel = new JPanel(new GridLayout(5, 2, 10, 10));
+            JPanel editPanel = new JPanel(new GridLayout(7, 2, 10, 10));
             editPanel.add(new JLabel("姓名:"));
             editPanel.add(nameField);
             editPanel.add(new JLabel("性别:"));
@@ -429,6 +454,10 @@ public class DoctorUI extends JFrame implements ActionListener {
             editPanel.add(bedField);
             editPanel.add(new JLabel("病房:"));
             editPanel.add(wardField);
+            editPanel.add(new JLabel("手机号:"));
+            editPanel.add(phoneField);
+            editPanel.add(new JLabel("备注:"));
+            editPanel.add(notesField);
 
             int result = JOptionPane.showConfirmDialog(DoctorUI.this, editPanel, "编辑病人信息", JOptionPane.OK_CANCEL_OPTION);
             if (result == JOptionPane.OK_OPTION) {
@@ -444,6 +473,11 @@ public class DoctorUI extends JFrame implements ActionListener {
                 }
                 model.setValueAt(bedField.getText(), row, 3);
                 model.setValueAt(wardField.getText(), row, 4);
+                model.setValueAt(phoneField.getText(), row, 5);
+                if(!notes.equals(notesField.getText())){//修改了信息要更新数据库
+                    doctor.updatePatientNote(Integer.parseInt(bedNumber), Integer.parseInt(ward), notesField.getText());
+                    model.setValueAt(notesField.getText(), row, 6);
+                }
                 JOptionPane.showMessageDialog(DoctorUI.this, "病人信息已更新");
             }
         }

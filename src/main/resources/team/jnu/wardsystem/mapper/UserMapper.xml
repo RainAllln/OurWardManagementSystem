@@ -3,6 +3,12 @@
 
 <mapper namespace="team.jnu.wardsystem.mapper.UserMapper">
     <select id="selectAll" resultType="User"> select * from users; </select>
-    <select id="selectByUserName" parameterType="string" resultType="User"> select * from users where user_name=#{user_name}; </select>
-    <update id="updatePassword">update users set password=#{password} where id=#{user_id} </update>
+    <select id="selectByUserName" parameterType="string" resultType="User"> select * from users where username=#{user_name}; </select>
+<!--    <update id="updatePassword" parameterType="map">-->
+<!--    UPDATE users SET password = #{password} WHERE user_id = #{user_id}-->
+<!--    </update>-->
+<!--    -->
+        <update id="updatePassword" parameterType="User" >
+        UPDATE public.users SET password = #{password} WHERE user_id = #{user_id}
+        </update>
 </mapper>

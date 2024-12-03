@@ -9,7 +9,7 @@ import team.jnu.wardsystem.ui.NurseUI;
 
 public class App {
   public static void main(String[] args) {
-    //LoginUI loginUI = new LoginUI();
+    LoginUI loginUI = new LoginUI();
     //User user = loginUI.getUser();
     //用户id一共5位数,如果用户id为10000说明是病人，20000为医生，30000为护士
 //    if(user.getUser_id()/10000 == 1){
@@ -18,13 +18,14 @@ public class App {
 //    }else if(user.getUser_id()/10000 == 2){
 //      //医生
 //      new DoctorUI((Doctor)user);
+
 //    }else if(user.getUser_id()/10000 == 3){
 //      //护士
 //      new NurseUI((Nurse)user);
 //    }
-
-    Doctor doctor_test=new Doctor("肖爷",101,"男","12345678912","T1-227",2);
-    new DoctorUI(doctor_test);
+    //System.out.println(User.getMD5Str("123456"));
+    //Doctor doctor_test=new Doctor("宵夜",101,"男","12345678910","T1-227",101);
+    //new DoctorUI(doctor_test);
 
     //Nurse nurse_test = new Nurse("张三",1, "女", "1234567890","dwdwdwd",1);
 

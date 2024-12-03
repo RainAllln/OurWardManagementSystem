@@ -25,7 +25,6 @@ public class User {
     private String username;
     private String password;
     private int user_id;
-
     /*
     final修饰的变量必须在声明时或构造函数中初始化，初始化后不能再修改
     由于Patient,Doctor,Nurse都继承了User类，所以这里的变量是所有用户共享的
@@ -66,7 +65,7 @@ public class User {
         }
     }
 
-    private static String getMD5Str(String str) {
+    public static String getMD5Str(String str) {
         //字符串转md5码
         byte[] digest = null;
         try {
@@ -83,10 +82,12 @@ public class User {
         //更新密码
         SqlSession sqlSession = sqlSessionFactory.openSession();     //打开链接
         UserMapper userMapper = sqlSession.getMapper(UserMapper.class); //获取mapper接口
-
         password = getMD5Str(newPassword);
-        userMapper.updatePassword(user_id,password);
-
+        System.out.println(password);
+        System.out.println(user_id);
+        //userMapper.updatePassword(user_id,password);
+        int x= userMapper.updatePassword(this);
+        System.out.println("x的值："+x);
         sqlSession.commit(); //提交
         sqlSession.close(); //关闭连接
     }
