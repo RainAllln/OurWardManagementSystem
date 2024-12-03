@@ -23,11 +23,11 @@ public class App {
 //      new NurseUI((Nurse)user);
 //    }
 
-    //Doctor doctor_test=new Doctor("肖爷",101,"男","12345678912","T1-227",2);
-    //new DoctorUI(doctor_test);
+    Doctor doctor_test=new Doctor("肖爷",101,"男","12345678912","T1-227",2);
+    new DoctorUI(doctor_test);
 
-    Nurse nurse_test = new Nurse("张三",1, "女", "1234567890","dwdwdwd",1);
+    //Nurse nurse_test = new Nurse("张三",1, "女", "1234567890","dwdwdwd",1);
 
-    new NurseUI(nurse_test);
+    //new NurseUI(nurse_test);
   }
 }

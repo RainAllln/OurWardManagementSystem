@@ -2,8 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="team.jnu.wardsystem.mapper.PatientMapper">
-    <select id="selectAllPatients" resultType="Patients" >select * from patients</select>
-    <select id="searchPatientById" resultType="Patients">select * from patients where patient_id=#{patient_id}</select>
+    <select id="selectAllPatients" resultType="Patient" >select * from patients</select>
+    <select id="searchPatientById" resultType="Patient">select * from patients where patient_id=#{patient_id}</select>
     <update id="updatePatientNote">
         UPDATE patients
         SET notes = #{notes}

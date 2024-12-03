@@ -20,6 +20,3 @@ buildNumber.properties
 # IDE files
 .idea/
 .vscode/
-
-pom.xml
-src/main/resources/mybatis-config.xml

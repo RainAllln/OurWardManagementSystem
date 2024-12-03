@@ -19,7 +19,6 @@ public class Doctor extends User{
   private int department_id;
   private List<Patient> patientList;
   private List<Equipment> equipmentList;
-
   public Doctor(String doctor_name, int doctor_id, String gender, String phone, String position, int department_id) {
     //数据库对应数据的构造函数
     this.doctor_name = doctor_name;
