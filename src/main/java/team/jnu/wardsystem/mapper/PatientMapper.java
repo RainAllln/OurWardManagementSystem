@@ -13,4 +13,8 @@ public interface PatientMapper {
     void updatePatientBed(@Param("bed_id") int bedId,@Param("ward_id") int wardId,@Param("newBedId") int newBedId);
 
     void updatePatientWard(@Param("bed_id") int bedId,@Param("ward_id") int wardId,@Param("newWardId") int newWardId);
+
+    int getMaxPatientID();
+
+    void insertPatient(Patient patient);
 }

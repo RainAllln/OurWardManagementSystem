@@ -5,6 +5,7 @@ import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+import team.jnu.wardsystem.mapper.PatientMapper;
 import team.jnu.wardsystem.mapper.UserMapper;
 
 
@@ -22,8 +23,9 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 public class User {
-    private String username;
-    private String password;
+    protected String username;
+    protected String password;
+    private String role;
     private int user_id;
     /*
     final修饰的变量必须在声明时或构造函数中初始化，初始化后不能再修改
@@ -92,4 +94,11 @@ public class User {
         sqlSession.close(); //关闭连接
     }
 
+    public void register() {
+        SqlSession sqlSession = sqlSessionFactory.openSession();     //打开链接
+        UserMapper userMapper = sqlSession.getMapper(UserMapper.class); //获取mapper接口
+        userMapper.insertUser(this);
+        sqlSession.commit(); //提交
+        sqlSession.close(); //关闭连接
+    }
 }

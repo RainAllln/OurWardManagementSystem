@@ -20,6 +20,12 @@ public class Doctor extends User{
   private List<Patient> patientList;
   private List<Equipment> equipmentList;
   private String department_name;
+  public Doctor(int doctor_id,String username,String password){
+    //构造函数
+    this.doctor_id=doctor_id;
+    this.username=username;
+    this.password=password;
+  }
   public Doctor(String doctor_name, int doctor_id, String gender, String phone, String position, int department_id) {
     //数据库对应数据的构造函数
     this.doctor_name = doctor_name;
