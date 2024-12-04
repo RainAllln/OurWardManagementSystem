@@ -155,9 +155,9 @@ public class LoginUI extends JFrame implements ActionListener {
                 String newPhone = newPhoneText.getText();
                 // 创建新用户和病人对象
                 Patient patient = new Patient(newUsername, newPassword, newAge, newGender, newName, newPhone);
-                User newUser = (User)patient;   // 向上转型,从patient对象中提取出用户名和密码
+                User newUser = new User(newUsername,newPassword,"病人",patient.getUser_id());
                 // 插入新用户和新病人到数据库中
-                patient.register();
+                patient.insertPatient();
                 newUser.register();
                 System.out.println(newUser.getUser_id());
                 System.out.println(newUser.getPassword());
