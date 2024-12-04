@@ -2,17 +2,21 @@ package team.jnu.wardsystem.ui;
 
 import lombok.Getter;
 import team.jnu.wardsystem.pojo.Doctor;
+import team.jnu.wardsystem.pojo.Patient;
 import team.jnu.wardsystem.pojo.User;
 
 import javax.swing.*;
-import javax.swing.border.TitledBorder;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class LoginUI extends JFrame implements ActionListener {
     private JTextField userText;         // 用户名输入框
     private JPasswordField passwordText; // 密码输入框
     private JButton loginButton;         // 登录按钮
+    private JButton registerButton;      // 注册按钮
 
     @Getter
     private User user;                   // 对应的用户
@@ -37,15 +41,6 @@ public class LoginUI extends JFrame implements ActionListener {
 
         // 创建一个带标题的边框面板
         JPanel borderedPanel = new JPanel(new GridBagLayout());
-//        TitledBorder titledBorder = BorderFactory.createTitledBorder(
-//                BorderFactory.createLineBorder(Color.WHITE),
-//                "登录",
-//                TitledBorder.CENTER,
-//                TitledBorder.TOP,
-//                new Font("SansSerif", Font.BOLD, 16),
-//                Color.BLACK
-//        );
-//        borderedPanel.setBorder(titledBorder);
         GridBagConstraints innerGbc = new GridBagConstraints();
         innerGbc.fill = GridBagConstraints.HORIZONTAL;
         innerGbc.insets = new Insets(10, 10, 10, 20); // 设置边距
@@ -84,8 +79,18 @@ public class LoginUI extends JFrame implements ActionListener {
         innerGbc.gridwidth = 2; // 按钮跨越两列
         borderedPanel.add(loginButton, innerGbc);
 
+        // 创建注册按钮
+        registerButton = new JButton("注册");
+        registerButton.setPreferredSize(new Dimension(100, 40)); // 设置按钮大小
+        innerGbc.gridx = 0; // 第0列
+        innerGbc.gridy = 3; // 第3行
+        innerGbc.gridwidth = 2; // 按钮跨越两列
+        borderedPanel.add(registerButton, innerGbc);
+
         // 登录按钮的点击事件
         loginButton.addActionListener(this);
+        // 注册按钮的点击事件
+        registerButton.addActionListener(this);
 
         // 将带边框的面板添加到背景面板
         gbc.gridx = 0;
@@ -116,17 +121,45 @@ public class LoginUI extends JFrame implements ActionListener {
                     // 病人
                 } else if(user.getUser_id() / 10000 == 2) {
                     // 医生
-                    Doctor doctor = Doctor.searchDoctorById(user.getUser_id());
-                    doctor.setUser_id(user.getUser_id());
-                    doctor.setUsername(username);
-                    doctor.setPassword(password);
-                    new DoctorUI(doctor);
+                    new DoctorUI(new Doctor(user.getUser_id(), username, password));
                 } else if(user.getUser_id() / 10000 == 3) {
                     // 护士
                 }
 
             } else {
                 JOptionPane.showMessageDialog(this, LoginMsg);
+            }
+        } else if (btn == registerButton) {
+            // 注册
+            JTextField newUserText = new JTextField();
+            JPasswordField newPasswordText = new JPasswordField();
+            JTextField newNameText = new JTextField();
+            JTextField newGenderText = new JTextField();
+            JTextField newAgeText = new JTextField();
+            JTextField newPhoneText = new JTextField();
+            Object[] message = {
+                    "用户名:", newUserText,
+                    "密码:", newPasswordText,
+                    "真实姓名",newNameText,
+                    "性别",newGenderText,
+                    "年龄",newAgeText,
+                    "手机号",newPhoneText
+            };
+            int option = JOptionPane.showConfirmDialog(this, message, "注册", JOptionPane.OK_CANCEL_OPTION);
+            if (option == JOptionPane.OK_OPTION) {
+                String newUsername = newUserText.getText();
+                String newPassword = User.getMD5Str(new String(newPasswordText.getPassword())) ;
+                String newName = newNameText.getText();
+                String newGender = newGenderText.getText();
+                int newAge = Integer.parseInt(newAgeText.getText());
+                String newPhone = newPhoneText.getText();
+                // 创建新用户和病人对象
+                Patient patient = new Patient(newUsername, newPassword, newAge, newGender, newName, newPhone);
+                User newUser = patient;   // 向上转型,从patient对象中提取出用户名和密码
+                // 插入新用户和新病人到数据库中
+                patient.register();
+                newUser.register1();
+                JOptionPane.showMessageDialog(this, "注册成功");
             }
         }
     }
