@@ -400,7 +400,6 @@ public class DoctorUI extends JFrame implements ActionListener {
             editButton.addActionListener(e -> {
                 int row = table.getSelectedRow();
                 if (row >= 0) {
-                    System.out.println("编辑第 " + row + " 行");
                     if (type.equals("patient")) {
                         editPatient(row);
                     } else if (type.equals("equipment")) {

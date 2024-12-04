@@ -46,8 +46,9 @@ public class Patient extends User{
     return patientMapper.getMaxPatientID();
   }
 
-//  @Override
-  public void register(){
+
+
+  public void insertPatient(){
    SqlSession sqlSession = sqlSessionFactory.openSession();     //打开链接
     PatientMapper patientMapper = sqlSession.getMapper(PatientMapper.class); //获取mapper接口
     patientMapper.insertPatient(this);

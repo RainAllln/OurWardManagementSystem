@@ -91,7 +91,8 @@ public class User {
         sqlSession.close(); //关闭连接
     }
 
-    public void register1() {
+
+    public void register() {
         SqlSession sqlSession = sqlSessionFactory.openSession();     //打开链接
         UserMapper userMapper = sqlSession.getMapper(UserMapper.class); //获取mapper接口
         userMapper.insertUser(this);
