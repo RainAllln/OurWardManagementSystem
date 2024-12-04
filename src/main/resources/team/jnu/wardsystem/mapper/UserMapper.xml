@@ -2,13 +2,17 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="team.jnu.wardsystem.mapper.UserMapper">
-    <select id="selectAll" resultType="User"> select * from users; </select>
-    <select id="selectByUserName" parameterType="string" resultType="User"> select * from users where username=#{user_name}; </select>
-<!--    <update id="updatePassword" parameterType="map">-->
+    <insert id="insertUser">
+        INSERT INTO users(user_id, username, password, role) VALUES(#{user_id},#{username},#{password},'patient');
+    </insert>
+    <select id="selectAll" resultType="User"> select * from users </select>
+    <select id="selectByUserName" parameterType="String" resultType="User"> select * from users where username=#{user_name} </select>
+
+    <!--    <update id="updatePassword" parameterType="map">-->
 <!--    UPDATE users SET password = #{password} WHERE user_id = #{user_id}-->
 <!--    </update>-->
 <!--    -->
-        <update id="updatePassword" parameterType="User" >
-        UPDATE public.users SET password = #{password} WHERE user_id = #{user_id}
-        </update>
+    <update id="updatePassword" parameterType="User" >
+        UPDATE users SET password = #{password} WHERE user_id = #{user_id}
+    </update>
 </mapper>
