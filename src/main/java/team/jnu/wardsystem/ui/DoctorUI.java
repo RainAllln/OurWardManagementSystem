@@ -427,9 +427,9 @@ public class DoctorUI extends JFrame implements ActionListener {
         // 弹出编辑病人信息的对话框
         // 修改 editPatient 方法中的类型转换
         private void editPatient(int row) {
-            String bedNumber = model.getValueAt(row, 0).toString();
-            String ward = model.getValueAt(row, 1).toString();
-            String notes = (String)model.getValueAt(row, 2);
+            String bedNumber = model.getValueAt(row, 3).toString();
+            String ward = model.getValueAt(row, 4).toString();
+            String notes = (String)model.getValueAt(row, 6);
             JTextField bedField = new JTextField(bedNumber);
             JTextField wardField = new JTextField(ward);
             JTextField notesField = new JTextField(notes);
@@ -446,15 +446,15 @@ public class DoctorUI extends JFrame implements ActionListener {
             if (result == JOptionPane.OK_OPTION) {
                 if(!bedNumber.equals(bedField.getText())){//修改了信息要更新数据库
                     doctor.updatePatientBed(Integer.parseInt(bedNumber), Integer.parseInt(ward), Integer.parseInt(bedField.getText()));
-                    model.setValueAt(bedField.getText(), row, 0);
+                    model.setValueAt(bedField.getText(), row, 3);
                 }
                 if(!ward.equals(wardField.getText())){//修改了信息要更新数据库
                     doctor.updatePatientWard(Integer.parseInt(bedNumber), Integer.parseInt(ward), Integer.parseInt(wardField.getText()));
-                    model.setValueAt(wardField.getText(), row, 1);
+                    model.setValueAt(wardField.getText(), row, 4);
                 }
                 if(!notes.equals(notesField.getText())){//修改了信息要更新数据库
                     doctor.updatePatientNote(Integer.parseInt(bedNumber), Integer.parseInt(ward), notesField.getText());
-                    model.setValueAt(notesField.getText(), row, 2);
+                    model.setValueAt(notesField.getText(), row, 6);
                 }
                 JOptionPane.showMessageDialog(DoctorUI.this, "病人信息已更新");
             }
@@ -463,8 +463,8 @@ public class DoctorUI extends JFrame implements ActionListener {
         // 修改 editEquipment 方法中的类型转换
         private void editEquipment(int row) {
             int equipment_id = Integer.parseInt(model.getValueAt(row, 0).toString());
-            String bedNumber = model.getValueAt(row, 0).toString();
-            String ward = model.getValueAt(row, 1).toString();
+            String bedNumber = model.getValueAt(row, 2).toString();
+            String ward = model.getValueAt(row, 3).toString();
 
             JTextField bedField = new JTextField(bedNumber);
             JTextField wardField = new JTextField(ward);
@@ -480,8 +480,8 @@ public class DoctorUI extends JFrame implements ActionListener {
                 // 更新表格数据
                 if(!bedNumber.equals(bedField.getText())||!ward.equals(wardField.getText())){//修改了信息要更新数据库
                     doctor.updateEquipment(equipment_id, Integer.parseInt(bedField.getText()), Integer.parseInt(wardField.getText()));
-                    model.setValueAt(bedField.getText(), row, 0);
-                    model.setValueAt(wardField.getText(), row, 1);
+                    model.setValueAt(bedField.getText(), row, 2);
+                    model.setValueAt(wardField.getText(), row, 3);
                     JOptionPane.showMessageDialog(DoctorUI.this, "设备信息已更新");
                 }else{
                     JOptionPane.showMessageDialog(DoctorUI.this, "设备信息未修改");
