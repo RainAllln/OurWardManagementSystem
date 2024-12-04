@@ -8,7 +8,6 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import team.jnu.wardsystem.mapper.PatientMapper;
 import team.jnu.wardsystem.mapper.UserMapper;
 
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -28,16 +27,15 @@ public class User {
     private String role;
     private int user_id;
     /*
-    final修饰的变量必须在声明时或构造函数中初始化，初始化后不能再修改
-    由于Patient,Doctor,Nurse都继承了User类，所以这里的变量是所有用户共享的
-    每次使用的时候只需要让sqlSessionFactory.openSession()之后再获取mapper接口即可
-    记得关闭连接
+     * final修饰的变量必须在声明时或构造函数中初始化，初始化后不能再修改
+     * 由于Patient,Doctor,Nurse都继承了User类，所以这里的变量是所有用户共享的
+     * 每次使用的时候只需要让sqlSessionFactory.openSession()之后再获取mapper接口即可 记得关闭连接
      */
-    protected static final String resource;   //静态变量，所有对象公用一个变量
+    protected static final String resource; // 静态变量，所有对象公用一个变量
     protected static final InputStream inputStream;
     protected static final SqlSessionFactory sqlSessionFactory;
 
-    static{
+    static {
         try {
             resource = "mybatis-config.xml";
             inputStream = Resources.getResourceAsStream(resource);
@@ -47,20 +45,21 @@ public class User {
         }
     }
 
-    public String Login(String username,String password){
+    public String Login(String username, String password) {
 
-        SqlSession sqlSession = sqlSessionFactory.openSession();     //打开链接
-        UserMapper userMapper = sqlSession.getMapper(UserMapper.class); //获取mapper接口
+        SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
+        UserMapper userMapper = sqlSession.getMapper(UserMapper.class); // 获取mapper接口
 
         User finded_user = userMapper.selectByUserName(username);
-        if(finded_user == null) return "用户名不存在";//没有该用户名
+        if (finded_user == null)
+            return "用户名不存在";// 没有该用户名
 
         String confirmPassword = finded_user.getPassword();
 
-        sqlSession.close(); //关闭连接
+        sqlSession.close(); // 关闭连接
 
         if (confirmPassword.equals(getMD5Str(password))) {
-            user_id = finded_user.getUser_id();     //获得用户id
+            user_id = finded_user.getUser_id(); // 获得用户id
             return "登录成功";
         } else {
             return "密码错误";
@@ -68,35 +67,34 @@ public class User {
     }
 
     public static String getMD5Str(String str) {
-        //字符串转md5码
+        // 字符串转md5码
         byte[] digest = null;
         try {
             MessageDigest md5 = MessageDigest.getInstance("md5");
-            digest  = md5.digest(str.getBytes(StandardCharsets.UTF_8));
+            digest = md5.digest(str.getBytes(StandardCharsets.UTF_8));
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
-        //16是表示转换为16进制数
+        // 16是表示转换为16进制数
         return new BigInteger(1, digest).toString(16);
     }
 
-    public void updatePassword(String newPassword){
-        //更新密码
-        SqlSession sqlSession = sqlSessionFactory.openSession();     //打开链接
-        UserMapper userMapper = sqlSession.getMapper(UserMapper.class); //获取mapper接口
+    public void updatePassword(String newPassword) {
+        // 更新密码
+        SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
+        UserMapper userMapper = sqlSession.getMapper(UserMapper.class); // 获取mapper接口
         password = getMD5Str(newPassword);
-        //userMapper.updatePassword(user_id,password);
-        int x= userMapper.updatePassword(this);
-        sqlSession.commit(); //提交
-        sqlSession.close(); //关闭连接
+        // userMapper.updatePassword(user_id,password);
+        int x = userMapper.updatePassword(this);
+        sqlSession.commit(); // 提交
+        sqlSession.close(); // 关闭连接
     }
 
-
     public void register() {
-        SqlSession sqlSession = sqlSessionFactory.openSession();     //打开链接
-        UserMapper userMapper = sqlSession.getMapper(UserMapper.class); //获取mapper接口
+        SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
+        UserMapper userMapper = sqlSession.getMapper(UserMapper.class); // 获取mapper接口
         userMapper.insertUser(this);
-        sqlSession.commit(); //提交
-        sqlSession.close(); //关闭连接
+        sqlSession.commit(); // 提交
+        sqlSession.close(); // 关闭连接
     }
 }

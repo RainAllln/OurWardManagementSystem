@@ -8,7 +8,7 @@ import team.jnu.wardsystem.pojo.Patient;
 import java.util.List;
 
 public interface DoctorMapper {
-    int updatePhone(@Param("doctor_id") int doctor_id,@Param("phone") String phone);
+    int updatePhone(@Param("doctor_id") int doctor_id, @Param("phone") String phone);
 
     Doctor searchDoctorById(int doctorId);
 

@@ -9,8 +9,11 @@ import java.util.List;
 public interface UserMapper {
 
     List<User> selectAll();
+
     User selectByUserName(String user_name);
-    //void updatePassword(@Param("user_id") int user_id,@Param("password") String password);
+
+    // void updatePassword(@Param("user_id") int user_id,@Param("password") String
+    // password);
     int updatePassword(User user);
 
     void insertUser(User user);

@@ -2,11 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="team.jnu.wardsystem.mapper.EquipmentMapper">
-    <select id="searchAllEquipment" resultType="Equipment" >select * from equipments</select>
-    <update id="updateEquipment" parameterType="map">
-        UPDATE equipments
-        SET bed_id = #{bed_id},
-            ward_id = #{ward_id}
-        WHERE equipment_id = #{equipment_id}
-    </update>
+    <select id="searchAllEquipment" resultType="Equipment">select * from equipments</select>
+    <update id="updateEquipment" parameterType="map"> UPDATE equipments SET bed_id = #{bed_id},
+        ward_id = #{ward_id} WHERE equipment_id = #{equipment_id} </update>
 </mapper>
