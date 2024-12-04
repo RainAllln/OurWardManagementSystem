@@ -101,23 +101,47 @@ public class Doctor extends User{
     }
     return "未找到对应病人";
   }
-  public void updatePatientBed(int patient_id){
+  public void updatePatientBed(int bed_id,int ward_id,int newBedId){
     //分配病人床位
+    for (Patient patient : patientList) {
+      if (patient.getBed_id() == bed_id && patient.getWard_id() == ward_id) {
+        patient.setBed_id(newBedId);
+        SqlSession sqlSession = sqlSessionFactory.openSession();     //打开链接
+        PatientMapper patientMapper = sqlSession.getMapper(PatientMapper.class);
+        patientMapper.updatePatientBed(bed_id, ward_id, newBedId);
+        sqlSession.commit(); //提交
+        sqlSession.close(); //关闭连接
+      }
+    }
+  }
+  public void updatePatientWard(int bed_id,int ward_id,int newWardId) {
+    //分配病人病房
+    for (Patient patient : patientList) {
+      if (patient.getBed_id() == bed_id && patient.getWard_id() == ward_id) {
+        patient.setWard_id(newWardId);
+        SqlSession sqlSession = sqlSessionFactory.openSession();     //打开链接
+        PatientMapper patientMapper = sqlSession.getMapper(PatientMapper.class);
+        patientMapper.updatePatientWard(bed_id, ward_id, newWardId);
+        sqlSession.commit(); //提交
+        sqlSession.close(); //关闭连接
+      }
+    }
   }
 
-  public void searchEmptyBed(){
-    //查询本科室的对应病人性别的空床位
-  }
-
-  public void updateEquipment(){
+  public void updateEquipment(int equipment_id,int bed_id,int ward_id){
     //分配设备
+    for(Equipment equipment:equipmentList){
+      if(equipment.getEquipment_id()==equipment_id){
+        equipment.setBed_id(bed_id);
+        equipment.setWard_id(ward_id);
+        SqlSession sqlSession = sqlSessionFactory.openSession();     //打开链接
+        EquipmentMapper equipmentMapper = sqlSession.getMapper(EquipmentMapper.class);
+        equipmentMapper.updateEquipment(equipment_id,bed_id,ward_id);
+        sqlSession.commit(); //提交
+        sqlSession.close(); //关闭连接
+      }
+    }
   }
 
-  public String getDoctorName() {
-    return doctor_name;
-  }
 
-  public int getDepartmentId() {
-    return department_id;
-  }
 }

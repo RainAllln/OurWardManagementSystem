@@ -3,4 +3,10 @@
 
 <mapper namespace="team.jnu.wardsystem.mapper.EquipmentMapper">
     <select id="searchAllEquipment" resultType="Equipment" >select * from equipments</select>
+    <update id="updateEquipment" parameterType="map">
+        UPDATE equipments
+        SET bed_id = #{bed_id},
+            ward_id = #{ward_id}
+        WHERE equipment_id = #{equipment_id}
+    </update>
 </mapper>

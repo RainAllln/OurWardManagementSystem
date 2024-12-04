@@ -4,9 +4,19 @@
 <mapper namespace="team.jnu.wardsystem.mapper.PatientMapper">
     <select id="selectAllPatients" resultType="Patient" >select * from patients where doctor_id=#{doctor_id}</select>
     <select id="searchPatientById" resultType="Patient">select * from patients where patient_id=#{patient_id}</select>
-    <update id="updatePatientNote">
+    <update id="updatePatientNote" parameterType="map">
         UPDATE patients
         SET notes = #{notes}
+        WHERE bed_id = #{bed_id} and ward_id = #{ward_id}
+    </update>
+    <update id="updatePatientBed" parameterType="map">
+        UPDATE patients
+        SET bed_id = #{newBedId}
+        WHERE bed_id = #{bed_id} and ward_id = #{ward_id}
+    </update>
+    <update id="updatePatientWard" parameterType="map">
+        UPDATE patients
+        SET ward_id = #{newWardId}
         WHERE bed_id = #{bed_id} and ward_id = #{ward_id}
     </update>
 </mapper>

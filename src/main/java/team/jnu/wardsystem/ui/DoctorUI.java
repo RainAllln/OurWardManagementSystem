@@ -118,7 +118,7 @@ public class DoctorUI extends JFrame implements ActionListener {
 
         JLabel nameLabel = new JLabel("姓名:");
         nameField = new JTextField(20);
-        nameField.setText(doctor.getDoctorName());
+        nameField.setText(doctor.getDoctor_name());
         nameField.setEditable(false);
 
         JLabel genderLabel = new JLabel("性别:");
@@ -233,12 +233,12 @@ public class DoctorUI extends JFrame implements ActionListener {
         JPanel panel = new JPanel(new BorderLayout());
 
         // 表格模型
-        String[] columns = {"设备编号", "设备类型", "使用病床", "操作"};
+        String[] columns = {"设备编号", "设备类型", "使用病床","使用病房","操作"};
         equipmentTableModel = new DefaultTableModel(columns, 0) {
             // 使表格不可编辑除了"操作"列
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column == 3;
+                return column == 4;
             }
         };
         equipmentTable = new JTable(equipmentTableModel);
@@ -292,7 +292,8 @@ public class DoctorUI extends JFrame implements ActionListener {
             equipmentTableModel.addRow(new Object[]{
                     equipment.getEquipment_id(),
                     equipment.getEquipment_type(),
-                    equipment.getBed_id()
+                    equipment.getBed_id(),
+                    equipment.getWard_id()
             });
         }
     }
@@ -426,57 +427,34 @@ public class DoctorUI extends JFrame implements ActionListener {
         // 弹出编辑病人信息的对话框
         // 修改 editPatient 方法中的类型转换
         private void editPatient(int row) {
-            String name = (String) model.getValueAt(row, 0);
-            String gender = (String) model.getValueAt(row, 1);
-            Integer age = (Integer) model.getValueAt(row, 2);
-            String bedNumber = model.getValueAt(row, 3).toString();
-            String ward = model.getValueAt(row, 4).toString();
-            String phone = model.getValueAt(row, 5).toString();
-            String notes = (String)model.getValueAt(row, 6);
-
-
-            JTextField nameField = new JTextField(name);
-            JTextField genderField = new JTextField(gender);
-            JTextField ageField = new JTextField(age.toString());
+            String bedNumber = model.getValueAt(row, 0).toString();
+            String ward = model.getValueAt(row, 1).toString();
+            String notes = (String)model.getValueAt(row, 2);
             JTextField bedField = new JTextField(bedNumber);
             JTextField wardField = new JTextField(ward);
-            JTextField phoneField = new JTextField(phone);
             JTextField notesField = new JTextField(notes);
 
-            JPanel editPanel = new JPanel(new GridLayout(7, 2, 10, 10));
-            editPanel.add(new JLabel("姓名:"));
-            editPanel.add(nameField);
-            editPanel.add(new JLabel("性别:"));
-            editPanel.add(genderField);
-            editPanel.add(new JLabel("年龄:"));
-            editPanel.add(ageField);
+            JPanel editPanel = new JPanel(new GridLayout(3, 2, 10, 10));
             editPanel.add(new JLabel("病床号:"));
             editPanel.add(bedField);
             editPanel.add(new JLabel("病房:"));
             editPanel.add(wardField);
-            editPanel.add(new JLabel("手机号:"));
-            editPanel.add(phoneField);
             editPanel.add(new JLabel("备注:"));
             editPanel.add(notesField);
 
             int result = JOptionPane.showConfirmDialog(DoctorUI.this, editPanel, "编辑病人信息", JOptionPane.OK_CANCEL_OPTION);
             if (result == JOptionPane.OK_OPTION) {
-                // 更新表格数据
-                model.setValueAt(nameField.getText(), row, 0);
-                model.setValueAt(genderField.getText(), row, 1);
-                try {
-                    int newAge = Integer.parseInt(ageField.getText());
-                    model.setValueAt(newAge, row, 2);
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(DoctorUI.this, "年龄必须为整数", "输入错误", JOptionPane.ERROR_MESSAGE);
-                    return;
+                if(!bedNumber.equals(bedField.getText())){//修改了信息要更新数据库
+                    doctor.updatePatientBed(Integer.parseInt(bedNumber), Integer.parseInt(ward), Integer.parseInt(bedField.getText()));
+                    model.setValueAt(bedField.getText(), row, 0);
                 }
-                model.setValueAt(bedField.getText(), row, 3);
-                model.setValueAt(wardField.getText(), row, 4);
-                model.setValueAt(phoneField.getText(), row, 5);
+                if(!ward.equals(wardField.getText())){//修改了信息要更新数据库
+                    doctor.updatePatientWard(Integer.parseInt(bedNumber), Integer.parseInt(ward), Integer.parseInt(wardField.getText()));
+                    model.setValueAt(wardField.getText(), row, 1);
+                }
                 if(!notes.equals(notesField.getText())){//修改了信息要更新数据库
                     doctor.updatePatientNote(Integer.parseInt(bedNumber), Integer.parseInt(ward), notesField.getText());
-                    model.setValueAt(notesField.getText(), row, 6);
+                    model.setValueAt(notesField.getText(), row, 2);
                 }
                 JOptionPane.showMessageDialog(DoctorUI.this, "病人信息已更新");
             }
@@ -484,29 +462,30 @@ public class DoctorUI extends JFrame implements ActionListener {
 
         // 修改 editEquipment 方法中的类型转换
         private void editEquipment(int row) {
-            String equipmentId = model.getValueAt(row, 0).toString();    // 修改这里
-            String equipmentType = model.getValueAt(row, 1).toString();
-            String bedNumber = model.getValueAt(row, 2).toString();
+            int equipment_id = Integer.parseInt(model.getValueAt(row, 0).toString());
+            String bedNumber = model.getValueAt(row, 0).toString();
+            String ward = model.getValueAt(row, 1).toString();
 
-            JTextField idField = new JTextField(equipmentId);
-            JTextField typeField = new JTextField(equipmentType);
             JTextField bedField = new JTextField(bedNumber);
+            JTextField wardField = new JTextField(ward);
 
-            JPanel editPanel = new JPanel(new GridLayout(3, 2, 10, 10));
-            editPanel.add(new JLabel("设备编号:"));
-            editPanel.add(idField);
-            editPanel.add(new JLabel("设备类型:"));
-            editPanel.add(typeField);
+            JPanel editPanel = new JPanel(new GridLayout(2, 2, 10, 10));
             editPanel.add(new JLabel("使用病床:"));
             editPanel.add(bedField);
+            editPanel.add(new JLabel("使用病房:"));
+            editPanel.add(wardField);
 
             int result = JOptionPane.showConfirmDialog(DoctorUI.this, editPanel, "编辑设备信息", JOptionPane.OK_CANCEL_OPTION);
             if (result == JOptionPane.OK_OPTION) {
                 // 更新表格数据
-                model.setValueAt(idField.getText(), row, 0);
-                model.setValueAt(typeField.getText(), row, 1);
-                model.setValueAt(bedField.getText(), row, 2);
-                JOptionPane.showMessageDialog(DoctorUI.this, "设备信息已更新");
+                if(!bedNumber.equals(bedField.getText())||!ward.equals(wardField.getText())){//修改了信息要更新数据库
+                    doctor.updateEquipment(equipment_id, Integer.parseInt(bedField.getText()), Integer.parseInt(wardField.getText()));
+                    model.setValueAt(bedField.getText(), row, 0);
+                    model.setValueAt(wardField.getText(), row, 1);
+                    JOptionPane.showMessageDialog(DoctorUI.this, "设备信息已更新");
+                }else{
+                    JOptionPane.showMessageDialog(DoctorUI.this, "设备信息未修改");
+                }
             }
         }
 
