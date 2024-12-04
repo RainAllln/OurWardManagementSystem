@@ -25,6 +25,13 @@ public class Patient extends User {
   private int doctor_id;
   private double paid_amount;
 
+  public Patient(int patient_id,String username, String password){
+    //登录时创建对象只需要id和用户名密码
+    this.patient_id = patient_id;
+    this.username = username;
+    this.password = password;
+  }
+
   public Patient(String newUsername, String newPassword, int newAge, String newGender, String newName,
       String newPhone) {
     // 注册时只需要那么多信息

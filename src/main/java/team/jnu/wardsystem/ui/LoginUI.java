@@ -119,6 +119,7 @@ public class LoginUI extends JFrame implements ActionListener {
                 // 可以在这里打开主界面，例如
                 if(user.getUser_id() / 10000 == 1) {
                     // 病人
+                    new PatientUI(new Patient(user.getUser_id(), username, password));
                 } else if(user.getUser_id() / 10000 == 2) {
                     // 医生
                     new DoctorUI(new Doctor(user.getUser_id(), username, password));
@@ -161,6 +162,8 @@ public class LoginUI extends JFrame implements ActionListener {
                 patient.insertPatient();
                 newUser.register();
                 JOptionPane.showMessageDialog(this, "注册成功");
+                //直接登录病人界面
+                new PatientUI(patient);
             }
         }
     }

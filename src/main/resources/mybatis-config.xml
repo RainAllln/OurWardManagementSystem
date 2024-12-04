@@ -12,10 +12,10 @@
             <transactionManager type="JDBC" />
             <dataSource type="POOLED">
 
-                <property name="driver" value="org.postgresql.Driver" />
-                <property name="url" value="jdbc:postgresql://192.168.233.131:26000/ward" />
-                <property name="username" value="joker" />
-                <property name="password" value="Xhubing@" />
+<!--                <property name="driver" value="org.postgresql.Driver" />-->
+<!--                <property name="url" value="jdbc:postgresql://192.168.233.131:26000/ward" />-->
+<!--                <property name="username" value="joker" />-->
+<!--                <property name="password" value="Xhubing@" />-->
 
                 <property name="driver" value="org.postgresql.Driver" />
                 <property name="url" value="jdbc:postgresql://113.45.207.38:26000/ward" />
