@@ -122,7 +122,11 @@ public class LoginUI extends JFrame implements ActionListener {
                     new PatientUI(new Patient(user.getUser_id(), username, password));
                 } else if(user.getUser_id() / 10000 == 2) {
                     // 医生
-                    new DoctorUI(new Doctor(user.getUser_id(), username, password));
+                    Doctor doctor = Doctor.searchDoctorById(user.getUser_id());
+                    doctor.setUsername(username);
+                    doctor.setPassword(password);
+                    doctor.setUser_id(user.getUser_id());
+                    new DoctorUI(doctor);
                 } else if(user.getUser_id() / 10000 == 3) {
                     // 护士
                 }

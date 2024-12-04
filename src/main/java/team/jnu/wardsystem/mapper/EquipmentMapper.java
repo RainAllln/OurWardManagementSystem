@@ -10,4 +10,6 @@ public interface EquipmentMapper {
 
     void updateEquipment(@Param("equipment_id") int equipmentId, @Param("bed_id") int bedId,
             @Param("ward_id") int wardId);
+
+    void deleteEquipment(int equipmentId);
 }

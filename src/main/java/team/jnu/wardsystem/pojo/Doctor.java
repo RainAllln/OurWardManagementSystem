@@ -6,6 +6,9 @@ import org.apache.ibatis.session.SqlSession;
 import team.jnu.wardsystem.mapper.EquipmentMapper;
 import team.jnu.wardsystem.mapper.DoctorMapper;
 import team.jnu.wardsystem.mapper.PatientMapper;
+import team.jnu.wardsystem.mapper.BedMapper;
+
+import java.util.Iterator;
 import java.util.List;
 
 @Data
@@ -156,4 +159,38 @@ public class Doctor extends User {
     }
   }
 
+    public void deleteEquipment(int equipment_id) {
+      // 删除设备
+      for (Equipment equipment : equipmentList) {
+        if (equipment.getEquipment_id() == equipment_id) {
+          equipmentList.remove(equipment);
+          SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
+          EquipmentMapper equipmentMapper = sqlSession.getMapper(EquipmentMapper.class);
+          equipmentMapper.deleteEquipment(equipment_id);
+          sqlSession.commit(); // 提交
+          sqlSession.close(); // 关闭连接
+        }
+      }
+    }
+  public void deletePatient(int bed_id, int ward_id) {
+    // 删除病人
+    Iterator<Patient> iterator = patientList.iterator();
+    while (iterator.hasNext()) {
+      Patient patient = iterator.next();
+      if (patient.getBed_id() == bed_id && patient.getWard_id() == ward_id) {
+        iterator.remove();
+        SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
+        PatientMapper patientMapper = sqlSession.getMapper(PatientMapper.class);
+        patientMapper.deletePatient(bed_id, ward_id);
+        sqlSession.commit(); // 提交
+        sqlSession.close(); // 关闭连接
+        sqlSession = sqlSessionFactory.openSession(); // 打开链接
+        BedMapper bedMapper = sqlSession.getMapper(BedMapper.class);
+        bedMapper.updateBedStatus(bed_id, ward_id, false);
+        sqlSession.commit(); // 提交
+        sqlSession.close(); // 关闭连接
+        break; // 退出循环
+      }
+    }
+  }
 }

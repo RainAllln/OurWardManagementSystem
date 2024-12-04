@@ -17,4 +17,5 @@
         WHERE bed_id = #{bed_id} and ward_id = #{ward_id} </update>
     <update id="updatePatientWard" parameterType="map"> UPDATE patients SET ward_id = #{newWardId}
         WHERE bed_id = #{bed_id} and ward_id = #{ward_id} </update>
+    <delete id="deletePatient" parameterType="map">delete from patients where bed_id=#{bed_id} and ward_id=#{ward_id} </delete>
 </mapper>

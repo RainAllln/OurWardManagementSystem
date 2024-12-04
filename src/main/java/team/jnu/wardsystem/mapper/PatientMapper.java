@@ -20,4 +20,6 @@ public interface PatientMapper {
     int getMaxPatientID();
 
     void insertPatient(Patient patient);
+
+    void deletePatient( @Param("bed_id")int bedId, @Param("ward_id")int wardId);
 }

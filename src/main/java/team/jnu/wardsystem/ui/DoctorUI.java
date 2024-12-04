@@ -415,6 +415,14 @@ public class DoctorUI extends JFrame implements ActionListener {
                 if (row >= 0) {
                     int confirm = JOptionPane.showConfirmDialog(DoctorUI.this, "确定要删除此条记录吗？", "确认删除", JOptionPane.YES_NO_OPTION);
                     if (confirm == JOptionPane.YES_OPTION) {
+
+                        if (type.equals("patient")) {
+                            //根据病人姓名和病床号删除病人
+                            doctor.deletePatient(Integer.parseInt(model.getValueAt(row, 3).toString()), Integer.parseInt(model.getValueAt(row, 4).toString()));
+                        } else if (type.equals("equipment")) {
+                            //根据设备编号删除设备
+                            doctor.deleteEquipment(Integer.parseInt(model.getValueAt(row, 0).toString()));
+                        }
                         model.removeRow(row);
                         JOptionPane.showMessageDialog(DoctorUI.this, "记录已删除");
                     }
