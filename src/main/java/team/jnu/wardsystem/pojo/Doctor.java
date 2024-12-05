@@ -244,6 +244,8 @@ public class Doctor extends User {
     bedMapper.updateBedStatus(bedId, wardId, true);
     sqlSession.commit(); // 提交
     sqlSession.close(); // 关闭连接
+    //更新病人的表
+    patientList.add(patient);
   }
 
   public void searchUnassignedBedList() {

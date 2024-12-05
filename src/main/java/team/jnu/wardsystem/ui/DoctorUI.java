@@ -294,12 +294,14 @@ public class DoctorUI extends JFrame implements ActionListener {
 
         return panel;
     }
-
     private void loadUnassignedPatientData(DefaultTableModel model) {
         if(doctor.getUnassignedPatientList()==null){
             doctor.searchUnassignedPatient();
         }
         List<Patient> unassignedPatients = doctor.getUnassignedPatientList();
+        if(unassignedPatients==null){
+            return;
+        }
         for (Patient patient : unassignedPatients) {
             model.addRow(new Object[]{
                     patient.getPatient_name(),
@@ -472,7 +474,6 @@ public class DoctorUI extends JFrame implements ActionListener {
                 }
                 fireEditingStopped();
             });
-
             // 删除按钮事件
             deleteButton.addActionListener(e -> {
                 int row = table.getSelectedRow();
@@ -528,6 +529,7 @@ public class DoctorUI extends JFrame implements ActionListener {
                 // 分配病床和病房
                 doctor.assignBedAndWardToPatient(bedId, wardId);
                 model.removeRow(row);
+                patient_add=false;
                 JOptionPane.showMessageDialog(DoctorUI.this, "病床和病房已分配");
             }
         }
