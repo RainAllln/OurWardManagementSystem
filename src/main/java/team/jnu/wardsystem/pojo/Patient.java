@@ -68,22 +68,29 @@ public class Patient extends User {
   public Boolean searchPersonalInfo() {
     SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
     PatientMapper patientMapper = sqlSession.getMapper(PatientMapper.class); // 获取mapper接口
-    Patient finded_patient = patientMapper.searchPatientById(patient_id);
-    if (finded_patient != null) {
-      patient_name = finded_patient.getPatient_name();
-      gender = finded_patient.getGender();
-      age = finded_patient.getAge();
-      notes = finded_patient.getNotes();
-      admission_date = finded_patient.getAdmission_date();
-      bed_id = finded_patient.getBed_id();
-      ward_id = finded_patient.getWard_id();
-      nurse_id = finded_patient.getNurse_id();
-      doctor_id = finded_patient.getDoctor_id();
-      phone = finded_patient.getPhone();
-      paid_amount = finded_patient.getPaid_amount();
-      return true;
-    } else {
-      return false;
+    if(patient_name == null) {
+      //如果没有患者姓名，说明缓存中并没有患者信息，需要从数据库中获取
+      Patient finded_patient = patientMapper.searchPatientById(patient_id);
+      if (finded_patient != null) {
+        patient_name = finded_patient.getPatient_name();
+        gender = finded_patient.getGender();
+        age = finded_patient.getAge();
+        notes = finded_patient.getNotes();
+        admission_date = finded_patient.getAdmission_date();
+        bed_id = finded_patient.getBed_id();
+        ward_id = finded_patient.getWard_id();
+        nurse_id = finded_patient.getNurse_id();
+        doctor_id = finded_patient.getDoctor_id();
+        phone = finded_patient.getPhone();
+        paid_amount = finded_patient.getPaid_amount();
+        return true;
+      } else {
+        return false;
+      }
+    }else{
+        //如果有患者姓名，说明缓存中有患者信息，直接返回
+        return true;
     }
+
   }
 }
