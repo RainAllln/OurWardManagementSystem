@@ -163,8 +163,13 @@ public class LoginUI extends JFrame implements ActionListener {
                 Patient patient = new Patient(newUsername, newPassword, newAge, newGender, newName, newPhone);
                 User newUser = patient;   // 向上转型,从patient对象中提取出用户名和密码
                 // 插入新用户和新病人到数据库中
-                patient.insertPatient();
-                newUser.register();
+                try {
+                    patient.insertPatient();
+                    newUser.register();
+                } catch (RuntimeException ex) {
+                    JOptionPane.showMessageDialog(this, "注册失败");
+                    return;
+                }
                 JOptionPane.showMessageDialog(this, "注册成功");
                 //直接登录病人界面
                 new PatientUI(patient);
