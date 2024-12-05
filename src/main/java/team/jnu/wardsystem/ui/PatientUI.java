@@ -14,8 +14,9 @@ import java.awt.event.*;
 import java.util.List;
 
 public class PatientUI extends JFrame implements ActionListener {
-    private Patient patient;
-
+    private Patient patient;        //病人
+    private Doctor doctor;      //主治医师
+    private Nurse nurse;    //管床护士
     //画布组件
     private JPanel mainPanel;
     private JPanel menuPanel;
@@ -57,7 +58,7 @@ public class PatientUI extends JFrame implements ActionListener {
 
     private void createBackGroundPanel() {
         // 创建背景板
-        BackgroundPanel backgroundPanel = new BackgroundPanel("login.jpg");
+        BackgroundPanel backgroundPanel = new BackgroundPanel("../picture/login.jpg");
         backgroundPanel.setLayout(new BorderLayout());
         backgroundPanel.add(mainPanel, BorderLayout.CENTER);
         backgroundPanel.add(menuPanel, BorderLayout.WEST);
@@ -89,11 +90,23 @@ public class PatientUI extends JFrame implements ActionListener {
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
 
+        mainPanel.add(createInitialPanel(), "Initial");
         mainPanel.add(createPersonalInfoPanel(), "PersonalInfo");
         mainPanel.add(createPaymentPanel(), "Payment");
         mainPanel.add(createBedInfoPanel(), "BedInfo");
 
         this.add(mainPanel, BorderLayout.CENTER);
+    }
+
+    //一开始的初始图片
+    private JPanel createInitialPanel() {
+        //加载一张图片和文字“欢迎来带病床管理系统”到初始界面上
+        JPanel panel = new JPanel();
+        JLabel label = new JLabel();
+        label.setIcon(new ImageIcon("../picture/login.jpg"));
+        label.setText("欢迎来带病床管理系统");
+        panel.add(label);
+        return panel;
     }
 
     //个人信息模块
@@ -151,19 +164,19 @@ public class PatientUI extends JFrame implements ActionListener {
         gbc.gridy = 6;
         panel.add(new JLabel("入院时间:"), gbc);
         gbc.gridx = 1;
-        panel.add(new JLabel(patient.getAdmission_date().toString()), gbc);
+        //panel.add(new JLabel(patient.getAdmission_date().toString()), gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 7;
         panel.add(new JLabel("床号:"), gbc);
         gbc.gridx = 1;
-        panel.add(new JLabel(String.valueOf(patient.getBed_id())), gbc);
+        //panel.add(new JLabel(String.valueOf(patient.getBed_id())), gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 8;
         panel.add(new JLabel("病房号:"), gbc);
         gbc.gridx = 1;
-        panel.add(new JLabel(String.valueOf(patient.getWard_id())), gbc);
+        //panel.add(new JLabel(String.valueOf(patient.getWard_id())), gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 9;
@@ -278,7 +291,7 @@ public class PatientUI extends JFrame implements ActionListener {
         //处理按钮事件监听器
         Object btn = e.getSource();
         if(btn == personalInfoButton) {
-            patient.searchPersonalInfo();
+            //patient.searchPersonalInfo();
             cardLayout.show(mainPanel, "PersonalInfo");
             setButtonColor(personalInfoButton);
         }else if(btn == paymentButton) {
