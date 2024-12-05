@@ -102,4 +102,23 @@ public class Nurse extends User {
     sqlSession.commit(); // 提交
     sqlSession.close(); // 关闭连接
   }
+
+  public String updatePatientNote(int bed_id, int ward_id, String notes) {
+    // 更新病人备注信息
+    for (Patient patient : patientList) {
+      if (patient.getBed_id() == bed_id && patient.getWard_id() == ward_id) {
+        patient.setNotes(notes);
+        SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
+        PatientMapper patientMapper = sqlSession.getMapper(PatientMapper.class);
+        int issue = patientMapper.updatePatientNote(bed_id, ward_id, notes);
+        sqlSession.commit(); // 提交
+        sqlSession.close(); // 关闭连接
+        if (issue > 0) {
+          return "更新成功";
+        } else
+          return "更新失败";
+      }
+    }
+    return "未找到对应病人";
+  }
 }

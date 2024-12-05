@@ -247,7 +247,7 @@ public class NurseUI extends JFrame implements ActionListener {
         JPanel panel = new JPanel(new BorderLayout());
 
         // 表格模型
-        String[] columns = {"姓名", "性别", "年龄", "病床号", "病房","电话","备注", "操作"};
+        String[] columns = {"姓名", "性别", "年龄", "病床号", "病房",  "电话","备注", "操作"};
         patientTableModel = new DefaultTableModel(columns, 0) {
             // 使表格不可编辑除了"操作"列
             @Override
@@ -456,4 +456,111 @@ public class NurseUI extends JFrame implements ActionListener {
 
         selectedButton.setBackground(Color.orange);
     }
+    class ButtonRenderer extends JPanel implements TableCellRenderer {
+        private JButton editButton = new JButton("编辑");
+        //private JButton deleteButton = new JButton("删除");
+        private JButton assignButton = new JButton("分配");
+        private JButton cleanButton = new JButton("清理");
+
+        public ButtonRenderer(String type) {
+            setLayout(new FlowLayout(FlowLayout.CENTER, 5, 0));
+            if(type.equals("bed")){
+                add(cleanButton);
+            }else if(type.equals("equipment")){
+                add(assignButton);
+            }else if(type.equals("patient")){
+                add(editButton);
+            }
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            return this;
+        }
+    }
+    class ButtonEditor extends AbstractCellEditor implements TableCellEditor {
+        private JPanel panel = new JPanel();
+        private JButton editButton = new JButton("编辑");
+        //private JButton deleteButton = new JButton("删除");
+        private JButton assignButton = new JButton("分配");
+        private JButton cleanButton = new JButton("清理");
+        private JTable table;
+        private DefaultTableModel model;
+        private String type; // "patient" 或 "equipment" or "unassignedPatient"
+
+        public ButtonEditor(JCheckBox checkBox, JTable table, DefaultTableModel model, String type) {
+            this.table = table;
+            this.model = model;
+            this.type = type;
+            panel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 0));
+            if(type.equals("bed")){
+                panel.add(cleanButton);
+            }else if(type.equals("equipment")){
+                panel.add(assignButton);
+            }else if(type.equals("patient")){
+                panel.add(editButton);
+            }
+            // 编辑按钮事件
+            editButton.addActionListener(e -> {
+                int row = table.getSelectedRow();
+                if (row >= 0) {
+                    if (type.equals("patient")) {
+                        editPatient(row);
+                    }
+                }
+                fireEditingStopped();
+            });
+            cleanButton.addActionListener(e -> {
+                int row = table.getSelectedRow();
+                if (row >= 0) {
+                    if(type.equals("bed")){
+                        cleanBed(row);
+                    }
+                }
+                fireEditingStopped();
+            });
+            // 分配按钮事件
+            assignButton.addActionListener(e -> {
+                int row = table.getSelectedRow();
+                if (row >= 0) {
+                    if(type.equals("equipment")){
+                        assignEquipment(row);
+                    }
+                }
+                fireEditingStopped();
+            });
+        }
+        private void editPatient(int row){
+            String bednum = model.getValueAt(row, 3).toString();
+            String wardnum = model.getValueAt(row, 4).toString();
+            String notes = (String) model.getValueAt(row, 6);
+            JTextField notesField = new JTextField(notes);
+
+            JPanel editPanel = new JPanel(new GridLayout(1, 2, 10, 10)); // 1 行 2 列布局
+            editPanel.add(new JLabel("备注:"));
+            editPanel.add(notesField);
+
+            int result = JOptionPane.showConfirmDialog(NurseUI.this, editPanel, "编辑备注", JOptionPane.OK_CANCEL_OPTION);
+            if (result == JOptionPane.OK_OPTION) {
+                if (!notes.equals(notesField.getText())) { // 判断备注是否改变
+                    nurse.updatePatientNote(Integer.parseInt(bednum), Integer.parseInt(wardnum), notesField.getText());
+                    model.setValueAt(notesField.getText(), row, 6); // 更新表格模型
+                    JOptionPane.showMessageDialog(NurseUI.this, "备注已更新");
+                } else {
+                    JOptionPane.showMessageDialog(NurseUI.this, "备注相同，未改变");}
+                }
+            }
+
+        @Override
+        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+            return panel;
+        }
+
+        @Override
+        public Object getCellEditorValue() {
+            return "";
+        }
+    }
 }
+
+
