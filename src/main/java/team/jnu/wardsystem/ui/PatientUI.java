@@ -15,7 +15,10 @@ import java.util.List;
 
 public class PatientUI extends JFrame implements ActionListener {
     private Patient patient;
+
+    //画布组件
     private JPanel mainPanel;
+    private JPanel menuPanel;
     private CardLayout cardLayout;
 
     //菜单按钮
@@ -45,47 +48,55 @@ public class PatientUI extends JFrame implements ActionListener {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        // Create the main panel with CardLayout
-        cardLayout = new CardLayout();
-        mainPanel = new JPanel(cardLayout);
+        createMenuPanel();  //菜单栏创建
+        createMainPanel();  //主面板创建
+        createBackGroundPanel();  //背景面板创建
 
-        // Add panels to the main panel
-        mainPanel.add(createPersonalInfoPanel(), "PersonalInfo");
-        mainPanel.add(createPaymentPanel(), "Payment");
-        mainPanel.add(createBedInfoPanel(), "BedInfo");
+        setVisible(true);
+    }
 
-        // Create the menu panel
-        JPanel menuPanel = new JPanel(new GridLayout(3, 1));
+    private void createBackGroundPanel() {
+        // 创建背景板
+        BackgroundPanel backgroundPanel = new BackgroundPanel("login.jpg");
+        backgroundPanel.setLayout(new BorderLayout());
+        backgroundPanel.add(mainPanel, BorderLayout.CENTER);
+        backgroundPanel.add(menuPanel, BorderLayout.WEST);
+
+        // 设置背景板为内容面板
+        setContentPane(backgroundPanel);
+    }
+
+    //左边菜单栏创建
+    private void createMenuPanel() {
+        menuPanel = new JPanel(new GridLayout(3, 1));
         personalInfoButton = new JButton("查询个人信息");
         paymentButton = new JButton("缴费");
         bedInfoButton = new JButton("查看病床信息");
 
-        personalInfoButton.addActionListener(e -> cardLayout.show(mainPanel, "PersonalInfo"));
-        paymentButton.addActionListener(e -> cardLayout.show(mainPanel, "Payment"));
-        bedInfoButton.addActionListener(e -> cardLayout.show(mainPanel, "BedInfo"));
+        personalInfoButton.addActionListener(this);
+        paymentButton.addActionListener(this);
+        bedInfoButton.addActionListener(this);
 
         menuPanel.add(personalInfoButton);
         menuPanel.add(paymentButton);
         menuPanel.add(bedInfoButton);
 
-        // Add the menu panel and main panel to the frame
-        getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(menuPanel, BorderLayout.WEST);
-        getContentPane().add(mainPanel, BorderLayout.CENTER);
+        this.add(menuPanel, BorderLayout.WEST);
+    }
+    //右边主界面创建
+    private void createMainPanel() {
+        // Create the main panel with CardLayout
+        cardLayout = new CardLayout();
+        mainPanel = new JPanel(cardLayout);
 
+        mainPanel.add(createPersonalInfoPanel(), "PersonalInfo");
+        mainPanel.add(createPaymentPanel(), "Payment");
+        mainPanel.add(createBedInfoPanel(), "BedInfo");
 
-        // Create the background panel
-        BackgroundPanel backgroundPanel = new BackgroundPanel("../picture/login.jpg");
-        backgroundPanel.setLayout(new BorderLayout());
-        backgroundPanel.add(menuPanel, BorderLayout.WEST);
-        backgroundPanel.add(mainPanel, BorderLayout.CENTER);
-
-        // Set the background panel as the content pane
-        setContentPane(backgroundPanel);
-
-        setVisible(true);
+        this.add(mainPanel, BorderLayout.CENTER);
     }
 
+    //个人信息模块
     private JPanel createPersonalInfoPanel() {
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -140,19 +151,19 @@ public class PatientUI extends JFrame implements ActionListener {
         gbc.gridy = 6;
         panel.add(new JLabel("入院时间:"), gbc);
         gbc.gridx = 1;
-        //panel.add(new JLabel(patient.getAdmission_date().toString()), gbc);
+        panel.add(new JLabel(patient.getAdmission_date().toString()), gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 7;
         panel.add(new JLabel("床号:"), gbc);
         gbc.gridx = 1;
-        //panel.add(new JLabel(String.valueOf(patient.getBed_id())), gbc);
+        panel.add(new JLabel(String.valueOf(patient.getBed_id())), gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 8;
         panel.add(new JLabel("病房号:"), gbc);
         gbc.gridx = 1;
-        //panel.add(new JLabel(String.valueOf(patient.getWard_id())), gbc);
+        panel.add(new JLabel(String.valueOf(patient.getWard_id())), gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 9;
@@ -175,6 +186,7 @@ public class PatientUI extends JFrame implements ActionListener {
         return panel;
     }
 
+    //缴费模块
     private JPanel createPaymentPanel() {
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -207,6 +219,7 @@ public class PatientUI extends JFrame implements ActionListener {
         return panel;
     }
 
+    //查询病床模块
     private JPanel createBedInfoPanel() {
         JPanel panel = new JPanel(new BorderLayout());
         JPanel infoPanel = new JPanel(new GridBagLayout());
@@ -253,9 +266,28 @@ public class PatientUI extends JFrame implements ActionListener {
         return panel;
     }
 
+    private void setButtonColor(JButton activeBtn){
+        personalInfoButton.setBackground(null);
+        paymentButton.setBackground(null);
+        bedInfoButton.setBackground(null);
+        activeBtn.setBackground(Color.ORANGE);
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
-        // Handle button actions if needed
+        //处理按钮事件监听器
+        Object btn = e.getSource();
+        if(btn == personalInfoButton) {
+            patient.searchPersonalInfo();
+            cardLayout.show(mainPanel, "PersonalInfo");
+            setButtonColor(personalInfoButton);
+        }else if(btn == paymentButton) {
+            cardLayout.show(mainPanel, "Payment");
+            setButtonColor(paymentButton);
+        }else if(btn == bedInfoButton) {
+            cardLayout.show(mainPanel, "BedInfo");
+            setButtonColor(bedInfoButton);
+        }
     }
 
     //背景图片

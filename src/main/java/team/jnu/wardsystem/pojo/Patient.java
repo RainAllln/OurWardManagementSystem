@@ -62,4 +62,26 @@ public class Patient extends User {
     sqlSession.commit();
     sqlSession.close(); // 关闭连接
   }
+
+  public Boolean searchPersonalInfo() {
+    SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
+    PatientMapper patientMapper = sqlSession.getMapper(PatientMapper.class); // 获取mapper接口
+    Patient finded_patient = patientMapper.searchPatientById(patient_id);
+    if (finded_patient != null) {
+      patient_name = finded_patient.getPatient_name();
+      gender = finded_patient.getGender();
+      age = finded_patient.getAge();
+      notes = finded_patient.getNotes();
+      admission_date = finded_patient.getAdmission_date();
+      bed_id = finded_patient.getBed_id();
+      ward_id = finded_patient.getWard_id();
+      nurse_id = finded_patient.getNurse_id();
+      doctor_id = finded_patient.getDoctor_id();
+      phone = finded_patient.getPhone();
+      paid_amount = finded_patient.getPaid_amount();
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
