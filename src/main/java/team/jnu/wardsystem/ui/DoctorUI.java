@@ -17,6 +17,7 @@ import java.util.List;
 public class DoctorUI extends JFrame implements ActionListener {
     private boolean patient_add =false;
     private boolean equipment_add=false;
+    private boolean unpatient_add=false;
     private Doctor doctor; // 当前登录的医生
     private JPanel menuPanel;
     private JPanel mainPanel;
@@ -26,6 +27,7 @@ public class DoctorUI extends JFrame implements ActionListener {
     private JButton personalInfoButton;
     private JButton patientInfoButton;
     private JButton equipmentInfoButton;
+    private JButton unassignedPatientButton;
 
     // 个人信息组件
     private JTextField usernameField;
@@ -64,20 +66,23 @@ public class DoctorUI extends JFrame implements ActionListener {
     // 初始化左边的菜单栏
     private void initMenu() {
         menuPanel = new JPanel();
-        menuPanel.setLayout(new GridLayout(3, 1, 10, 10));
+        menuPanel.setLayout(new GridLayout(4, 1, 10, 10));
         menuPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         personalInfoButton = new JButton("个人信息");
         patientInfoButton = new JButton("所有病人信息");
         equipmentInfoButton = new JButton("所有设备信息");
+        unassignedPatientButton = new JButton("待诊病人");
 
         personalInfoButton.addActionListener(this);
         patientInfoButton.addActionListener(this);
         equipmentInfoButton.addActionListener(this);
+        unassignedPatientButton.addActionListener(this);
 
         menuPanel.add(personalInfoButton);
         menuPanel.add(patientInfoButton);
         menuPanel.add(equipmentInfoButton);
+        menuPanel.add(unassignedPatientButton);
 
         this.add(menuPanel, BorderLayout.WEST);
     }
@@ -217,7 +222,7 @@ public class DoctorUI extends JFrame implements ActionListener {
         }
 
         // 设置"操作"列的渲染器和编辑器
-        patientTable.getColumn("操作").setCellRenderer(new ButtonRenderer());
+        patientTable.getColumn("操作").setCellRenderer(new ButtonRenderer("patient"));
         patientTable.getColumn("操作").setCellEditor(new ButtonEditor(new JCheckBox(), patientTable, patientTableModel, "patient"));
 
         // 设置表格行高
@@ -252,7 +257,7 @@ public class DoctorUI extends JFrame implements ActionListener {
         }
 
         // 设置"操作"列的渲染器和编辑器
-        equipmentTable.getColumn("操作").setCellRenderer(new ButtonRenderer());
+        equipmentTable.getColumn("操作").setCellRenderer(new ButtonRenderer("equipment"));
         equipmentTable.getColumn("操作").setCellEditor(new ButtonEditor(new JCheckBox(), equipmentTable, equipmentTableModel, "equipment"));
 
         // 设置表格行高
@@ -262,7 +267,46 @@ public class DoctorUI extends JFrame implements ActionListener {
 
         return panel;
     }
+    private JPanel initUnassignedPatientPanel() {
+        JPanel panel = new JPanel(new BorderLayout());
 
+        // Table model
+        String[] columns = {"姓名", "性别", "年龄", "电话", "操作"};
+        DefaultTableModel unassignedPatientTableModel = new DefaultTableModel(columns, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return column == 4; // Only "操作" column is editable
+            }
+        };
+        JTable unassignedPatientTable = new JTable(unassignedPatientTableModel);
+        loadUnassignedPatientData(unassignedPatientTableModel);
+
+        // Set cell renderer and editor for "操作" column
+        unassignedPatientTable.getColumn("操作").setCellRenderer(new ButtonRenderer("unassignedPatient"));
+        unassignedPatientTable.getColumn("操作").setCellEditor(new ButtonEditor(new JCheckBox(), unassignedPatientTable, unassignedPatientTableModel, "unassignedPatient"));
+
+        // Set row height
+        unassignedPatientTable.setRowHeight(30);
+
+        panel.add(new JScrollPane(unassignedPatientTable), BorderLayout.CENTER);
+
+        return panel;
+    }
+
+    private void loadUnassignedPatientData(DefaultTableModel model) {
+        if(doctor.getUnassignedPatientList()==null){
+            doctor.searchUnassignedPatient();
+        }
+        List<Patient> unassignedPatients = doctor.getUnassignedPatientList();
+        for (Patient patient : unassignedPatients) {
+            model.addRow(new Object[]{
+                    patient.getPatient_name(),
+                    patient.getGender(),
+                    patient.getAge(),
+                    patient.getPhone(),
+            });
+        }
+    }
     private void loadPatientData() {
         // 将病人数据添加到表格
         if(doctor.getPatientList()==null){
@@ -318,7 +362,15 @@ public class DoctorUI extends JFrame implements ActionListener {
             }
             cardLayout.show(mainPanel, "equipmentInfo");
             setButtonColor(equipmentInfoButton);
-        } else if (source == editPasswordButton) {
+        } else if(source==unassignedPatientButton){
+            if(!unpatient_add){//点击才能加载数据
+                mainPanel.add(initUnassignedPatientPanel(), "unassignedPatient");
+                unpatient_add=true;
+            }
+            cardLayout.show(mainPanel, "unassignedPatient");
+            setButtonColor(unassignedPatientButton);
+        }
+        else if (source == editPasswordButton) {
             // 处理修改密码
             JPasswordField newPasswordField = new JPasswordField(20);
             int option = JOptionPane.showConfirmDialog(this, newPasswordField, "请输入新密码:", JOptionPane.OK_CANCEL_OPTION);
@@ -359,6 +411,7 @@ public class DoctorUI extends JFrame implements ActionListener {
         personalInfoButton.setBackground(null);
         patientInfoButton.setBackground(null);
         equipmentInfoButton.setBackground(null);
+        unassignedPatientButton.setBackground(null);
         activeButton.setBackground(Color.orange);
     }
 
@@ -366,11 +419,16 @@ public class DoctorUI extends JFrame implements ActionListener {
     class ButtonRenderer extends JPanel implements TableCellRenderer {
         private JButton editButton = new JButton("编辑");
         private JButton deleteButton = new JButton("删除");
+        private JButton assignButton = new JButton("分配");
 
-        public ButtonRenderer() {
+        public ButtonRenderer(String type) {
             setLayout(new FlowLayout(FlowLayout.CENTER, 5, 0));
-            add(editButton);
-            add(deleteButton);
+            if(type.equals("unassignedPatient")){
+                add(assignButton);
+            }else {
+                add(editButton);
+                add(deleteButton);
+            }
         }
 
         @Override
@@ -384,18 +442,22 @@ public class DoctorUI extends JFrame implements ActionListener {
         private JPanel panel = new JPanel();
         private JButton editButton = new JButton("编辑");
         private JButton deleteButton = new JButton("删除");
+        private JButton assignButton = new JButton("分配");
         private JTable table;
         private DefaultTableModel model;
-        private String type; // "patient" 或 "equipment"
+        private String type; // "patient" 或 "equipment" or "unassignedPatient"
 
         public ButtonEditor(JCheckBox checkBox, JTable table, DefaultTableModel model, String type) {
             this.table = table;
             this.model = model;
             this.type = type;
             panel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 0));
-            panel.add(editButton);
-            panel.add(deleteButton);
-
+            if(type.equals("unassignedPatient")){
+                panel.add(assignButton);
+            }else {
+                panel.add(editButton);
+                panel.add(deleteButton);
+            }
             // 编辑按钮事件
             editButton.addActionListener(e -> {
                 int row = table.getSelectedRow();
@@ -429,6 +491,36 @@ public class DoctorUI extends JFrame implements ActionListener {
                 }
                 fireEditingStopped();
             });
+            // 分配按钮事件
+            assignButton.addActionListener(e -> {
+                int row = table.getSelectedRow();
+                if (row >= 0) {
+                    assignBedAndWard(row);
+                }
+                fireEditingStopped();
+            });
+        }
+        // 弹出分配病床和病房的对话框
+
+        private void assignBedAndWard(int row) {
+            // Implement the logic to assign a bed and ward to the patient
+            JTextField bedField = new JTextField();
+            JTextField wardField = new JTextField();
+
+            JPanel assignPanel = new JPanel(new GridLayout(2, 2, 10, 10));
+            assignPanel.add(new JLabel("病床号:"));
+            assignPanel.add(bedField);
+            assignPanel.add(new JLabel("病房:"));
+            assignPanel.add(wardField);
+
+            int result = JOptionPane.showConfirmDialog(DoctorUI.this, assignPanel, "分配病床和病房", JOptionPane.OK_CANCEL_OPTION);
+            if (result == JOptionPane.OK_OPTION) {
+                int bedId = Integer.parseInt(bedField.getText());
+                int wardId = Integer.parseInt(wardField.getText());
+                doctor.assignBedAndWardToPatient(row, bedId, wardId);
+                model.removeRow(row);
+                JOptionPane.showMessageDialog(DoctorUI.this, "病床和病房已分配");
+            }
         }
 
         // 弹出编辑病人信息的对话框

@@ -23,6 +23,7 @@ public class Doctor extends User {
   private String position;
   private int department_id;
   private List<Patient> patientList;
+  private List<Patient> unassignedPatientList;
   private List<Equipment> equipmentList;
   private String department_name;
 
@@ -195,5 +196,30 @@ public class Doctor extends User {
         break; // 退出循环
       }
     }
+  }
+
+
+  public void searchUnassignedPatient() {
+    // 查询未分配病人
+    SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
+    PatientMapper patientMapper = sqlSession.getMapper(PatientMapper.class); // 获取mapper接口
+    unassignedPatientList = patientMapper.searchUnassignedPatient(); // 获取病人列表
+    sqlSession.close(); // 关闭连接
+
+  }
+
+  public void assignBedAndWardToPatient(int patientIndex, int bedId, int wardId) {
+    Patient patient = unassignedPatientList.get(patientIndex);
+    patient.setBed_id(bedId);
+    patient.setWard_id(wardId);
+    // Update the database with the new bed and ward assignment
+    SqlSession sqlSession = sqlSessionFactory.openSession();
+    PatientMapper patientMapper = sqlSession.getMapper(PatientMapper.class);
+    patientMapper.updatePatientBedAndWard(patient.getPatient_id(), bedId, wardId);
+    sqlSession.commit();
+    sqlSession.close();
+    // Remove the patient from the unassigned list and add to the assigned list
+    unassignedPatientList.remove(patientIndex);
+    patientList.add(patient);
   }
 }

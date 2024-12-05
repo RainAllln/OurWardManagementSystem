@@ -22,4 +22,8 @@ public interface PatientMapper {
     void insertPatient(Patient patient);
 
     void deletePatient( @Param("bed_id")int bedId, @Param("ward_id")int wardId);
+
+    List<Patient> searchUnassignedPatient();
+
+    void updatePatientBedAndWard(int patientId, int bedId, int wardId);
 }
