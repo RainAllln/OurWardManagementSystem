@@ -19,4 +19,9 @@
         WHERE bed_id = #{bed_id} and ward_id = #{ward_id} </update>
     <delete id="deletePatient" parameterType="map">delete from patients where bed_id=#{bed_id} and ward_id=#{ward_id} </delete>
     <select id="searchUnassignedPatient" resultType="Patient" >select * from patients where bed_id is null  </select>
+    <update id="updatePatientStatus">
+        UPDATE patients
+        SET bed_id = #{bed_id} , ward_id = #{ward_id},nurse_id = #{nurse_id},doctor_id = #{doctor_id}
+        WHERE patient_id = #{patient_id}
+    </update>
 </mapper>

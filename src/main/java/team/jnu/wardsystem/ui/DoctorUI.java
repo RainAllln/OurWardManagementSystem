@@ -506,7 +506,6 @@ public class DoctorUI extends JFrame implements ActionListener {
 
         private void assignBedAndWard(int row) {
 
-            // Implement the logic to assign a bed and ward to the patient
             JTextField bedField = new JTextField();
             JTextField wardField = new JTextField();
 
@@ -516,7 +515,6 @@ public class DoctorUI extends JFrame implements ActionListener {
             assignPanel.add(new JLabel("病房:"));
             assignPanel.add(wardField);
 
-            // Display unassigned bed and ward information
             JTextArea unassignedPatientsArea = new JTextArea(5, 20);
             unassignedPatientsArea.setText(getUnassignedPatientsInfo());
             unassignedPatientsArea.setEditable(false);
@@ -527,7 +525,8 @@ public class DoctorUI extends JFrame implements ActionListener {
             if (result == JOptionPane.OK_OPTION) {
                 int bedId = Integer.parseInt(bedField.getText());
                 int wardId = Integer.parseInt(wardField.getText());
-                doctor.assignBedAndWardToPatient(row, bedId, wardId);
+                // 分配病床和病房
+                doctor.assignBedAndWardToPatient(bedId, wardId);
                 model.removeRow(row);
                 JOptionPane.showMessageDialog(DoctorUI.this, "病床和病房已分配");
             }
