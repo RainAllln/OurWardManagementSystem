@@ -7,4 +7,6 @@
         doctor_id=#{doctor_id}</select>
     <select id="searchDepartmentName" resultType="String"> select department_name from departments
         where department_id=#{department_id}</select>
+
+
 </mapper>

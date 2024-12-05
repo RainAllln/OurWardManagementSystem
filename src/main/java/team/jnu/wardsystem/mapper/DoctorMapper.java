@@ -13,4 +13,5 @@ public interface DoctorMapper {
     Doctor searchDoctorById(int doctorId);
 
     String searchDepartmentName(int department_id);
+
 }

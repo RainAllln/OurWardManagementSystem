@@ -1,6 +1,7 @@
 package team.jnu.wardsystem.mapper;
 
 import org.apache.ibatis.annotations.Param;
+import team.jnu.wardsystem.pojo.Nurse;
 import team.jnu.wardsystem.pojo.Patient;
 
 import java.util.List;
@@ -27,4 +28,6 @@ public interface PatientMapper {
 
 
     void updatePatientStatus(Patient patient);
+
+    double getPaidAmount(int patientId);
 }

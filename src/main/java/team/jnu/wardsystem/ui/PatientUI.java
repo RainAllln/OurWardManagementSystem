@@ -1,5 +1,6 @@
 package team.jnu.wardsystem.ui;
 
+import team.jnu.wardsystem.pojo.Department;
 import team.jnu.wardsystem.pojo.Doctor;
 import team.jnu.wardsystem.pojo.Nurse;
 import team.jnu.wardsystem.pojo.Patient;
@@ -15,8 +16,8 @@ import java.util.List;
 
 public class PatientUI extends JFrame implements ActionListener {
     private Patient patient;        //病人
-    private Doctor doctor;      //主治医师
-    private Nurse nurse;    //管床护士
+
+
     //画布组件
     private JPanel mainPanel;
     private JPanel menuPanel;
@@ -28,15 +29,14 @@ public class PatientUI extends JFrame implements ActionListener {
     private JButton bedInfoButton;
 
     //个人信息组件
-    private JTextField passwordField;
     private JButton editPasswordButton;
-    private JTextField phoneField;
     private JButton editPhoneButton;
     private JButton departmentDetailsButton;
     private JButton doctorDetailsButton;
 
     //缴费组件
     private JButton payButton;
+    private JButton totalPaymentButton;
 
     //病床信息组件
     private JButton cleanRequestButton;
@@ -126,8 +126,7 @@ public class PatientUI extends JFrame implements ActionListener {
         gbc.gridy = 1;
         panel.add(new JLabel("密码:"), gbc);
         gbc.gridx = 1;
-        passwordField = new JTextField(patient.getPassword(), 15);
-        panel.add(passwordField, gbc);
+        panel.add(new JLabel(patient.getPassword()), gbc);
         gbc.gridx = 2;
         editPasswordButton = new JButton("编辑");
         panel.add(editPasswordButton, gbc);
@@ -136,8 +135,7 @@ public class PatientUI extends JFrame implements ActionListener {
         gbc.gridy = 2;
         panel.add(new JLabel("手机号:"), gbc);
         gbc.gridx = 1;
-        phoneField = new JTextField(patient.getPhone(), 15);
-        panel.add(phoneField, gbc);
+        panel.add(new JLabel(patient.getPhone()), gbc);
         gbc.gridx = 2;
         editPhoneButton = new JButton("编辑");
         panel.add(editPhoneButton, gbc);
@@ -182,7 +180,7 @@ public class PatientUI extends JFrame implements ActionListener {
         gbc.gridy = 9;
         panel.add(new JLabel("科室名:"), gbc);
         gbc.gridx = 1;
-        panel.add(new JLabel("科室名"), gbc); // Replace with actual department name
+        panel.add(new JLabel(""), gbc); // Replace with actual department name
         gbc.gridx = 2;
         departmentDetailsButton = new JButton("详情");
         panel.add(departmentDetailsButton, gbc);
@@ -191,7 +189,7 @@ public class PatientUI extends JFrame implements ActionListener {
         gbc.gridy = 10;
         panel.add(new JLabel("医生名:"), gbc);
         gbc.gridx = 1;
-        panel.add(new JLabel("医生名"), gbc); // Replace with actual doctor name
+        panel.add(new JLabel(patient.getDoctor().getDoctor_name()), gbc); // Replace with actual doctor name
         gbc.gridx = 2;
         doctorDetailsButton = new JButton("详情");
         panel.add(doctorDetailsButton, gbc);
@@ -214,15 +212,18 @@ public class PatientUI extends JFrame implements ActionListener {
 
         gbc.gridx = 0;
         gbc.gridy = 1;
-        panel.add(new JLabel("代缴费用:"), gbc);
+        panel.add(new JLabel("待缴费用:"), gbc);
         gbc.gridx = 1;
-        panel.add(new JLabel("代缴费用"), gbc); // Replace with actual unpaid amount
+        panel.add(new JLabel(String.valueOf(patient.getUnpaid_amount())), gbc); // Replace with actual unpaid amount
 
         gbc.gridx = 0;
         gbc.gridy = 2;
         panel.add(new JLabel("总费用:"), gbc);
         gbc.gridx = 1;
-        panel.add(new JLabel("总费用"), gbc); // Replace with actual total amount
+        panel.add(new JLabel(String.valueOf(patient.getTotal_amount())), gbc);
+        gbc.gridx = 2;
+        totalPaymentButton = new JButton("详情");
+        panel.add(totalPaymentButton, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 3;
@@ -242,9 +243,9 @@ public class PatientUI extends JFrame implements ActionListener {
 
         gbc.gridx = 0;
         gbc.gridy = 0;
-        infoPanel.add(new JLabel("病床类型:"), gbc);
+        infoPanel.add(new JLabel("病床号:"), gbc);
         gbc.gridx = 1;
-        infoPanel.add(new JLabel("病床类型"), gbc); // Replace with actual bed type
+        infoPanel.add(new JLabel(String.valueOf(patient.getBed_id())), gbc); // Replace with actual bed type
 
         gbc.gridx = 0;
         gbc.gridy = 1;
@@ -259,7 +260,7 @@ public class PatientUI extends JFrame implements ActionListener {
         gbc.gridy = 2;
         infoPanel.add(new JLabel("管床护士名:"), gbc);
         gbc.gridx = 1;
-        infoPanel.add(new JLabel("护士名"), gbc); // Replace with actual nurse name
+        infoPanel.add(new JLabel(patient.getNurse().getNurse_name()), gbc); // Replace with actual nurse name
         gbc.gridx = 2;
         nurseDetailsButton = new JButton("查看详情");
         infoPanel.add(nurseDetailsButton, gbc);
@@ -291,10 +292,13 @@ public class PatientUI extends JFrame implements ActionListener {
         //处理按钮事件监听器
         Object btn = e.getSource();
         if(btn == personalInfoButton) {
-            //patient.searchPersonalInfo();
+            patient.searchPersonalInfo();
+            patient.getManagingDoctor();
+            patient.getManagingNurse();
             cardLayout.show(mainPanel, "PersonalInfo");
             setButtonColor(personalInfoButton);
         }else if(btn == paymentButton) {
+            patient.calculateUnpaidAmount();
             cardLayout.show(mainPanel, "Payment");
             setButtonColor(paymentButton);
         }else if(btn == bedInfoButton) {

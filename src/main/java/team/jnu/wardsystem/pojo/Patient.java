@@ -5,6 +5,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.ibatis.session.SqlSession;
+import team.jnu.wardsystem.mapper.DoctorMapper;
+import team.jnu.wardsystem.mapper.NurseMapper;
 import team.jnu.wardsystem.mapper.PatientMapper;
 
 import java.sql.Date;
@@ -26,6 +28,14 @@ public class Patient extends User {
   private int nurse_id;
   private int doctor_id;
   private double paid_amount;
+  private int day_length; //住院时长
+  private double total_amount; //总费用
+  private double unpaid_amount; //未支付金额
+  private Doctor doctor;      //主治医师
+  private Nurse nurse;    //管床护士
+  private Department department;  //科室
+  private Ward ward;  //病房信息
+  private Bed bed;    //床位信息
 
   public Patient(int patient_id, String username, String password) {
     // 登录时创建对象只需要id和用户名密码
@@ -92,5 +102,33 @@ public class Patient extends User {
         return true;
     }
 
+  }
+
+  public boolean getManagingDoctor() {
+    SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
+    DoctorMapper doctorMapper = sqlSession.getMapper(DoctorMapper.class);    // 获取mapper接口
+    doctor =  doctorMapper.searchDoctorById(doctor_id);
+    sqlSession.close(); // 关闭连接
+    return doctor != null;
+  }
+
+  public boolean getManagingNurse() {
+    SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
+    NurseMapper nurseMapper = sqlSession.getMapper(NurseMapper.class); // 获取mapper接口
+    nurse = nurseMapper.searchNurseById(nurse_id);
+    sqlSession.close();
+    return nurse != null;
+  }
+
+  public boolean calculateUnpaidAmount() {
+    // 计算未支付金额
+    SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
+    PatientMapper patientMapper = sqlSession.getMapper(PatientMapper.class); // 获取mapper接口
+    day_length = (int) ((System.currentTimeMillis() - admission_date.getTime()) / (1000 * 60 * 60 * 24));
+    paid_amount = patientMapper.getPaidAmount(patient_id);
+    total_amount = day_length * ward.getCost();
+    unpaid_amount = total_amount - paid_amount;
+    sqlSession.close(); // 关闭连接
+    return true;
   }
 }
