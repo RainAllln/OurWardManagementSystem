@@ -25,6 +25,7 @@ public class Doctor extends User {
   private List<Patient> patientList;
   private List<Patient> unassignedPatientList;
   private List<Equipment> equipmentList;
+  private List<Bed> unassignedBedList;
   private String department_name;
 
   public Doctor(int doctor_id, String username, String password) {
@@ -208,18 +209,50 @@ public class Doctor extends User {
 
   }
 
-  public void assignBedAndWardToPatient(int patientIndex, int bedId, int wardId) {
-    Patient patient = unassignedPatientList.get(patientIndex);
+  public void assignBedAndWardToPatient(int bedId, int wardId) {
+    Bed bed = null;
+    Iterator<Bed> iterator = unassignedBedList.iterator();
+    while (iterator.hasNext()) {
+      bed = iterator.next();
+      if (bed.getBed_id() == bedId && bed.getWard_id() == wardId) {
+        iterator.remove();
+        break;
+      }
+    }
+    //删除unsignedPatientList中的病人
+    Patient patient=new Patient();
+    Iterator<Patient> iterator1 = unassignedPatientList.iterator();
+    while (iterator1.hasNext()) {
+      patient = iterator1.next();
+      if (patient.getBed_id() == bedId && patient.getWard_id() == wardId) {
+        iterator.remove();
+        break;
+      }
+    }
     patient.setBed_id(bedId);
     patient.setWard_id(wardId);
-    // Update the database with the new bed and ward assignment
-    SqlSession sqlSession = sqlSessionFactory.openSession();
-    PatientMapper patientMapper = sqlSession.getMapper(PatientMapper.class);
-    patientMapper.updatePatientBedAndWard(patient.getPatient_id(), bedId, wardId);
-    sqlSession.commit();
-    sqlSession.close();
-    // Remove the patient from the unassigned list and add to the assigned list
-    unassignedPatientList.remove(patientIndex);
+    patient.setDoctor_id(doctor_id);
+    patient.setNurse_id(bed.getNurse_id());
+    SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
+    PatientMapper patientMapper = sqlSession.getMapper(PatientMapper.class); // 获取mapper接口
+    patientMapper.updatePatientStatus(patient);
+    sqlSession.commit(); // 提交
+    sqlSession.close(); // 关闭连接
+    //更新床的状态
+    sqlSession = sqlSessionFactory.openSession(); // 打开链接
+    BedMapper bedMapper = sqlSession.getMapper(BedMapper.class); // 获取mapper接口
+    bedMapper.updateBedStatus(bedId, wardId, true);
+    sqlSession.commit(); // 提交
+    sqlSession.close(); // 关闭连接
+    //更新病人的表
     patientList.add(patient);
+  }
+
+  public void searchUnassignedBedList() {
+    // 查询未分配床位
+    SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
+    BedMapper bedMapper = sqlSession.getMapper(BedMapper.class); // 获取mapper接口
+    unassignedBedList = bedMapper.searchUnassignedBed(); // 获取病人列表
+    sqlSession.close(); // 关闭连接
   }
 }

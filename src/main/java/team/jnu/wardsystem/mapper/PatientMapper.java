@@ -26,5 +26,6 @@ public interface PatientMapper {
 
     List<Patient> searchUnassignedPatient();
 
-    void updatePatientBedAndWard(int patientId, int bedId, int wardId);
+
+    void updatePatientStatus(Patient patient);
 }

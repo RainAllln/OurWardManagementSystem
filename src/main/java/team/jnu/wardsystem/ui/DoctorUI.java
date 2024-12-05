@@ -3,6 +3,7 @@ package team.jnu.wardsystem.ui;
 import team.jnu.wardsystem.pojo.Doctor;
 import team.jnu.wardsystem.pojo.Patient;
 import team.jnu.wardsystem.pojo.Equipment;
+import team.jnu.wardsystem.pojo.Bed;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -19,6 +20,7 @@ public class DoctorUI extends JFrame implements ActionListener {
     private boolean equipment_add=false;
     private boolean unpatient_add=false;
     private Doctor doctor; // 当前登录的医生
+    private Bed bed;
     private JPanel menuPanel;
     private JPanel mainPanel;
     private CardLayout cardLayout;
@@ -292,12 +294,14 @@ public class DoctorUI extends JFrame implements ActionListener {
 
         return panel;
     }
-
     private void loadUnassignedPatientData(DefaultTableModel model) {
         if(doctor.getUnassignedPatientList()==null){
             doctor.searchUnassignedPatient();
         }
         List<Patient> unassignedPatients = doctor.getUnassignedPatientList();
+        if(unassignedPatients==null){
+            return;
+        }
         for (Patient patient : unassignedPatients) {
             model.addRow(new Object[]{
                     patient.getPatient_name(),
@@ -470,7 +474,6 @@ public class DoctorUI extends JFrame implements ActionListener {
                 }
                 fireEditingStopped();
             });
-
             // 删除按钮事件
             deleteButton.addActionListener(e -> {
                 int row = table.getSelectedRow();
@@ -503,26 +506,48 @@ public class DoctorUI extends JFrame implements ActionListener {
         // 弹出分配病床和病房的对话框
 
         private void assignBedAndWard(int row) {
-            // Implement the logic to assign a bed and ward to the patient
+
             JTextField bedField = new JTextField();
             JTextField wardField = new JTextField();
 
-            JPanel assignPanel = new JPanel(new GridLayout(2, 2, 10, 10));
+            JPanel assignPanel = new JPanel(new GridLayout(3, 2, 10, 10));
             assignPanel.add(new JLabel("病床号:"));
             assignPanel.add(bedField);
             assignPanel.add(new JLabel("病房:"));
             assignPanel.add(wardField);
 
+            JTextArea unassignedPatientsArea = new JTextArea(5, 20);
+            unassignedPatientsArea.setText(getUnassignedPatientsInfo());
+            unassignedPatientsArea.setEditable(false);
+            assignPanel.add(new JLabel("未分配病床:"));
+            assignPanel.add(new JScrollPane(unassignedPatientsArea));
+
             int result = JOptionPane.showConfirmDialog(DoctorUI.this, assignPanel, "分配病床和病房", JOptionPane.OK_CANCEL_OPTION);
             if (result == JOptionPane.OK_OPTION) {
                 int bedId = Integer.parseInt(bedField.getText());
                 int wardId = Integer.parseInt(wardField.getText());
-                doctor.assignBedAndWardToPatient(row, bedId, wardId);
+                // 分配病床和病房
+                doctor.assignBedAndWardToPatient(bedId, wardId);
                 model.removeRow(row);
+                patient_add=false;
                 JOptionPane.showMessageDialog(DoctorUI.this, "病床和病房已分配");
             }
         }
-
+        private String getUnassignedPatientsInfo() {
+            StringBuilder info = new StringBuilder();
+            if(doctor.getUnassignedBedList()==null){
+                doctor.searchUnassignedBedList();
+            }
+            List<Bed> unassignedBed = doctor.getUnassignedBedList();
+            int num=1;
+            for (Bed bed : unassignedBed) {
+                info.append("序号: ").append(num++)
+                        .append(" 病床号: ").append(bed.getBed_id())
+                        .append(" 病房号: ").append(bed.getWard_id())
+                        .append("\n");
+            }
+            return info.toString();
+        }
         // 弹出编辑病人信息的对话框
         // 修改 editPatient 方法中的类型转换
         private void editPatient(int row) {
