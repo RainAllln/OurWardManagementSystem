@@ -2,6 +2,7 @@ package team.jnu.wardsystem.ui;
 
 import lombok.Getter;
 import team.jnu.wardsystem.pojo.Doctor;
+import team.jnu.wardsystem.pojo.Nurse;
 import team.jnu.wardsystem.pojo.Patient;
 import team.jnu.wardsystem.pojo.User;
 
@@ -129,8 +130,12 @@ public class LoginUI extends JFrame implements ActionListener {
                     new DoctorUI(doctor);
                 } else if(user.getUser_id() / 10000 == 3) {
                     // 护士
+                    Nurse nurse = Nurse.searchNurseById(user.getUser_id());
+                    nurse.setUsername(username);
+                    nurse.setPassword(password);
+                    nurse.setUser_id(user.getUser_id());
+                    new NurseUI(nurse);
                 }
-
             } else {
                 JOptionPane.showMessageDialog(this, LoginMsg);
             }

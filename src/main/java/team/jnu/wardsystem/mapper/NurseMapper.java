@@ -1,7 +1,13 @@
 package team.jnu.wardsystem.mapper;
 
-public interface NurseMapper {
-    void setPassword(String password, String oldPassword);
+import org.apache.ibatis.annotations.Param;
+import team.jnu.wardsystem.pojo.Doctor;
+import team.jnu.wardsystem.pojo.Nurse;
 
-    void setPhone(String phone);
+public interface NurseMapper {
+    int updatePhone(@Param("nurse_id") int nurse_id, @Param("phone") String phone);
+
+    String searchDepartmentName(int department_id);
+
+    Nurse searchNurseById(int nurse_id);
 }

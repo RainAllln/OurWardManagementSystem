@@ -8,6 +8,7 @@ import java.util.List;
 public interface PatientMapper {
     List<Patient> selectAllPatients(int doctor_id);
 
+    List<Patient> selectAllPatient(int nurse_id);
     Patient searchPatientById(int patient_id);
 
     int updatePatientNote(@Param("patient_id") int patientId, @Param("ward_id") int ward_id,

@@ -7,6 +7,8 @@
         VALUES(#{patient_id},#{patient_name},#{gender},#{age},#{phone},#{admission_date},0) </insert>
     <select id="selectAllPatients" resultType="Patient">select * from patients where
         doctor_id=#{doctor_id}</select>
+    <select id="selectAllPatient" resultType="Patient">select * from patients where
+        nurse_id=#{nurse_id}</select>
     <select id="searchPatientById" resultType="Patient">select * from patients where
         patient_id=#{patient_id}</select>
     <select id="getMaxPatientID" resultType="java.lang.Integer"> SELECT MAX(patient_id) FROM
