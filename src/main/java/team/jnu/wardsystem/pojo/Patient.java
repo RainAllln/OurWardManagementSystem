@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.ibatis.session.SqlSession;
+import team.jnu.wardsystem.mapper.BedMapper;
 import team.jnu.wardsystem.mapper.DoctorMapper;
 import team.jnu.wardsystem.mapper.NurseMapper;
 import team.jnu.wardsystem.mapper.PatientMapper;
@@ -130,5 +131,11 @@ public class Patient extends User {
     unpaid_amount = total_amount - paid_amount;
     sqlSession.close(); // 关闭连接
     return true;
+  }
+
+  public void searchBedInfo() {
+    SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
+    BedMapper bedMapper = sqlSession.getMapper(BedMapper.class); // 获取mapper接口
+    bed = bedMapper.searchBedById(bed_id, ward_id);
   }
 }

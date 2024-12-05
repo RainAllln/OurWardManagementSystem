@@ -189,7 +189,7 @@ public class PatientUI extends JFrame implements ActionListener {
         gbc.gridy = 10;
         panel.add(new JLabel("医生名:"), gbc);
         gbc.gridx = 1;
-        panel.add(new JLabel(patient.getDoctor().getDoctor_name()), gbc); // Replace with actual doctor name
+        //panel.add(new JLabel(patient.getDoctor().getDoctor_name()), gbc); // Replace with actual doctor name
         gbc.gridx = 2;
         doctorDetailsButton = new JButton("详情");
         panel.add(doctorDetailsButton, gbc);
@@ -245,7 +245,13 @@ public class PatientUI extends JFrame implements ActionListener {
         gbc.gridy = 0;
         infoPanel.add(new JLabel("病床号:"), gbc);
         gbc.gridx = 1;
-        infoPanel.add(new JLabel(String.valueOf(patient.getBed_id())), gbc); // Replace with actual bed type
+        infoPanel.add(new JLabel(String.valueOf(patient.getBed_id())), gbc);
+
+        gbc.gridx = 2;
+        gbc.gridy = 0;
+        infoPanel.add(new JLabel("病房号:"), gbc);
+        gbc.gridx = 3;
+        infoPanel.add(new JLabel(String.valueOf(patient.getWard_id())), gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 1;
@@ -260,22 +266,14 @@ public class PatientUI extends JFrame implements ActionListener {
         gbc.gridy = 2;
         infoPanel.add(new JLabel("管床护士名:"), gbc);
         gbc.gridx = 1;
-        infoPanel.add(new JLabel(patient.getNurse().getNurse_name()), gbc); // Replace with actual nurse name
+        //infoPanel.add(new JLabel(patient.getNurse().getNurse_name()), gbc); // Replace with actual nurse name
         gbc.gridx = 2;
         nurseDetailsButton = new JButton("查看详情");
         infoPanel.add(nurseDetailsButton, gbc);
 
         panel.add(infoPanel, BorderLayout.NORTH);
 
-        // Add table for bed equipment
-        String[] columnNames = {"设备名称", "设备状态"};
-        Object[][] data = {
-                {"设备1", "状态1"},
-                {"设备2", "状态2"},
-                // Add more equipment data
-        };
-        JTable equipmentTable = new JTable(data, columnNames);
-        panel.add(new JScrollPane(equipmentTable), BorderLayout.CENTER);
+        panel.add(setEquipmentTable(), BorderLayout.CENTER);
 
         return panel;
     }
@@ -292,21 +290,32 @@ public class PatientUI extends JFrame implements ActionListener {
         //处理按钮事件监听器
         Object btn = e.getSource();
         if(btn == personalInfoButton) {
-            patient.searchPersonalInfo();
-            patient.getManagingDoctor();
-            patient.getManagingNurse();
+            //patient.searchPersonalInfo();
+            //patient.getManagingDoctor();
+            //patient.getManagingNurse();
             cardLayout.show(mainPanel, "PersonalInfo");
             setButtonColor(personalInfoButton);
         }else if(btn == paymentButton) {
-            patient.calculateUnpaidAmount();
+            //patient.calculateUnpaidAmount();
             cardLayout.show(mainPanel, "Payment");
             setButtonColor(paymentButton);
         }else if(btn == bedInfoButton) {
+            //patient.searchBedInfo();
             cardLayout.show(mainPanel, "BedInfo");
             setButtonColor(bedInfoButton);
         }
     }
 
+    private JScrollPane setEquipmentTable(){
+        String[] columnNames = {"设备名称", "设备状态"};
+        Object[][] data = {
+                {"设备1", "状态1"},
+                {"设备2", "状态2"},
+                // Add more equipment data
+        };
+        JTable equipmentTable = new JTable(data, columnNames);
+        return new JScrollPane(equipmentTable);
+    }
     //背景图片
     class BackgroundPanel extends JPanel {
         private Image backgroundImage;
