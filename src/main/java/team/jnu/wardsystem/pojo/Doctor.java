@@ -25,6 +25,7 @@ public class Doctor extends User {
   private List<Patient> patientList;
   private List<Patient> unassignedPatientList;
   private List<Equipment> equipmentList;
+  private List<Bed> unassignedBedList;
   private String department_name;
 
   public Doctor(int doctor_id, String username, String password) {
@@ -221,5 +222,13 @@ public class Doctor extends User {
     // Remove the patient from the unassigned list and add to the assigned list
     unassignedPatientList.remove(patientIndex);
     patientList.add(patient);
+  }
+
+  public void searchUnassignedBedList() {
+    // 查询未分配床位
+    SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
+    BedMapper bedMapper = sqlSession.getMapper(BedMapper.class); // 获取mapper接口
+    unassignedBedList = bedMapper.searchUnassignedBed(); // 获取病人列表
+    sqlSession.close(); // 关闭连接
   }
 }
