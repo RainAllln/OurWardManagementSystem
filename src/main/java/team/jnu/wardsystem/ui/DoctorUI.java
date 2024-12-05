@@ -510,7 +510,7 @@ public class DoctorUI extends JFrame implements ActionListener {
             JTextField bedField = new JTextField();
             JTextField wardField = new JTextField();
 
-            JPanel assignPanel = new JPanel(new GridLayout(2, 2, 10, 10));
+            JPanel assignPanel = new JPanel(new GridLayout(3, 2, 10, 10));
             assignPanel.add(new JLabel("病床号:"));
             assignPanel.add(bedField);
             assignPanel.add(new JLabel("病房:"));
