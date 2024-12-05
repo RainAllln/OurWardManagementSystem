@@ -3,6 +3,7 @@ package team.jnu.wardsystem.pojo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
@@ -16,6 +17,7 @@ import java.io.InputStream;
 import java.util.List;
 
 @Data
+@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 public class Nurse extends User {
   // Getter 和 Setter 方法

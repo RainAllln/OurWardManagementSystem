@@ -1,6 +1,7 @@
 package team.jnu.wardsystem.pojo;
 
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.ibatis.session.SqlSession;
@@ -10,6 +11,7 @@ import java.sql.Date;
 import java.text.SimpleDateFormat;
 
 @Data
+@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 public class Patient extends User {
   private String patient_name;
@@ -25,8 +27,8 @@ public class Patient extends User {
   private int doctor_id;
   private double paid_amount;
 
-  public Patient(int patient_id,String username, String password){
-    //登录时创建对象只需要id和用户名密码
+  public Patient(int patient_id, String username, String password) {
+    // 登录时创建对象只需要id和用户名密码
     this.patient_id = patient_id;
     this.username = username;
     this.password = password;

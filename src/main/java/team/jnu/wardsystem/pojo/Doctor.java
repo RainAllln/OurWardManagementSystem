@@ -2,6 +2,7 @@ package team.jnu.wardsystem.pojo;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.EqualsAndHashCode;
 import org.apache.ibatis.session.SqlSession;
 import team.jnu.wardsystem.mapper.EquipmentMapper;
 import team.jnu.wardsystem.mapper.DoctorMapper;
@@ -12,6 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 
 @Data
+@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 public class Doctor extends User {
   private String doctor_name;
@@ -159,19 +161,20 @@ public class Doctor extends User {
     }
   }
 
-    public void deleteEquipment(int equipment_id) {
-      // 删除设备
-      for (Equipment equipment : equipmentList) {
-        if (equipment.getEquipment_id() == equipment_id) {
-          equipmentList.remove(equipment);
-          SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
-          EquipmentMapper equipmentMapper = sqlSession.getMapper(EquipmentMapper.class);
-          equipmentMapper.deleteEquipment(equipment_id);
-          sqlSession.commit(); // 提交
-          sqlSession.close(); // 关闭连接
-        }
+  public void deleteEquipment(int equipment_id) {
+    // 删除设备
+    for (Equipment equipment : equipmentList) {
+      if (equipment.getEquipment_id() == equipment_id) {
+        equipmentList.remove(equipment);
+        SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
+        EquipmentMapper equipmentMapper = sqlSession.getMapper(EquipmentMapper.class);
+        equipmentMapper.deleteEquipment(equipment_id);
+        sqlSession.commit(); // 提交
+        sqlSession.close(); // 关闭连接
       }
     }
+  }
+
   public void deletePatient(int bed_id, int ward_id) {
     // 删除病人
     Iterator<Patient> iterator = patientList.iterator();
