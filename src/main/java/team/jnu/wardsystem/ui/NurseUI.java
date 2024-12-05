@@ -2,6 +2,7 @@ package team.jnu.wardsystem.ui;
 
 import lombok.Getter;
 import lombok.Setter;
+import team.jnu.wardsystem.pojo.Bed;
 import team.jnu.wardsystem.pojo.Nurse;
 import team.jnu.wardsystem.pojo.Patient;
 import team.jnu.wardsystem.pojo.Equipment;
@@ -27,6 +28,7 @@ public class NurseUI extends JFrame implements ActionListener {
     private JButton personalInfoButton;
     private JButton patientInfoButton;
     private JButton equipmentInfoButton;
+    private JButton bedInfoButton;
 
     // 个人信息组件
     private JTextField usernameField;
@@ -48,6 +50,11 @@ public class NurseUI extends JFrame implements ActionListener {
     private JTable equipmentTable;
     private DefaultTableModel equipmentTableModel;
     private JButton assignEquipmentButton;
+
+    // 病床信息组件
+    private JTable bedTable;
+    private DefaultTableModel bedTableModel;
+    private JButton assignBedButton;
 
     // 构造函数，传入护士信息
     public NurseUI(Nurse nurse) {
@@ -75,14 +82,17 @@ public class NurseUI extends JFrame implements ActionListener {
         personalInfoButton = new JButton("个人信息");
         patientInfoButton = new JButton("所有病人信息");
         equipmentInfoButton = new JButton("所有设备信息");
+        bedInfoButton = new JButton("床位信息");
 
         personalInfoButton.addActionListener(this);
         patientInfoButton.addActionListener(this);
         equipmentInfoButton.addActionListener(this);
+        bedInfoButton.addActionListener(this);
 
         menuPanel.add(personalInfoButton);
         menuPanel.add(patientInfoButton);
         menuPanel.add(equipmentInfoButton);
+        menuPanel.add(bedInfoButton);
 
         this.add(menuPanel, BorderLayout.WEST);
     }
@@ -97,10 +107,44 @@ public class NurseUI extends JFrame implements ActionListener {
         mainPanel.add(initPersonalInfoPanel(), "personalInfo");
         mainPanel.add(initPatientInfoPanel(), "patientInfo");
         mainPanel.add(initEquipmentInfoPanel(), "equipmentInfo");
+        mainPanel.add(initBedInfoPanel(), "bedInfo");
 
         this.add(mainPanel, BorderLayout.CENTER);
     }
 
+    private JPanel initBedInfoPanel(){
+        JPanel panel = new JPanel(new BorderLayout());
+
+        // 表格模型
+        String[] columns = {"病床号", "病房号", "使用状态", "清洁状态", "操作"};
+        bedTableModel = new DefaultTableModel(columns, 0) {
+            // 使表格不可编辑除了"操作"列
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return column == 4;
+            }
+        };
+        bedTable = new JTable(equipmentTableModel);
+        loadBedData();
+
+        // 设置单元格渲染器，使文字居中
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        for (int i = 0; i < bedTable.getColumnCount(); i++) {
+            bedTable.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+        }
+
+        // 设置"操作"列的渲染器和编辑器
+        bedTable.getColumn("操作").setCellRenderer(new ButtonRenderer("bed"));
+        bedTable.getColumn("操作").setCellEditor(new ButtonEditor(new JCheckBox(), bedTable, bedTableModel, "bed"));
+
+        // 设置表格行高
+        bedTable.setRowHeight(30);
+
+        panel.add(new JScrollPane(bedTable), BorderLayout.CENTER);
+
+        return panel;
+    }
     // 初始化个人信息面板
     private JPanel initPersonalInfoPanel() {
         JPanel panel = new JPanel(new GridBagLayout());
@@ -123,9 +167,7 @@ public class NurseUI extends JFrame implements ActionListener {
 
         JLabel nameLabel = new JLabel("姓名:");
         nameField = new JTextField(20);
-
         nameField.setText(nurse.getNurse_name());
-
         nameField.setEditable(false);
 
         JLabel genderLabel = new JLabel("性别:");
@@ -144,6 +186,11 @@ public class NurseUI extends JFrame implements ActionListener {
         phoneField.setEditable(false);
         editPhoneButton = new JButton("修改");
         editPhoneButton.addActionListener(this);
+
+        JLabel departmentLabel = new JLabel("所属科室:");
+        departmentField = new JTextField(20);
+        departmentField.setText(nurse.getDepartment_name());
+        departmentField.setEditable(false);
 
         // 添加到面板
         gbc.gridx = 0;
@@ -186,6 +233,12 @@ public class NurseUI extends JFrame implements ActionListener {
         gbc.gridx = 2;
         panel.add(editPhoneButton, gbc);
 
+        gbc.gridx = 0;
+        gbc.gridy = 6;
+        panel.add(departmentLabel, gbc);
+        gbc.gridx = 1;
+        panel.add(departmentField, gbc);
+
         return panel;
     }
 
@@ -194,20 +247,32 @@ public class NurseUI extends JFrame implements ActionListener {
         JPanel panel = new JPanel(new BorderLayout());
 
         // 表格模型
-        String[] columns = {"姓名", "性别", "年龄", "病床号", "病房", "操作"};
-        patientTableModel = new DefaultTableModel(columns, 0);
+        String[] columns = {"姓名", "性别", "年龄", "病床号", "病房","电话","备注", "操作"};
+        patientTableModel = new DefaultTableModel(columns, 0) {
+            // 使表格不可编辑除了"操作"列
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return column == 7;
+            }
+        };
         patientTable = new JTable(patientTableModel);
         loadPatientData();
+
+        // 设置单元格渲染器，使文字居中
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        for (int i = 0; i < patientTable.getColumnCount(); i++) {
+            patientTable.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+        }
+
+        // 设置"操作"列的渲染器和编辑器
+        patientTable.getColumn("操作").setCellRenderer(new ButtonRenderer("patient"));
+        patientTable.getColumn("操作").setCellEditor(new ButtonEditor(new JCheckBox(), patientTable, patientTableModel, "patient"));
 
         // 设置表格行高
         patientTable.setRowHeight(30);
 
-        // 添加修改病人信息按钮
-        editPatientButton = new JButton("修改病人信息");
-        editPatientButton.addActionListener(this);
-
         panel.add(new JScrollPane(patientTable), BorderLayout.CENTER);
-        panel.add(editPatientButton, BorderLayout.SOUTH);
 
         return panel;
     }
@@ -217,31 +282,83 @@ public class NurseUI extends JFrame implements ActionListener {
         JPanel panel = new JPanel(new BorderLayout());
 
         // 表格模型
-        String[] columns = {"设备编号", "设备类型", "使用病床", "设备状态", "操作"};
-        equipmentTableModel = new DefaultTableModel(columns, 0);
+        String[] columns = {"设备编号", "设备类型", "使用病床","使用病房","操作"};
+        equipmentTableModel = new DefaultTableModel(columns, 0) {
+            // 使表格不可编辑除了"操作"列
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return column == 4;
+            }
+        };
         equipmentTable = new JTable(equipmentTableModel);
         loadEquipmentData();
+
+        // 设置单元格渲染器，使文字居中
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        for (int i = 0; i < equipmentTable.getColumnCount(); i++) {
+            equipmentTable.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+        }
+
+        // 设置"操作"列的渲染器和编辑器
+        equipmentTable.getColumn("操作").setCellRenderer(new ButtonRenderer("equipment"));
+        equipmentTable.getColumn("操作").setCellEditor(new ButtonEditor(new JCheckBox(), equipmentTable, equipmentTableModel, "equipment"));
 
         // 设置表格行高
         equipmentTable.setRowHeight(30);
 
-        // 添加分配设备按钮
-        assignEquipmentButton = new JButton("分配设备");
-        assignEquipmentButton.addActionListener(this);
-
         panel.add(new JScrollPane(equipmentTable), BorderLayout.CENTER);
-        panel.add(assignEquipmentButton, BorderLayout.SOUTH);
 
         return panel;
     }
 
     private void loadPatientData() {
-        // 示例数据
-        patientTableModel.addRow(new Object[]{"张三", "男", 25, 1, 1});
+        if(nurse.getPatientList()==null){
+            nurse.searchAllPatient(nurse.getNurse_id());
+        }
+        List<Patient> patients=nurse.getPatientList();
+        for (Patient patient : patients) {
+            patientTableModel.addRow(new Object[]{
+                    patient.getPatient_name(),
+                    patient.getGender(),
+                    patient.getAge(),
+                    patient.getBed_id(),
+                    patient.getWard_id(),
+                    patient.getPhone(),
+                    patient.getNotes()
+            });
+        }
     }
 
     private void loadEquipmentData() {
-        equipmentTableModel.addRow(new Object[]{1, "监护仪", 1, "未使用", "分配"});
+        // 将设备数据添加到表格
+        if(nurse.getEquipmentList()==null){
+            nurse.searchAllEquipment();
+        }
+        List<Equipment> equipments=nurse.getEquipmentList();
+        for (Equipment equipment : equipments) {
+            equipmentTableModel.addRow(new Object[]{
+                    equipment.getEquipment_id(),
+                    equipment.getEquipment_type(),
+                    equipment.getBed_id(),
+                    equipment.getWard_id()
+            });
+        }
+    }
+
+    private void loadBedData(){
+        if(nurse.getBedList()==null){
+            nurse.searchAllBed(nurse.getNurse_id());
+        }
+        List<Bed> beds=nurse.getBedList();
+        for (Bed bed : beds) {
+            bedTableModel.addRow(new Object[]{
+                    bed.getBed_id(),
+                    bed.getWard_id(),
+                    bed.isIn_use(),
+                    bed.isClean()
+            });
+        }
     }
 
     @Override
@@ -256,6 +373,9 @@ public class NurseUI extends JFrame implements ActionListener {
         } else if (source == equipmentInfoButton) {
             cardLayout.show(mainPanel, "equipmentInfo");
             setButtonColor(equipmentInfoButton);
+        } else if (source == bedInfoButton) {
+            cardLayout.show(mainPanel, "bedInfo");
+            setButtonColor(bedInfoButton);
         } else if (source == editPasswordButton) {
             // 处理修改密码
             JPasswordField newPasswordField = new JPasswordField(20);
@@ -263,13 +383,13 @@ public class NurseUI extends JFrame implements ActionListener {
             if (option == JOptionPane.OK_OPTION) {
                 String newPassword = new String(newPasswordField.getPassword());
                 if (!newPassword.trim().isEmpty()) {
-                    try {
-                        nurse.setPassword(newPassword, nurse.getPassword()); // 假设 Nurse 类有 setPassword 方法
-                        passwordField.setText(newPassword);
-                        JOptionPane.showMessageDialog(this, "密码已更新");
-                    } catch (IllegalArgumentException ex) {
-                        JOptionPane.showMessageDialog(this, ex.getMessage());
+                    if(nurse.getPassword().equals(newPassword)){
+                        JOptionPane.showMessageDialog(this, "新密码不能与旧密码相同");
+                        return;
                     }
+                    passwordField.setText(newPassword);
+                    nurse.updatePassword(newPassword);
+                    JOptionPane.showMessageDialog(this, "密码已更新");
                 } else {
                     JOptionPane.showMessageDialog(this, "密码不能为空");
                 }
@@ -278,51 +398,53 @@ public class NurseUI extends JFrame implements ActionListener {
             // 处理修改手机号
             String newPhone = JOptionPane.showInputDialog(this, "请输入新手机号:");
             if (newPhone != null && !newPhone.trim().isEmpty()) {
-                try {
-                    nurse.setPhone(newPhone);
-                    phoneField.setText(newPhone);
-                    JOptionPane.showMessageDialog(this, "手机号已更新");
-                } catch (IllegalArgumentException ex) {
-                    JOptionPane.showMessageDialog(this, ex.getMessage());
+                if(nurse.getPhone().equals(newPhone)){
+                    JOptionPane.showMessageDialog(this, "新手机号不能与旧手机号相同");
+                    return;
                 }
-            } else {
+                phoneField.setText(newPhone);
+                nurse.updatePhone(newPhone);
+                JOptionPane.showMessageDialog(this, "手机号已更新");
+            }else {
                 JOptionPane.showMessageDialog(this, "手机号不能为空");
             }
-        } else if (source == editPatientButton) {
-            // 处理修改病人信息
-            int selectedRow = patientTable.getSelectedRow();
-            if (selectedRow >= 0) {
-                String name = (String) patientTable.getValueAt(selectedRow, 0);
-                String newName = JOptionPane.showInputDialog(this, "修改病人姓名", name);
-                if (newName != null && !newName.trim().isEmpty()) {
-                    patientTable.setValueAt(newName, selectedRow, 0);
-                }
-            }
-        } else if (source == assignEquipmentButton) {
-            // 处理设备分配
-            int selectedRow = equipmentTable.getSelectedRow();
-            if (selectedRow >= 0) {
-                String equipmentId = equipmentTable.getValueAt(selectedRow, 0).toString();
-                String[] patients = {"王大夫 - 101", "李小花 - 102", "张三 - 103"};
-
-                String selectedPatient = (String) JOptionPane.showInputDialog(
-                        this,
-                        "选择一个病人使用设备：" + equipmentId,
-                        "分配设备",
-                        JOptionPane.QUESTION_MESSAGE,
-                        null,
-                        patients,
-                        patients[0]
-                );
-
-                if (selectedPatient != null) {
-                    JOptionPane.showMessageDialog(this,
-                            "设备 " + equipmentId + " 已分配给 " + selectedPatient,
-                            "分配成功",
-                            JOptionPane.INFORMATION_MESSAGE);
-                }
-            }
-        }
+        } // TODO: 处理其他按钮和菜单项的事件
+//        else if (source == editPatientButton) {
+//            // 处理修改病人信息
+//            int selectedRow = patientTable.getSelectedRow();
+//            if (selectedRow >= 0) {
+//                String name = (String) patientTable.getValueAt(selectedRow, 0);
+//                String newName = JOptionPane.showInputDialog(this, "修改病人姓名", name);
+//                if (newName != null && !newName.trim().isEmpty()) {
+//                    patientTable.setValueAt(newName, selectedRow, 0);
+//                }
+//            }
+//        }
+//        else if (source == assignEquipmentButton) {
+//            // 处理设备分配
+//            int selectedRow = equipmentTable.getSelectedRow();
+//            if (selectedRow >= 0) {
+//                String equipmentId = equipmentTable.getValueAt(selectedRow, 0).toString();
+//                String[] patients = {"王大夫 - 101", "李小花 - 102", "张三 - 103"};
+//
+//                String selectedPatient = (String) JOptionPane.showInputDialog(
+//                        this,
+//                        "选择一个病人使用设备：" + equipmentId,
+//                        "分配设备",
+//                        JOptionPane.QUESTION_MESSAGE,
+//                        null,
+//                        patients,
+//                        patients[0]
+//                );
+//
+//                if (selectedPatient != null) {
+//                    JOptionPane.showMessageDialog(this,
+//                            "设备 " + equipmentId + " 已分配给 " + selectedPatient,
+//                            "分配成功",
+//                            JOptionPane.INFORMATION_MESSAGE);
+//                }
+//            }
+//        }
     }
 
     // 设置按钮的高亮
@@ -330,7 +452,8 @@ public class NurseUI extends JFrame implements ActionListener {
         personalInfoButton.setBackground(null);
         patientInfoButton.setBackground(null);
         equipmentInfoButton.setBackground(null);
+        bedInfoButton.setBackground(null);
 
-        selectedButton.setBackground(Color.LIGHT_GRAY);
+        selectedButton.setBackground(Color.orange);
     }
 }
