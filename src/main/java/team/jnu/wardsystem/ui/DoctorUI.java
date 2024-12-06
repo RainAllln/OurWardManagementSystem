@@ -602,7 +602,7 @@ public class DoctorUI extends JFrame implements ActionListener {
             List<Bed> unassignedBed = doctor.getUnassignedBedList();
             int num=1;
             for (Bed bed : unassignedBed) {
-                if(doctor.seachGender(bed.getWard_id()))
+                if((doctor.seachGender(bed.getWard_id())).equals(gender))
                 info.append("序号: ").append(num++)
                         .append(" 病床号: ").append(bed.getBed_id())
                         .append(" 病房号: ").append(bed.getWard_id())

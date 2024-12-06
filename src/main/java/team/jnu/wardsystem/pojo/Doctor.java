@@ -299,8 +299,13 @@ public class Doctor extends User {
     }
   }
 
-  public boolean seachGender(int wardId) {
-    return true;
+  public String seachGender(int wardId) {
+    // 查询病房性别
+    SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
+    WardMapper wardMapper = sqlSession.getMapper(WardMapper.class); // 获取mapper接口
+    String gender = wardMapper.searchWardType(wardId);
+    sqlSession.close(); // 关闭连接
+    return gender;
   }
 
 }

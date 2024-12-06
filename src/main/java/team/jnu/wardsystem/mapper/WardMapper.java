@@ -7,4 +7,5 @@ public interface WardMapper {
     Ward searchWardById(int wardId);
 
     String searchWardType(int wardId);  //判断病房男女
+
 }
