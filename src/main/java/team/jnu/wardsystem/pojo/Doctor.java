@@ -4,10 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.session.SqlSession;
-import team.jnu.wardsystem.mapper.EquipmentMapper;
-import team.jnu.wardsystem.mapper.DoctorMapper;
-import team.jnu.wardsystem.mapper.PatientMapper;
-import team.jnu.wardsystem.mapper.BedMapper;
+import team.jnu.wardsystem.mapper.*;
 
 import java.util.Iterator;
 import java.util.List;
@@ -254,5 +251,19 @@ public class Doctor extends User {
     BedMapper bedMapper = sqlSession.getMapper(BedMapper.class); // 获取mapper接口
     unassignedBedList = bedMapper.searchUnassignedBed(); // 获取病人列表
     sqlSession.close(); // 关闭连接
+  }
+
+  public String getDepartmentDetail(int department_id) {
+    // 获取科室详细信息
+    SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
+    DepartmentMapper departmentMapper = sqlSession.getMapper(DepartmentMapper.class); // 获取mapper接口
+    Department department = departmentMapper.getDepartmentDetail(department_id); // 获取病人列表
+    sqlSession.close(); // 关闭连接
+    //将所有信息拼接成字符串返回
+    String departmentDetail = "科室名称：" + department.getDepartment_name() + "\n" +
+            "科室负责人：" +searchDoctorById(department.getHead_id()).doctor_name + "\n" +
+            "科室电话：" + department.getTel() + "\n" +
+            "科室备注：" + department.getNotes();
+    return departmentDetail;
   }
 }

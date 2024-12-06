@@ -541,6 +541,7 @@ public class NurseUI extends JFrame implements ActionListener {
                 }
             }
         }
+
         private void editPatient(int row){
             String bednum = model.getValueAt(row, 3).toString();
             String wardnum = model.getValueAt(row, 4).toString();

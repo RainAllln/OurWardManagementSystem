@@ -22,6 +22,11 @@
 <!--                <property name="username" value="gaussdb" />-->
 <!--                <property name="password" value="Gauss123" />-->
 
+<!--                <property name="driver" value="org.postgresql.Driver" />-->
+<!--                <property name="url" value="jdbc:postgresql://192.168.52.130:26000/ward" />-->
+<!--                <property name="username" value="lai" />-->
+<!--                <property name="password" value="Gauss123" />-->
+
             </dataSource>
         </environment>
     </environments>

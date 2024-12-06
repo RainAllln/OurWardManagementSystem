@@ -41,7 +41,10 @@ public class DoctorUI extends JFrame implements ActionListener {
     private JTextField departmentField;
     private JButton editPasswordButton;
     private JButton editPhoneButton;
+    //查看所属科室详情的按钮
+    private JButton departmentDetailButton;
 
+    private JButton logoutButton;
     // 病人信息组件
     private JTable patientTable;
     private DefaultTableModel patientTableModel;
@@ -149,7 +152,14 @@ public class DoctorUI extends JFrame implements ActionListener {
         departmentField = new JTextField(20);
         departmentField.setText(doctor.getDepartment_name());
         departmentField.setEditable(false);
+        departmentDetailButton = new JButton("查看详情");
+        departmentDetailButton.addActionListener(this );
 
+        // Add the logout button
+        logoutButton = new JButton("退出登录");
+        logoutButton.setBackground(Color.red);
+        logoutButton.setForeground(Color.white);
+        logoutButton.addActionListener(this);
         // 添加到面板
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -196,6 +206,13 @@ public class DoctorUI extends JFrame implements ActionListener {
         panel.add(departmentLabel, gbc);
         gbc.gridx = 1;
         panel.add(departmentField, gbc);
+        gbc.gridx = 2;
+        panel.add(departmentDetailButton, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 7;
+        gbc.gridwidth = 1;
+        panel.add(logoutButton, gbc);
 
         return panel;
     }
@@ -406,6 +423,16 @@ public class DoctorUI extends JFrame implements ActionListener {
             } else {
                 JOptionPane.showMessageDialog(this, "手机号不能为空");
             }
+        }else if(source==departmentDetailButton){
+            //查看所属科室详情
+            JOptionPane.showMessageDialog(this,doctor.getDepartmentDetail(doctor.getDepartment_id()));
+        }else if(source==logoutButton){
+            // 退出登录
+            int confirm = JOptionPane.showConfirmDialog(this, "确定要退出登录吗？", "确认退出", JOptionPane.YES_NO_OPTION);
+            if (confirm == JOptionPane.YES_OPTION) {
+                this.dispose();
+                new LoginUI();
+            }
         }
         // TODO: 处理其他按钮和菜单项的事件
     }
@@ -472,7 +499,7 @@ public class DoctorUI extends JFrame implements ActionListener {
                         editEquipment(row);
                     }
                 }
-                fireEditingStopped();
+                //fireEditingStopped();
             });
             // 删除按钮事件
             deleteButton.addActionListener(e -> {
@@ -497,10 +524,10 @@ public class DoctorUI extends JFrame implements ActionListener {
             // 分配按钮事件
             assignButton.addActionListener(e -> {
                 int row = table.getSelectedRow();
-                if (row >= 0) {
+                if (row >=0) {
                     assignBedAndWard(row);
                 }
-                fireEditingStopped();
+                //fireEditingStopped();
             });
         }
         // 弹出分配病床和病房的对话框

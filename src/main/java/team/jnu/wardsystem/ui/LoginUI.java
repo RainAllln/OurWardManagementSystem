@@ -120,7 +120,11 @@ public class LoginUI extends JFrame implements ActionListener {
                 // 可以在这里打开主界面，例如
                 if(user.getUser_id() / 10000 == 1) {
                     // 病人
-                    new PatientUI(new Patient(user.getUser_id(), username, password));
+                    Patient patient = Patient.searchPatientById(user.getUser_id());
+                    patient.setUsername(username);
+                    patient.setPassword(password);
+                    patient.setUser_id(user.getUser_id());
+                    new PatientUI(patient);
                 } else if(user.getUser_id() / 10000 == 2) {
                     // 医生
                     Doctor doctor = Doctor.searchDoctorById(user.getUser_id());
@@ -134,7 +138,7 @@ public class LoginUI extends JFrame implements ActionListener {
                     nurse.setUsername(username);
                     nurse.setPassword(password);
                     nurse.setUser_id(user.getUser_id());
-                    new NurseUI(nurse);
+                    //new NurseUI(nurse);
                 }
             } else {
                 JOptionPane.showMessageDialog(this, LoginMsg);

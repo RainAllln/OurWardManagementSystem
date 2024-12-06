@@ -16,4 +16,5 @@ public interface BedMapper {
 
     List<Bed> searchUnassignedBed();
 
+    Bed searchBedById(int bedId, int wardId);
 }

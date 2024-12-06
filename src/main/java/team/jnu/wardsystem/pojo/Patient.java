@@ -5,10 +5,12 @@ import lombok.EqualsAndHashCode;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.ibatis.session.SqlSession;
+import team.jnu.wardsystem.mapper.BedMapper;
 import team.jnu.wardsystem.mapper.DoctorMapper;
 import team.jnu.wardsystem.mapper.NurseMapper;
 import team.jnu.wardsystem.mapper.PatientMapper;
 
+import javax.print.Doc;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 
@@ -104,17 +106,25 @@ public class Patient extends User {
 
   }
 
-  public boolean getManagingDoctor() {
+  public String getManagingDoctorName() {
+    if(doctor == null){
+      doctor = getManagingDoctor();
+    }
+    return (doctor == null) ? "" : doctor.getDoctor_name();
+  }
+
+  public Doctor getManagingDoctor() {
     SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
     DoctorMapper doctorMapper = sqlSession.getMapper(DoctorMapper.class);    // 获取mapper接口
-    doctor =  doctorMapper.searchDoctorById(doctor_id);
+    Doctor finded_doctor =  doctorMapper.searchDoctorById(doctor_id);
     sqlSession.close(); // 关闭连接
-    return doctor != null;
+    return finded_doctor;
   }
 
   public boolean getManagingNurse() {
     SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
     NurseMapper nurseMapper = sqlSession.getMapper(NurseMapper.class); // 获取mapper接口
+    nurse = new Nurse();
     nurse = nurseMapper.searchNurseById(nurse_id);
     sqlSession.close();
     return nurse != null;
@@ -130,5 +140,27 @@ public class Patient extends User {
     unpaid_amount = total_amount - paid_amount;
     sqlSession.close(); // 关闭连接
     return true;
+  }
+
+  public void searchBedInfo() {
+    SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
+    BedMapper bedMapper = sqlSession.getMapper(BedMapper.class); // 获取mapper接口
+    bed = bedMapper.searchBedById(bed_id, ward_id);
+  }
+
+  public static Patient searchPatientById(int user_id){
+    //用于登录时寻找患者信息
+    SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
+    PatientMapper patientMapper = sqlSession.getMapper(PatientMapper.class); // 获取mapper接口
+    Patient patient = patientMapper.searchPatientById(user_id);
+    sqlSession.close(); // 关闭连接
+    return patient;
+  }
+
+  public String getManagingNurseName() {
+    if(nurse == null){
+      getManagingNurse();
+    }
+    return (nurse == null) ? "" : nurse.getNurse_name();
   }
 }
