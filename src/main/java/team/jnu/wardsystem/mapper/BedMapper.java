@@ -2,6 +2,7 @@ package team.jnu.wardsystem.mapper;
 import org.apache.ibatis.annotations.Param;
 import team.jnu.wardsystem.pojo.Bed;
 
+import team.jnu.wardsystem.pojo.Equipment;
 import team.jnu.wardsystem.pojo.Patient;
 
 
@@ -16,5 +17,6 @@ public interface BedMapper {
 
     List<Bed> searchUnassignedBed();
 
-    Bed searchBedById(int bedId, int wardId);
+    Bed searchBedById(@Param("bed_id") int bedId,@Param("ward_id") int wardId);
+
 }

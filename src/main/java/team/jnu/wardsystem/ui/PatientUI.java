@@ -1,9 +1,6 @@
 package team.jnu.wardsystem.ui;
 
-import team.jnu.wardsystem.pojo.Department;
-import team.jnu.wardsystem.pojo.Doctor;
-import team.jnu.wardsystem.pojo.Nurse;
-import team.jnu.wardsystem.pojo.Patient;
+import team.jnu.wardsystem.pojo.*;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -16,7 +13,6 @@ import java.util.List;
 
 public class PatientUI extends JFrame implements ActionListener {
     private Patient patient;        //病人
-
 
     //画布组件
     private JPanel mainPanel;
@@ -41,6 +37,8 @@ public class PatientUI extends JFrame implements ActionListener {
     //病床信息组件
     private JButton cleanRequestButton;
     private JButton nurseDetailsButton;
+    private JTable equipmentTable;
+    private DefaultTableModel equipmentTableModel;
 
     public PatientUI(Patient patient) {
         this.patient = patient;
@@ -91,9 +89,6 @@ public class PatientUI extends JFrame implements ActionListener {
         mainPanel = new JPanel(cardLayout);
 
         mainPanel.add(createInitialPanel(), "Initial");
-        mainPanel.add(createPersonalInfoPanel(), "PersonalInfo");
-        mainPanel.add(createPaymentPanel(), "Payment");
-        mainPanel.add(createBedInfoPanel(), "BedInfo");
 
         this.add(mainPanel, BorderLayout.CENTER);
     }
@@ -180,7 +175,7 @@ public class PatientUI extends JFrame implements ActionListener {
         gbc.gridy = 9;
         panel.add(new JLabel("科室名:"), gbc);
         gbc.gridx = 1;
-        panel.add(new JLabel(""), gbc); // Replace with actual department name
+        panel.add(new JLabel(patient.getDepartmentName()), gbc); // Replace with actual department name
         gbc.gridx = 2;
         departmentDetailsButton = new JButton("详情");
         panel.add(departmentDetailsButton, gbc);
@@ -291,27 +286,40 @@ public class PatientUI extends JFrame implements ActionListener {
         Object btn = e.getSource();
         if(btn == personalInfoButton) {
             patient.searchPersonalInfo();
+            mainPanel.add(createPersonalInfoPanel(), "PersonalInfo");
             cardLayout.show(mainPanel, "PersonalInfo");
             setButtonColor(personalInfoButton);
         }else if(btn == paymentButton) {
-            patient.calculateUnpaidAmount();
-            cardLayout.show(mainPanel, "Payment");
-            setButtonColor(paymentButton);
+            if(!patient.calculateUnpaidAmount()){
+                JOptionPane.showMessageDialog(this, "您还未办理住院", "提示", JOptionPane.WARNING_MESSAGE);
+            }else{
+                mainPanel.add(createPaymentPanel(), "Payment");
+                cardLayout.show(mainPanel, "Payment");
+                setButtonColor(paymentButton);
+            }
         }else if(btn == bedInfoButton) {
-            //patient.searchBedInfo();
-            cardLayout.show(mainPanel, "BedInfo");
-            setButtonColor(bedInfoButton);
+            if(!patient.searchBedInfo()){
+                JOptionPane.showMessageDialog(this, "您还未办理住院", "提示", JOptionPane.WARNING_MESSAGE);
+            }else{
+                mainPanel.add(createBedInfoPanel(), "BedInfo");
+                cardLayout.show(mainPanel, "BedInfo");
+                setButtonColor(bedInfoButton);
+            }
         }
     }
 
     private JScrollPane setEquipmentTable(){
-        String[] columnNames = {"设备名称", "设备状态"};
-        Object[][] data = {
-                {"设备1", "状态1"},
-                {"设备2", "状态2"},
-                // Add more equipment data
-        };
-        JTable equipmentTable = new JTable(data, columnNames);
+        //设置设备表格
+        String[] columnNames = {"设备编号", "设备类型"};
+        equipmentTableModel = new DefaultTableModel(columnNames, 0);
+        JTable equipmentTable = new JTable(equipmentTableModel);
+        List<Equipment> equipmentList = patient.getEquipmentList();
+        for(Equipment equipment : equipmentList){
+            equipmentTableModel.addRow(new Object[]{
+                    equipment.getEquipment_id(),
+                    equipment.getEquipment_type()
+            });
+        }
         return new JScrollPane(equipmentTable);
     }
     //背景图片

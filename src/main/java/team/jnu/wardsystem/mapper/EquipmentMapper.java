@@ -12,4 +12,6 @@ public interface EquipmentMapper {
             @Param("ward_id") int wardId);
 
     void deleteEquipment(int equipmentId);
+
+    List<Equipment> searchEquipmentList(@Param("bed_id") int bedId,@Param("ward_id") int wardId);
 }

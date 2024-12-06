@@ -5,14 +5,12 @@ import lombok.EqualsAndHashCode;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.ibatis.session.SqlSession;
-import team.jnu.wardsystem.mapper.BedMapper;
-import team.jnu.wardsystem.mapper.DoctorMapper;
-import team.jnu.wardsystem.mapper.NurseMapper;
-import team.jnu.wardsystem.mapper.PatientMapper;
+import team.jnu.wardsystem.mapper.*;
 
 import javax.print.Doc;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -80,60 +78,82 @@ public class Patient extends User {
   public Boolean searchPersonalInfo() {
     SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
     PatientMapper patientMapper = sqlSession.getMapper(PatientMapper.class); // 获取mapper接口
-    if(patient_name == null) {
-      //如果没有患者姓名，说明缓存中并没有患者信息，需要从数据库中获取
-      Patient finded_patient = patientMapper.searchPatientById(patient_id);
-      if (finded_patient != null) {
-        patient_name = finded_patient.getPatient_name();
-        gender = finded_patient.getGender();
-        age = finded_patient.getAge();
-        notes = finded_patient.getNotes();
-        admission_date = finded_patient.getAdmission_date();
-        bed_id = finded_patient.getBed_id();
-        ward_id = finded_patient.getWard_id();
-        nurse_id = finded_patient.getNurse_id();
-        doctor_id = finded_patient.getDoctor_id();
-        phone = finded_patient.getPhone();
-        paid_amount = finded_patient.getPaid_amount();
-        return true;
-      } else {
-        return false;
-      }
-    }else{
-        //如果有患者姓名，说明缓存中有患者信息，直接返回
-        return true;
+    Patient finded_patient = patientMapper.searchPatientById(patient_id);
+    //病人每次点击个人信息时都会更新信息，因为医生可以让病人出院，所以每次点击都要更新
+    if (finded_patient != null) {
+      patient_name = finded_patient.getPatient_name();
+      gender = finded_patient.getGender();
+      age = finded_patient.getAge();
+      notes = finded_patient.getNotes();
+      admission_date = finded_patient.getAdmission_date();
+      bed_id = finded_patient.getBed_id();
+      ward_id = finded_patient.getWard_id();
+      nurse_id = finded_patient.getNurse_id();
+      doctor_id = finded_patient.getDoctor_id();
+      phone = finded_patient.getPhone();
+      paid_amount = finded_patient.getPaid_amount();
+      return true;
+    } else {
+      return false;
     }
 
   }
 
   public String getManagingDoctorName() {
-    if(doctor == null){
-      doctor = getManagingDoctor();
+    if(getManagingDoctor()) {
+      return doctor.getDoctor_name();
+    } else {
+      return "仍未分配医生";
     }
-    return (doctor == null) ? "" : doctor.getDoctor_name();
   }
 
-  public Doctor getManagingDoctor() {
+  public boolean getManagingDoctor() {
     SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
     DoctorMapper doctorMapper = sqlSession.getMapper(DoctorMapper.class);    // 获取mapper接口
-    Doctor finded_doctor =  doctorMapper.searchDoctorById(doctor_id);
+    if(doctor == null) doctor = doctorMapper.searchDoctorById(doctor_id);
     sqlSession.close(); // 关闭连接
-    return finded_doctor;
+    return doctor != null;
   }
 
   public boolean getManagingNurse() {
     SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
     NurseMapper nurseMapper = sqlSession.getMapper(NurseMapper.class); // 获取mapper接口
-    nurse = new Nurse();
-    nurse = nurseMapper.searchNurseById(nurse_id);
+    if(nurse == null) nurse = nurseMapper.searchNurseById(nurse_id);
     sqlSession.close();
     return nurse != null;
+  }
+
+  public boolean getDepartment(){
+    SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
+    DepartmentMapper departmentMapper = sqlSession.getMapper(DepartmentMapper.class); // 获取mapper接口
+    if(department == null) department = departmentMapper.getDepartmentDetail(nurse.getDepartment_id());
+    sqlSession.close(); // 关闭连接
+    return department != null;
+  }
+
+  public String getDepartmentName(){
+    if(getDepartment()){
+      return department.getDepartment_name();
+    }else{
+      return "并没有分配科室";
+    }
+  }
+
+  public boolean getWardInfo() {
+    SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
+    WardMapper wardMapper = sqlSession.getMapper(WardMapper.class); // 获取mapper接口
+    if(ward == null) ward = wardMapper.searchWardById(ward_id);
+    sqlSession.close(); // 关闭连接
+    return ward != null;
   }
 
   public boolean calculateUnpaidAmount() {
     // 计算未支付金额
     SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
     PatientMapper patientMapper = sqlSession.getMapper(PatientMapper.class); // 获取mapper接口
+    if(!getWardInfo()){
+        return false; //说明没有入住病房
+    }
     day_length = (int) ((System.currentTimeMillis() - admission_date.getTime()) / (1000 * 60 * 60 * 24));
     paid_amount = patientMapper.getPaidAmount(patient_id);
     total_amount = day_length * ward.getCost();
@@ -142,10 +162,12 @@ public class Patient extends User {
     return true;
   }
 
-  public void searchBedInfo() {
+  public boolean searchBedInfo() {
     SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
     BedMapper bedMapper = sqlSession.getMapper(BedMapper.class); // 获取mapper接口
     bed = bedMapper.searchBedById(bed_id, ward_id);
+    sqlSession.close(); // 关闭连接
+    return bed != null;
   }
 
   public static Patient searchPatientById(int user_id){
@@ -158,13 +180,29 @@ public class Patient extends User {
   }
 
   public String getManagingNurseName() {
-    if(nurse == null){
-      getManagingNurse();
+    if(getManagingNurse()) {
+      return nurse.getNurse_name();
+    } else {
+      return "数据库连接错误";
     }
-    return (nurse == null) ? "" : nurse.getNurse_name();
   }
   //病人
   public boolean isCheck_out(Date time) {
+    //确认病人是否缴费足够可出院
+    if (calculateUnpaidAmount()) {
+      if (unpaid_amount > 0) {
+        return false;
+      }
+    }
     return true;
+  }
+
+  public List<Equipment> getEquipmentList() {
+    if(bed.getEquipmentList() == null){
+      bed.searchEquipmentList();
+      return bed.getEquipmentList();
+    }else{
+      return bed.getEquipmentList();
+    }
   }
 }
