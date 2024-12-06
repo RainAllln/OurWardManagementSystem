@@ -159,11 +159,14 @@ public class Patient extends User {
 
   public boolean calculateUnpaidAmount() {
     // 计算未支付金额
+    if(!getWardInfo()){
+      return false; //说明没有入住病房
+    }
+    if(unpaid_amount != 0) {
+      return true; //已经计算过了，不需要再链接数据库
+    }
     SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
     PatientMapper patientMapper = sqlSession.getMapper(PatientMapper.class); // 获取mapper接口
-    if(!getWardInfo()){
-        return false; //说明没有入住病房
-    }
     day_length = (int) ((System.currentTimeMillis() - admission_date.getTime()) / (1000 * 60 * 60 * 24));
     paid_amount = patientMapper.getPaidAmount(patient_id);
     total_amount = day_length * ward.getCost();
@@ -235,6 +238,26 @@ public class Patient extends User {
     } else {
       sqlSession.close(); // 关闭连接
       return false;
+    }
+  }
+
+  public String getWardFee() {
+    return String.valueOf(ward.getCost());
+  }
+
+  public boolean pay(int fee) {
+    // 病人缴费
+    SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
+    PatientMapper patientMapper = sqlSession.getMapper(PatientMapper.class); // 获取mapper接口
+    if(fee > unpaid_amount) {
+      return false;
+    }else{
+      paid_amount += fee;
+      unpaid_amount -= fee;
+      patientMapper.updatePaidAmount(patient_id, paid_amount);
+      sqlSession.commit(); // 提交
+      sqlSession.close(); // 关闭连接
+      return true;
     }
   }
 }

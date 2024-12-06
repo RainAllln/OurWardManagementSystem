@@ -32,4 +32,7 @@
     <update id="updatePatientPhone">
         update patients set phone = #{new_phone} where patient_id = #{patient_id}
     </update>
+    <update id="updatePaidAmount">
+        update patients set paid_amount = #{paid_amount} where patient_id = #{patient_id}
+    </update>
 </mapper>
