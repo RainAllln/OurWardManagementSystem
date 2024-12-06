@@ -23,7 +23,8 @@ public class DoctorUI extends JFrame implements ActionListener {
     private Doctor doctor; // 当前登录的医生
     private Bed bed;
     private JPanel menuPanel;
-    private JPanel mainPanel;
+   private JPanel mainPanel;
+
     private CardLayout cardLayout;
 
     // 菜单按钮
@@ -52,6 +53,7 @@ public class DoctorUI extends JFrame implements ActionListener {
 
     // 设备信息组件
     private JTable equipmentTable;
+
     private DefaultTableModel equipmentTableModel;
 
     // 构造函数
@@ -444,7 +446,7 @@ public class DoctorUI extends JFrame implements ActionListener {
         patientInfoButton.setBackground(null);
         equipmentInfoButton.setBackground(null);
         unassignedPatientButton.setBackground(null);
-        activeButton.setBackground(Color.orange);
+        activeButton.setBackground(Color.LIGHT_GRAY);
     }
 
     // 自定义渲染器类，用于在 "操作" 列中渲染两个按钮
