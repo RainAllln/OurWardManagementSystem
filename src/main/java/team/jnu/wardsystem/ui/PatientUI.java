@@ -170,13 +170,21 @@ public class PatientUI extends JFrame implements ActionListener {
         gbc.gridy = 7;
         panel.add(new JLabel("床号:"), gbc);
         gbc.gridx = 1;
-        panel.add(new JLabel(String.valueOf(patient.getBed_id())), gbc);
+        if(patient.getBed_id() != 0) {
+            panel.add(new JLabel(String.valueOf(patient.getBed_id())), gbc);
+        }else {
+            panel.add(new JLabel("未分配床位"), gbc);
+        }
 
         gbc.gridx = 0;
         gbc.gridy = 8;
         panel.add(new JLabel("病房号:"), gbc);
         gbc.gridx = 1;
-        panel.add(new JLabel(String.valueOf(patient.getWard_id())), gbc);
+        if (patient.getWard_id() != 0) {
+            panel.add(new JLabel(String.valueOf(patient.getWard_id())), gbc);
+        } else {
+            panel.add(new JLabel("未分配病房"), gbc);
+        }
 
         gbc.gridx = 0;
         gbc.gridy = 9;
@@ -313,20 +321,28 @@ public class PatientUI extends JFrame implements ActionListener {
                 setButtonColor(bedInfoButton);
             }
         }else if(btn == doctorDetailsButton){
-            Doctor doctor = patient.getDoctor();
-            String doctorDetails = "医生姓名: " + doctor.getDoctor_name() + "\n" +
-                    "医生编号: " + doctor.getDoctor_id() + "\n" +
-                    "性别: " + doctor.getGender() + "\n" +
-                    "电话: " + doctor.getPhone();
-            JOptionPane.showMessageDialog(this, doctorDetails, "医生详情", JOptionPane.INFORMATION_MESSAGE);
+            if (patient.getDoctor_id() != 0) {
+                Doctor doctor = patient.getDoctor();
+                String doctorDetails = "医生姓名: " + doctor.getDoctor_name() + "\n" +
+                        "医生编号: " + doctor.getDoctor_id() + "\n" +
+                        "性别: " + doctor.getGender() + "\n" +
+                        "电话: " + doctor.getPhone();
+                JOptionPane.showMessageDialog(this, doctorDetails, "医生详情", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "您还未分配医生", "提示", JOptionPane.WARNING_MESSAGE);
+            }
         }else if(btn == departmentDetailsButton){
-            Department department = patient.getDepartment();
-            String departmentDetails = "科室名称: " + department.getDepartment_name() + "\n" +
-                    "科室编号: " + department.getDepartment_id() + "\n" +
-                    "科室主任: " + department.getHead_name() + "\n" +
-                    "电话: " + department.getTel() + "\n" +
-                    "备注: " + department.getNotes();
-            JOptionPane.showMessageDialog(this, departmentDetails, "科室详情", JOptionPane.INFORMATION_MESSAGE);
+            if (patient.getDoctor_id() != 0) {
+                Department department = patient.getDepartment();
+                String departmentDetails = "科室名称: " + department.getDepartment_name() + "\n" +
+                        "科室编号: " + department.getDepartment_id() + "\n" +
+                        "科室主任: " + department.getHead_name() + "\n" +
+                        "电话: " + department.getTel() + "\n" +
+                        "备注: " + department.getNotes();
+                JOptionPane.showMessageDialog(this, departmentDetails, "科室详情", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "您还未分配医生", "提示", JOptionPane.WARNING_MESSAGE);
+            }
         }else if(btn == editPhoneButton){
             String newPhone = JOptionPane.showInputDialog(this, "请输入新的手机号:");
             if(newPhone != null) {

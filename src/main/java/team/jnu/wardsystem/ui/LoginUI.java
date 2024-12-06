@@ -164,7 +164,6 @@ public class LoginUI extends JFrame implements ActionListener {
             if (option == JOptionPane.OK_OPTION) {
                 String newUsername = newUserText.getText();
                 String newPassword = User.getMD5Str(new String(newPasswordText.getPassword())) ;
-
                 String newName = newNameText.getText();
                 String newGender = newGenderText.getText();
                 int newAge = Integer.parseInt(newAgeText.getText());
@@ -175,7 +174,12 @@ public class LoginUI extends JFrame implements ActionListener {
                 // 插入新用户和新病人到数据库中
                 try {
                     patient.insertPatient();
-                    newUser.register();
+                    if (!newUser.isExistUser(newUsername)) {
+                        newUser.register();
+                    }else{
+                        JOptionPane.showMessageDialog(this, "用户名已存在");
+                        return;
+                    }
                 } catch (RuntimeException ex) {
                     JOptionPane.showMessageDialog(this, "注册失败");
                     return;
