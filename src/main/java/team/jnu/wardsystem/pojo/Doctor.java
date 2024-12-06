@@ -273,4 +273,39 @@ public class Doctor extends User {
             "科室备注：" + department.getNotes();
     return departmentDetail;
   }
+
+  public String getAllBedInfo() {
+    StringBuilder info = new StringBuilder();
+    for (Patient patient : patientList) {
+      info.append("病人姓名：").append(patient.getPatient_name()).append("\t")
+              .append("床号：").append(patient.getBed_id()).append("\t")
+              .append("病房号：").append(patient.getWard_id()).append("\n");
+    }
+    return info.toString();
+  }
+
+  public void assignEquipmentToPatient(int equipmentId, int bedId, int wardId) {
+    // 分配设备给病人
+    for (Equipment equipment : equipmentList) {
+      if (equipment.getEquipment_id() == equipmentId) {
+        equipment.setBed_id(bedId);
+        equipment.setWard_id(wardId);
+        SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
+        EquipmentMapper equipmentMapper = sqlSession.getMapper(EquipmentMapper.class);
+        equipmentMapper.updateEquipment(equipmentId, bedId, wardId);
+        sqlSession.commit(); // 提交
+        sqlSession.close(); // 关闭连接
+      }
+    }
+  }
+
+  public String seachGender(int wardId) {
+    // 查询病房性别
+    SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
+    WardMapper wardMapper = sqlSession.getMapper(WardMapper.class); // 获取mapper接口
+    String gender = wardMapper.searchWardType(wardId);
+    sqlSession.close(); // 关闭连接
+    return gender;
+  }
+
 }
