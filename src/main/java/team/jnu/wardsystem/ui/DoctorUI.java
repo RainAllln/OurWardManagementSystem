@@ -44,6 +44,7 @@ public class DoctorUI extends JFrame implements ActionListener {
     //查看所属科室详情的按钮
     private JButton departmentDetailButton;
 
+    private JButton logoutButton;
     // 病人信息组件
     private JTable patientTable;
     private DefaultTableModel patientTableModel;
@@ -154,6 +155,11 @@ public class DoctorUI extends JFrame implements ActionListener {
         departmentDetailButton = new JButton("查看详情");
         departmentDetailButton.addActionListener(this );
 
+        // Add the logout button
+        logoutButton = new JButton("退出登录");
+        logoutButton.setBackground(Color.red);
+        logoutButton.setForeground(Color.white);
+        logoutButton.addActionListener(this);
         // 添加到面板
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -203,6 +209,10 @@ public class DoctorUI extends JFrame implements ActionListener {
         gbc.gridx = 2;
         panel.add(departmentDetailButton, gbc);
 
+        gbc.gridx = 1;
+        gbc.gridy = 7;
+        gbc.gridwidth = 1;
+        panel.add(logoutButton, gbc);
 
         return panel;
     }
@@ -416,6 +426,13 @@ public class DoctorUI extends JFrame implements ActionListener {
         }else if(source==departmentDetailButton){
             //查看所属科室详情
             JOptionPane.showMessageDialog(this,doctor.getDepartmentDetail(doctor.getDepartment_id()));
+        }else if(source==logoutButton){
+            // 退出登录
+            int confirm = JOptionPane.showConfirmDialog(this, "确定要退出登录吗？", "确认退出", JOptionPane.YES_NO_OPTION);
+            if (confirm == JOptionPane.YES_OPTION) {
+                this.dispose();
+                new LoginUI();
+            }
         }
         // TODO: 处理其他按钮和菜单项的事件
     }
