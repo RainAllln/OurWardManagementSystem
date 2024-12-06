@@ -163,4 +163,8 @@ public class Patient extends User {
     }
     return (nurse == null) ? "" : nurse.getNurse_name();
   }
+  //病人
+  public boolean isCheck_out(Date time) {
+    return true;
+  }
 }

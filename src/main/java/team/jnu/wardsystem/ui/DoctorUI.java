@@ -12,6 +12,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableCellEditor;
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.Date;
 import java.util.List;
 
 // DoctorUI类实现医生界面，包括个人信息、病人信息和设备信息
@@ -507,10 +508,13 @@ public class DoctorUI extends JFrame implements ActionListener {
                 if (row >= 0) {
                     int confirm = JOptionPane.showConfirmDialog(DoctorUI.this, "确定要删除此条记录吗？", "确认删除", JOptionPane.YES_NO_OPTION);
                     if (confirm == JOptionPane.YES_OPTION) {
-
                         if (type.equals("patient")) {
                             //根据病人姓名和病床号删除病人
-                            doctor.deletePatient(Integer.parseInt(model.getValueAt(row, 3).toString()), Integer.parseInt(model.getValueAt(row, 4).toString()));
+                            String notice=doctor.deletePatient(Integer.parseInt(model.getValueAt(row, 3).toString()), Integer.parseInt(model.getValueAt(row, 4).toString()),new Date(System.currentTimeMillis()));
+                            if(notice==null){
+                                JOptionPane.showMessageDialog(DoctorUI.this, "病人还没缴费！");
+                                return;
+                            }
                         } else if (type.equals("equipment")) {
                             //根据设备编号删除设备
                             doctor.deleteEquipment(Integer.parseInt(model.getValueAt(row, 0).toString()));

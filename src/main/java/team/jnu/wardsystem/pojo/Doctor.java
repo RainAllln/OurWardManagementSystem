@@ -6,6 +6,8 @@ import lombok.EqualsAndHashCode;
 import org.apache.ibatis.session.SqlSession;
 import team.jnu.wardsystem.mapper.*;
 
+import java.time.LocalDateTime;
+import java.sql.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -174,12 +176,15 @@ public class Doctor extends User {
     }
   }
 
-  public void deletePatient(int bed_id, int ward_id) {
+  public String deletePatient(int bed_id, int ward_id ,Date time) {
     // 删除病人
     Iterator<Patient> iterator = patientList.iterator();
     while (iterator.hasNext()) {
       Patient patient = iterator.next();
       if (patient.getBed_id() == bed_id && patient.getWard_id() == ward_id) {
+        if(!patient.isCheck_out(time)){
+          return "";
+        }
         iterator.remove();
         SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
         PatientMapper patientMapper = sqlSession.getMapper(PatientMapper.class);
@@ -191,9 +196,10 @@ public class Doctor extends User {
         bedMapper.updateBedStatus(bed_id, ward_id, false);
         sqlSession.commit(); // 提交
         sqlSession.close(); // 关闭连接
-        break; // 退出循环
+        return "删除成功";
       }
     }
+    return null;
   }
 
 
@@ -226,6 +232,7 @@ public class Doctor extends User {
         break;
       }
     }
+    patient.setAdmission_date(new Date(System.currentTimeMillis()));
     patient.setBed_id(bedId);
     patient.setWard_id(wardId);
     patient.setDoctor_id(doctor_id);
