@@ -11,6 +11,7 @@ import team.jnu.wardsystem.ui.PatientUI;
 public class App {
   public static void main(String[] args) {
     LoginUI loginUI = new LoginUI();
-  //new PatientUI(new Patient(10001,"yukino","123456"));
+    //new PatientUI(new Patient(10001,"yukino","123456"));
+
   }
 }

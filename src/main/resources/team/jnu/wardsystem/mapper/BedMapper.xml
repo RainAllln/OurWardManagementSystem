@@ -12,4 +12,5 @@
 
     <select id="searchBedById" resultType="Bed">
         select * from beds where bed_id=#{bed_id} and ward_id=#{ward_id}</select>
+
 </mapper>
