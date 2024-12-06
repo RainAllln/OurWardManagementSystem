@@ -29,6 +29,7 @@ public class NurseUI extends JFrame implements ActionListener {
     private JButton patientInfoButton;
     private JButton equipmentInfoButton;
     private JButton bedInfoButton;
+    private JButton logoutButton; //退出登录按钮
 
     // 个人信息组件
     private JTextField usernameField;
@@ -40,6 +41,7 @@ public class NurseUI extends JFrame implements ActionListener {
     private JTextField departmentField;
     private JButton editPasswordButton;
     private JButton editPhoneButton;
+    private JButton departmentDetailButton; //科室详情按钮
 
     // 病人信息组件
     private JTable patientTable;
@@ -80,8 +82,8 @@ public class NurseUI extends JFrame implements ActionListener {
         menuPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         personalInfoButton = new JButton("个人信息");
-        patientInfoButton = new JButton("所有病人信息");
-        equipmentInfoButton = new JButton("所有设备信息");
+        patientInfoButton = new JButton("病人信息");
+        equipmentInfoButton = new JButton("设备信息");
         bedInfoButton = new JButton("床位信息");
 
         personalInfoButton.addActionListener(this);
@@ -124,7 +126,7 @@ public class NurseUI extends JFrame implements ActionListener {
                 return column == 4;
             }
         };
-        bedTable = new JTable(equipmentTableModel);
+        bedTable = new JTable(bedTableModel);
         loadBedData();
 
         // 设置单元格渲染器，使文字居中
@@ -191,6 +193,14 @@ public class NurseUI extends JFrame implements ActionListener {
         departmentField = new JTextField(20);
         departmentField.setText(nurse.getDepartment_name());
         departmentField.setEditable(false);
+        departmentDetailButton = new JButton("查看详情");
+        departmentDetailButton.addActionListener(this );
+
+        // Add the logout button
+        logoutButton = new JButton("退出登录");
+        logoutButton.setBackground(Color.red);
+        logoutButton.setForeground(Color.white);
+        logoutButton.addActionListener(this);
 
         // 添加到面板
         gbc.gridx = 0;
@@ -238,6 +248,13 @@ public class NurseUI extends JFrame implements ActionListener {
         panel.add(departmentLabel, gbc);
         gbc.gridx = 1;
         panel.add(departmentField, gbc);
+        gbc.gridx = 2;
+        panel.add(departmentDetailButton, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 7;
+        gbc.gridwidth = 1;
+        panel.add(logoutButton, gbc);
 
         return panel;
     }
@@ -247,7 +264,7 @@ public class NurseUI extends JFrame implements ActionListener {
         JPanel panel = new JPanel(new BorderLayout());
 
         // 表格模型
-        String[] columns = {"姓名", "性别", "年龄", "病床号", "病房",  "电话","备注", "操作"};
+        String[] columns = {"姓名", "性别", "年龄", "病床号", "病房",  "电话", "备注", "操作"};
         patientTableModel = new DefaultTableModel(columns, 0) {
             // 使表格不可编辑除了"操作"列
             @Override
@@ -282,7 +299,7 @@ public class NurseUI extends JFrame implements ActionListener {
         JPanel panel = new JPanel(new BorderLayout());
 
         // 表格模型
-        String[] columns = {"设备编号", "设备类型", "使用病床","使用病房","操作"};
+        String[] columns = {"设备编号", "设备类型", "使用病床", "使用病房", "操作"};
         equipmentTableModel = new DefaultTableModel(columns, 0) {
             // 使表格不可编辑除了"操作"列
             @Override
@@ -355,8 +372,8 @@ public class NurseUI extends JFrame implements ActionListener {
             bedTableModel.addRow(new Object[]{
                     bed.getBed_id(),
                     bed.getWard_id(),
-                    bed.isIn_use(),
-                    bed.isClean()
+                    bed.isIn_use() ? "正在使用" : "未使用",
+                    bed.isClean() ? "已清洁" : "未清洁"
             });
         }
     }
@@ -408,32 +425,15 @@ public class NurseUI extends JFrame implements ActionListener {
             }else {
                 JOptionPane.showMessageDialog(this, "手机号不能为空");
             }
-        } // TODO: 处理其他按钮和菜单项的事件
-//        else if (source == assignEquipmentButton) {
-//            // 处理设备分配
-//            int selectedRow = equipmentTable.getSelectedRow();
-//            if (selectedRow >= 0) {
-//                String equipmentId = equipmentTable.getValueAt(selectedRow, 0).toString();
-//                String[] patients = {"王大夫 - 101", "李小花 - 102", "张三 - 103"};
-//
-//                String selectedPatient = (String) JOptionPane.showInputDialog(
-//                        this,
-//                        "选择一个病人使用设备：" + equipmentId,
-//                        "分配设备",
-//                        JOptionPane.QUESTION_MESSAGE,
-//                        null,
-//                        patients,
-//                        patients[0]
-//                );
-//
-//                if (selectedPatient != null) {
-//                    JOptionPane.showMessageDialog(this,
-//                            "设备 " + equipmentId + " 已分配给 " + selectedPatient,
-//                            "分配成功",
-//                            JOptionPane.INFORMATION_MESSAGE);
-//                }
-//            }
-//        }
+        } else if (source == departmentDetailButton){
+            JOptionPane.showMessageDialog(this,nurse.getDepartmentDetail(nurse.getDepartment_id()));
+        }else if (source == logoutButton){
+            int confirm = JOptionPane.showConfirmDialog(this, "确定要退出登录吗？", "确认退出", JOptionPane.YES_NO_OPTION);
+            if (confirm == JOptionPane.YES_OPTION) {
+                this.dispose();
+                new LoginUI();
+            }
+        }// TODO: 处理其他按钮和菜单项的事件
     }
 
     // 设置按钮的高亮
@@ -520,19 +520,43 @@ public class NurseUI extends JFrame implements ActionListener {
             });
         }
         private void assignEquipment(int row){
-            return;
+            int equipment_id = Integer.parseInt(model.getValueAt(row, 0).toString());
+            String bednum = model.getValueAt(row, 2).toString();
+            String wardnum = model.getValueAt(row, 3).toString();
+
+            JTextField bedField = new JTextField(bednum);
+            JTextField wardField = new JTextField(wardnum);
+
+            JPanel editPanel = new JPanel(new GridLayout(2, 2, 10, 10));
+            editPanel.add(new JLabel("使用病床:"));
+            editPanel.add(bedField);
+            editPanel.add(new JLabel("使用病房:"));
+            editPanel.add(wardField);
+
+            int result = JOptionPane.showConfirmDialog(NurseUI.this, editPanel, "编辑设备信息", JOptionPane.OK_CANCEL_OPTION);
+            if (result == JOptionPane.OK_OPTION) {
+                // 更新表格数据
+                if(!bednum.equals(bedField.getText())||!wardnum.equals(wardField.getText())){//修改了信息要更新数据库
+                    nurse.updateEquipment(equipment_id, Integer.parseInt(bedField.getText()), Integer.parseInt(wardField.getText()));
+                    model.setValueAt(bedField.getText(), row, 2);
+                    model.setValueAt(wardField.getText(), row, 3);
+                    JOptionPane.showMessageDialog(NurseUI.this, "设备信息已更新");
+                }else{
+                    JOptionPane.showMessageDialog(NurseUI.this, "设备信息未修改");
+                }
+            }
         }
         private void cleanBed(int row){
             String bednum = model.getValueAt(row, 0).toString();
             String wardnum = model.getValueAt(row, 1).toString();
-            boolean usestatus = (boolean)model.getValueAt(row,2);
-            boolean cleanstatus = (boolean)model.getValueAt(row, 3);
+            boolean usestatus = model.getValueAt(row,2).toString().equals("正在使用");
+            boolean cleanstatus = model.getValueAt(row, 3).toString().equals("已清洁");
 
             int confirm = JOptionPane.showConfirmDialog(NurseUI.this, "确定要清理该床位吗？", "清理确认", JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.YES_OPTION) {
                 if(!cleanstatus){
                     cleanstatus = true;
-                    model.setValueAt(cleanstatus,row,3);
+                    model.setValueAt(true,row,3);
                     JOptionPane.showMessageDialog(NurseUI.this, "床位清洁成功"," ",JOptionPane.INFORMATION_MESSAGE);
                     nurse.updateBedstatus(Integer.parseInt(bednum), Integer.parseInt(wardnum),true);
                 }
@@ -574,5 +598,3 @@ public class NurseUI extends JFrame implements ActionListener {
         }
     }
 }
-
-

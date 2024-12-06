@@ -138,7 +138,7 @@ public class LoginUI extends JFrame implements ActionListener {
                     nurse.setUsername(username);
                     nurse.setPassword(password);
                     nurse.setUser_id(user.getUser_id());
-                    //new NurseUI(nurse);
+                    new NurseUI(nurse);
                 }
             } else {
                 JOptionPane.showMessageDialog(this, LoginMsg);

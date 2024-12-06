@@ -5,15 +5,11 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import team.jnu.wardsystem.mapper.*;
-
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
+
+import static team.jnu.wardsystem.pojo.Doctor.searchDoctorById;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -120,6 +116,20 @@ public class Nurse extends User {
     }
     return "未找到对应病床";
   }
+  public void updateEquipment(int equipment_id, int bed_id, int ward_id) {
+    // 分配设备
+    for (Equipment equipment : equipmentList) {
+      if (equipment.getEquipment_id() == equipment_id) {
+        equipment.setBed_id(bed_id);
+        equipment.setWard_id(ward_id);
+        SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
+        EquipmentMapper equipmentMapper = sqlSession.getMapper(EquipmentMapper.class);
+        equipmentMapper.updateEquipment(equipment_id, bed_id, ward_id);
+        sqlSession.commit(); // 提交
+        sqlSession.close(); // 关闭连接
+      }
+    }
+  }
   public String updatePatientNote(int bed_id, int ward_id, String notes) {
     // 更新病人备注信息
     for (Patient patient : patientList) {
@@ -137,5 +147,18 @@ public class Nurse extends User {
       }
     }
     return "未找到对应病人";
+  }
+  public String getDepartmentDetail(int department_id) {
+    // 获取科室详细信息
+    SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
+    DepartmentMapper departmentMapper = sqlSession.getMapper(DepartmentMapper.class); // 获取mapper接口
+    Department department = departmentMapper.getDepartmentDetail(department_id); // 获取科室列表
+    sqlSession.close(); // 关闭连接
+    //将所有信息拼接成字符串返回
+    String departmentDetail = "科室名称：" + department.getDepartment_name() + "\n" +
+            "科室主任：" + searchDoctorById(department.getHead_id()).getDoctor_name() + "\n" +
+            "科室电话：" + department.getTel() + "\n" +
+            "科室备注：" + department.getNotes();
+    return departmentDetail;
   }
 }
