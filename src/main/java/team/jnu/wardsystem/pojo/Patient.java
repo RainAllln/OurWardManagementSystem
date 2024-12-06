@@ -123,16 +123,23 @@ public class Patient extends User {
     return nurse != null;
   }
 
-  public boolean getDepartment(){
+  public boolean getDepartmentDetails(){
     SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
     DepartmentMapper departmentMapper = sqlSession.getMapper(DepartmentMapper.class); // 获取mapper接口
+    DoctorMapper doctorMapper = sqlSession.getMapper(DoctorMapper.class);
     if(department == null) department = departmentMapper.getDepartmentDetail(nurse.getDepartment_id());
+    if(department.getHead_id() != 0) {
+      Doctor Head = doctorMapper.searchDoctorById(department.getHead_id());
+      department.setHead_name(Head.getDoctor_name());
+    }else{
+        department.setHead_name("暂无");
+    }
     sqlSession.close(); // 关闭连接
     return department != null;
   }
 
   public String getDepartmentName(){
-    if(getDepartment()){
+    if(getDepartmentDetails()){
       return department.getDepartment_name();
     }else{
       return "并没有分配科室";
@@ -198,11 +205,11 @@ public class Patient extends User {
   }
 
   public List<Equipment> getEquipmentList() {
-    if(bed.getEquipmentList() == null){
-      bed.searchEquipmentList();
-      return bed.getEquipmentList();
-    }else{
-      return bed.getEquipmentList();
-    }
+    SqlSession sqlSession = User.sqlSessionFactory.openSession(); // 打开链接
+    EquipmentMapper equipmentMapper = sqlSession.getMapper(EquipmentMapper.class); // 获取mapper接口
+    List<Equipment> equipmentList = equipmentMapper.searchEquipmentList(bed_id,ward_id); // 获取equipmentList
+    bed.setEquipmentList(equipmentList);
+    sqlSession.close(); // 关闭连接
+    return bed.getEquipmentList();
   }
 }

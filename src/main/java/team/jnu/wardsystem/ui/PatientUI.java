@@ -2,6 +2,7 @@ package team.jnu.wardsystem.ui;
 
 import team.jnu.wardsystem.pojo.*;
 
+import javax.print.Doc;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -305,6 +306,22 @@ public class PatientUI extends JFrame implements ActionListener {
                 cardLayout.show(mainPanel, "BedInfo");
                 setButtonColor(bedInfoButton);
             }
+        }else if(btn == doctorDetailsButton){
+            Doctor doctor = patient.getDoctor();
+            String doctorDetails = "医生姓名: " + doctor.getDoctor_name() + "\n" +
+                    "医生编号: " + doctor.getDoctor_id() + "\n" +
+                    "性别: " + doctor.getGender() + "\n" +
+                    "科室: " + doctor.getDepartment_name() + "\n" +
+                    "电话: " + doctor.getPhone();
+            JOptionPane.showMessageDialog(this, doctorDetails, "医生详情", JOptionPane.INFORMATION_MESSAGE);
+        }else if(btn == departmentDetailsButton){
+            Department department = patient.getDepartment();
+            String departmentDetails = "科室名称: " + department.getDepartment_name() + "\n" +
+                    "科室编号: " + department.getDepartment_id() + "\n" +
+                    "科室主任: " + department.getHead_name() + "\n" +
+                    "电话: " + department.getTel() + "\n" +
+                    "备注: " + department.getNotes();
+            JOptionPane.showMessageDialog(this, departmentDetails, "科室详情", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
