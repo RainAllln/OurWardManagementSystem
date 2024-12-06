@@ -499,7 +499,7 @@ public class DoctorUI extends JFrame implements ActionListener {
                         editEquipment(row);
                     }
                 }
-                fireEditingStopped();
+                //fireEditingStopped();
             });
             // 删除按钮事件
             deleteButton.addActionListener(e -> {
@@ -524,10 +524,10 @@ public class DoctorUI extends JFrame implements ActionListener {
             // 分配按钮事件
             assignButton.addActionListener(e -> {
                 int row = table.getSelectedRow();
-                if (row >= 0) {
+                if (row >=0) {
                     assignBedAndWard(row);
                 }
-                fireEditingStopped();
+                //fireEditingStopped();
             });
         }
         // 弹出分配病床和病房的对话框
