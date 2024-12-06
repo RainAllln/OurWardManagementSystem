@@ -36,7 +36,6 @@ public class Patient extends User {
   private Department department;  //科室
   private Ward ward;  //病房信息
   private Bed bed;    //床位信息
-  private boolean helpStatus=false; //是否需要帮助
 
   public Patient(int patient_id, String username, String password) {
     // 登录时创建对象只需要id和用户名密码
@@ -111,6 +110,7 @@ public class Patient extends User {
   public boolean getManagingDoctor() {
     SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
     DoctorMapper doctorMapper = sqlSession.getMapper(DoctorMapper.class);    // 获取mapper接口
+    if(doctor_id == 0) return false;
     if(doctor == null) doctor = doctorMapper.searchDoctorById(doctor_id);
     sqlSession.close(); // 关闭连接
     return doctor != null;
@@ -119,6 +119,7 @@ public class Patient extends User {
   public boolean getManagingNurse() {
     SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
     NurseMapper nurseMapper = sqlSession.getMapper(NurseMapper.class); // 获取mapper接口
+    if(nurse_id == 0) return false;
     if(nurse == null) nurse = nurseMapper.searchNurseById(nurse_id);
     sqlSession.close();
     return nurse != null;
@@ -128,7 +129,8 @@ public class Patient extends User {
     SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
     DepartmentMapper departmentMapper = sqlSession.getMapper(DepartmentMapper.class); // 获取mapper接口
     DoctorMapper doctorMapper = sqlSession.getMapper(DoctorMapper.class);
-    if(department == null) department = departmentMapper.getDepartmentDetail(nurse.getDepartment_id());
+    if(doctor_id == 0) return false;  //未分配医生
+    if(department == null) department = departmentMapper.getDepartmentDetail(doctor.getDepartment_id());
     if(department.getHead_id() != 0) {
       Doctor Head = doctorMapper.searchDoctorById(department.getHead_id());
       department.setHead_name(Head.getDoctor_name());
@@ -157,11 +159,14 @@ public class Patient extends User {
 
   public boolean calculateUnpaidAmount() {
     // 计算未支付金额
+    if(!getWardInfo()){
+      return false; //说明没有入住病房
+    }
+    if(unpaid_amount != 0) {
+      return true; //已经计算过了，不需要再链接数据库
+    }
     SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
     PatientMapper patientMapper = sqlSession.getMapper(PatientMapper.class); // 获取mapper接口
-    if(!getWardInfo()){
-        return false; //说明没有入住病房
-    }
     day_length = (int) ((System.currentTimeMillis() - admission_date.getTime()) / (1000 * 60 * 60 * 24));
     paid_amount = patientMapper.getPaidAmount(patient_id);
     total_amount = day_length * ward.getCost();
@@ -206,11 +211,53 @@ public class Patient extends User {
   }
 
   public List<Equipment> getEquipmentList() {
-    SqlSession sqlSession = User.sqlSessionFactory.openSession(); // 打开链接
+    SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
     EquipmentMapper equipmentMapper = sqlSession.getMapper(EquipmentMapper.class); // 获取mapper接口
     List<Equipment> equipmentList = equipmentMapper.searchEquipmentList(bed_id,ward_id); // 获取equipmentList
     bed.setEquipmentList(equipmentList);
     sqlSession.close(); // 关闭连接
     return bed.getEquipmentList();
+  }
+
+  public void updatePhone(String newPhone) {
+    SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
+    PatientMapper patientMapper = sqlSession.getMapper(PatientMapper.class); // 获取mapper接口
+    patientMapper.updatePatientPhone(patient_id, newPhone);
+    sqlSession.commit(); // 提交
+    sqlSession.close(); // 关闭连接
+  }
+
+  public boolean sendNeedHelp() {
+    SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
+    BedMapper bedMapper = sqlSession.getMapper(BedMapper.class); // 获取mapper接口
+    int updateline = bedMapper.updateBedstatus(bed_id, ward_id, false);
+    if(updateline > 0) {
+      sqlSession.commit(); // 提交
+      sqlSession.close(); // 关闭连接
+      return true;
+    } else {
+      sqlSession.close(); // 关闭连接
+      return false;
+    }
+  }
+
+  public String getWardFee() {
+    return String.valueOf(ward.getCost());
+  }
+
+  public boolean pay(int fee) {
+    // 病人缴费
+    SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
+    PatientMapper patientMapper = sqlSession.getMapper(PatientMapper.class); // 获取mapper接口
+    if(fee > unpaid_amount) {
+      return false;
+    }else{
+      paid_amount += fee;
+      unpaid_amount -= fee;
+      patientMapper.updatePaidAmount(patient_id, paid_amount);
+      sqlSession.commit(); // 提交
+      sqlSession.close(); // 关闭连接
+      return true;
+    }
   }
 }

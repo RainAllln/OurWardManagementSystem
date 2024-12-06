@@ -66,6 +66,15 @@ public class User {
         }
     }
 
+    public boolean isExistUser(String user_name) {
+        // 查询用户是否已存在
+        SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
+        UserMapper userMapper = sqlSession.getMapper(UserMapper.class); // 获取mapper接口
+        User finded_user = userMapper.selectByUserName(user_name); // 获取用户列表
+        sqlSession.close(); // 关闭连接
+        return finded_user != null;
+    }
+
     public static String getMD5Str(String str) {
         // 字符串转md5码
         byte[] digest = null;
@@ -85,7 +94,7 @@ public class User {
         UserMapper userMapper = sqlSession.getMapper(UserMapper.class); // 获取mapper接口
         password = getMD5Str(newPassword);
         // userMapper.updatePassword(user_id,password);
-        int x = userMapper.updatePassword(this);
+        userMapper.updatePassword(this);
         sqlSession.commit(); // 提交
         sqlSession.close(); // 关闭连接
     }
