@@ -85,7 +85,7 @@ public class User {
         UserMapper userMapper = sqlSession.getMapper(UserMapper.class); // 获取mapper接口
         password = getMD5Str(newPassword);
         // userMapper.updatePassword(user_id,password);
-        int x = userMapper.updatePassword(this);
+        userMapper.updatePassword(this);
         sqlSession.commit(); // 提交
         sqlSession.close(); // 关闭连接
     }

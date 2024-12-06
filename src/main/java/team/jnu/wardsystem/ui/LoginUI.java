@@ -1,6 +1,7 @@
 package team.jnu.wardsystem.ui;
 
 import lombok.Getter;
+import org.apache.ibatis.session.SqlSession;
 import team.jnu.wardsystem.pojo.Doctor;
 import team.jnu.wardsystem.pojo.Nurse;
 import team.jnu.wardsystem.pojo.Patient;
@@ -122,7 +123,7 @@ public class LoginUI extends JFrame implements ActionListener {
                     // 病人
                     Patient patient = Patient.searchPatientById(user.getUser_id());
                     patient.setUsername(username);
-                    patient.setPassword(password);
+                    patient.setPassword(User.getMD5Str(password));
                     patient.setUser_id(user.getUser_id());
                     new PatientUI(patient);
                 } else if(user.getUser_id() / 10000 == 2) {
@@ -181,6 +182,7 @@ public class LoginUI extends JFrame implements ActionListener {
                 }
                 JOptionPane.showMessageDialog(this, "注册成功");
                 //直接登录病人界面
+                this.dispose(); // 关闭登录界面
                 new PatientUI(patient);
             }
         }

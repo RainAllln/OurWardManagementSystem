@@ -122,9 +122,14 @@ public class PatientUI extends JFrame implements ActionListener {
         gbc.gridy = 1;
         panel.add(new JLabel("密码:"), gbc);
         gbc.gridx = 1;
-        panel.add(new JLabel(patient.getPassword()), gbc);
+        StringBuilder star_password = new StringBuilder();
+        for(int i = 0; i < patient.getPassword().length(); i++){
+            star_password.append("*");
+        }
+        panel.add(new JLabel(star_password.toString()), gbc);
         gbc.gridx = 2;
         editPasswordButton = new JButton("编辑");
+        editPasswordButton.addActionListener(this);
         panel.add(editPasswordButton, gbc);
 
         gbc.gridx = 0;
@@ -134,6 +139,7 @@ public class PatientUI extends JFrame implements ActionListener {
         panel.add(new JLabel(patient.getPhone()), gbc);
         gbc.gridx = 2;
         editPhoneButton = new JButton("编辑");
+        editPhoneButton.addActionListener(this);
         panel.add(editPhoneButton, gbc);
 
         gbc.gridx = 0;
@@ -174,21 +180,23 @@ public class PatientUI extends JFrame implements ActionListener {
 
         gbc.gridx = 0;
         gbc.gridy = 9;
-        panel.add(new JLabel("科室名:"), gbc);
+        panel.add(new JLabel("医生名:"), gbc);
         gbc.gridx = 1;
-        panel.add(new JLabel(patient.getDepartmentName()), gbc); // Replace with actual department name
+        panel.add(new JLabel(patient.getManagingDoctorName()), gbc);
         gbc.gridx = 2;
-        departmentDetailsButton = new JButton("详情");
-        panel.add(departmentDetailsButton, gbc);
+        doctorDetailsButton = new JButton("详情");
+        doctorDetailsButton.addActionListener(this);
+        panel.add(doctorDetailsButton, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 10;
-        panel.add(new JLabel("医生名:"), gbc);
+        panel.add(new JLabel("科室名:"), gbc);
         gbc.gridx = 1;
-        panel.add(new JLabel(patient.getManagingDoctorName()), gbc); // Replace with actual doctor name
+        panel.add(new JLabel(patient.getDepartmentName()), gbc);
         gbc.gridx = 2;
-        doctorDetailsButton = new JButton("详情");
-        panel.add(doctorDetailsButton, gbc);
+        departmentDetailsButton = new JButton("详情");
+        departmentDetailsButton.addActionListener(this);
+        panel.add(departmentDetailsButton, gbc);
 
         return panel;
     }
@@ -219,11 +227,13 @@ public class PatientUI extends JFrame implements ActionListener {
         panel.add(new JLabel(String.valueOf(patient.getTotal_amount())), gbc);
         gbc.gridx = 2;
         totalPaymentButton = new JButton("详情");
+        totalPaymentButton.addActionListener(this);
         panel.add(totalPaymentButton, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 3;
         payButton = new JButton("缴费");
+        payButton.addActionListener(this);
         panel.add(payButton, gbc);
 
         return panel;
@@ -251,21 +261,17 @@ public class PatientUI extends JFrame implements ActionListener {
 
         gbc.gridx = 0;
         gbc.gridy = 1;
-        infoPanel.add(new JLabel("病床是否干净:"), gbc);
-        gbc.gridx = 1;
-        infoPanel.add(new JLabel("病床是否干净"), gbc); // Replace with actual cleanliness status
-        gbc.gridx = 2;
-        cleanRequestButton = new JButton("请求清理");
-        infoPanel.add(cleanRequestButton, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy = 2;
         infoPanel.add(new JLabel("管床护士名:"), gbc);
         gbc.gridx = 1;
         infoPanel.add(new JLabel(patient.getManagingNurseName()), gbc); // Replace with actual nurse name
         gbc.gridx = 2;
         nurseDetailsButton = new JButton("查看详情");
+        nurseDetailsButton.addActionListener(this);
         infoPanel.add(nurseDetailsButton, gbc);
+        gbc.gridx = 3;
+        cleanRequestButton = new JButton("请求帮助");
+        cleanRequestButton.addActionListener(this);
+        infoPanel.add(cleanRequestButton, gbc);
 
         panel.add(infoPanel, BorderLayout.NORTH);
 
@@ -311,7 +317,6 @@ public class PatientUI extends JFrame implements ActionListener {
             String doctorDetails = "医生姓名: " + doctor.getDoctor_name() + "\n" +
                     "医生编号: " + doctor.getDoctor_id() + "\n" +
                     "性别: " + doctor.getGender() + "\n" +
-                    "科室: " + doctor.getDepartment_name() + "\n" +
                     "电话: " + doctor.getPhone();
             JOptionPane.showMessageDialog(this, doctorDetails, "医生详情", JOptionPane.INFORMATION_MESSAGE);
         }else if(btn == departmentDetailsButton){
@@ -322,6 +327,66 @@ public class PatientUI extends JFrame implements ActionListener {
                     "电话: " + department.getTel() + "\n" +
                     "备注: " + department.getNotes();
             JOptionPane.showMessageDialog(this, departmentDetails, "科室详情", JOptionPane.INFORMATION_MESSAGE);
+        }else if(btn == editPhoneButton){
+            String newPhone = JOptionPane.showInputDialog(this, "请输入新的手机号:");
+            if(newPhone != null) {
+                if(newPhone.equals(patient.getPhone())) {
+                    JOptionPane.showMessageDialog(this, "输入的手机号与原先的手机号相同", "错误", JOptionPane.ERROR_MESSAGE);
+                } else if(newPhone.length() != 11) {
+                    JOptionPane.showMessageDialog(this, "输入的手机号不正确", "错误", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    int confirm = JOptionPane.showConfirmDialog(this, "确定要更改手机号吗?", "确认", JOptionPane.YES_NO_OPTION);
+                    if(confirm == JOptionPane.YES_OPTION) {
+                        patient.setPhone(newPhone);
+                        patient.updatePhone(newPhone);
+                        JOptionPane.showMessageDialog(this, "手机号已成功更改", "成功", JOptionPane.INFORMATION_MESSAGE);
+                        personalInfoButton.doClick();   //自动更新个人信息
+                    }
+                }
+            }
+        }else if(btn == editPasswordButton){
+            editPassword();
+        }
+    }
+
+    private void editPassword(){
+        JPanel panel = new JPanel(new GridLayout(3, 2));
+        JLabel oldPasswordLabel = new JLabel("原密码:");
+        JPasswordField oldPasswordField = new JPasswordField();
+        JLabel newPasswordLabel = new JLabel("新密码:");
+        JPasswordField newPasswordField = new JPasswordField();
+        JLabel confirmPasswordLabel = new JLabel("确认新密码:");
+        JPasswordField confirmPasswordField = new JPasswordField();
+
+        panel.add(oldPasswordLabel);
+        panel.add(oldPasswordField);
+        panel.add(newPasswordLabel);
+        panel.add(newPasswordField);
+        panel.add(confirmPasswordLabel);
+        panel.add(confirmPasswordField);
+
+        int result = JOptionPane.showConfirmDialog(this, panel, "更改密码", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (result == JOptionPane.OK_OPTION) {
+            String oldPassword = new String(oldPasswordField.getPassword());
+            String oldPassword_md5 = User.getMD5Str(oldPassword);
+            String newPassword = new String(newPasswordField.getPassword());
+            String confirmPassword = new String(confirmPasswordField.getPassword());
+
+            if (!oldPassword_md5.equals(patient.getPassword())) {
+                JOptionPane.showMessageDialog(this, "原密码不正确", "错误", JOptionPane.ERROR_MESSAGE);
+            } else if (newPassword.equals(oldPassword)) {
+                JOptionPane.showMessageDialog(this, "新密码不能与原密码相同", "错误", JOptionPane.ERROR_MESSAGE);
+            } else if (!newPassword.equals(confirmPassword)) {
+                JOptionPane.showMessageDialog(this, "新密码与确认新密码不一致", "错误", JOptionPane.ERROR_MESSAGE);
+            } else {
+                int confirm = JOptionPane.showConfirmDialog(this, "确定要更改密码吗?", "确认", JOptionPane.YES_NO_OPTION);
+                if (confirm == JOptionPane.YES_OPTION) {
+                    patient.setPassword(newPassword);
+                    patient.updatePassword(newPassword);
+                    JOptionPane.showMessageDialog(this, "密码已成功更改", "成功", JOptionPane.INFORMATION_MESSAGE);
+                    personalInfoButton.doClick();   //自动更新个人信息
+                }
+            }
         }
     }
 
