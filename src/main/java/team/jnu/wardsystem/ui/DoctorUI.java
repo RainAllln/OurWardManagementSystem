@@ -455,11 +455,11 @@ public class DoctorUI extends JFrame implements ActionListener {
 
         public ButtonRenderer(String type) {
             setLayout(new FlowLayout(FlowLayout.CENTER, 5, 0));
-            if(type.equals("unassignedPatient")){
-                add(assignButton);
-            }else {
+            if(type.equals("patient")){
                 add(editButton);
                 add(deleteButton);
+            }else {
+                add(assignButton);
             }
         }
 
@@ -484,21 +484,17 @@ public class DoctorUI extends JFrame implements ActionListener {
             this.model = model;
             this.type = type;
             panel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 0));
-            if(type.equals("unassignedPatient")){
-                panel.add(assignButton);
-            }else {
+            if(type.equals("patient")){
                 panel.add(editButton);
                 panel.add(deleteButton);
+            }else {
+                panel.add(assignButton);
             }
             // 编辑按钮事件
             editButton.addActionListener(e -> {
                 int row = table.getSelectedRow();
                 if (row >= 0) {
-                    if (type.equals("patient")) {
-                        editPatient(row);
-                    } else if (type.equals("equipment")) {
-                        editEquipment(row);
-                    }
+                    editPatient(row);
                 }
                 //fireEditingStopped();
             });
@@ -515,9 +511,6 @@ public class DoctorUI extends JFrame implements ActionListener {
                                 JOptionPane.showMessageDialog(DoctorUI.this, "病人还没缴费！");
                                 return;
                             }
-                        } else if (type.equals("equipment")) {
-                            //根据设备编号删除设备
-                            doctor.deleteEquipment(Integer.parseInt(model.getValueAt(row, 0).toString()));
                         }
                         model.removeRow(row);
                         JOptionPane.showMessageDialog(DoctorUI.this, "记录已删除");
@@ -529,14 +522,49 @@ public class DoctorUI extends JFrame implements ActionListener {
             assignButton.addActionListener(e -> {
                 int row = table.getSelectedRow();
                 if (row >=0) {
-                    assignBedAndWard(row);
+                    if(type.equals("unassignedPatient")){
+                        // 分配病床和病房
+                    assignBedAndWard(row,model.getValueAt(row,1).toString());
+                }else {
+                        //分配设备
+                        assignEquipment(row);
+                    }
                 }
                 //fireEditingStopped();
             });
         }
         // 弹出分配病床和病房的对话框
+        private void assignEquipment(int row) {
+            JTextField equipmentField = new JTextField();
+            JTextField bedField = new JTextField();
+            JTextField wardField = new JTextField();
 
-        private void assignBedAndWard(int row) {
+            JPanel assignPanel = new JPanel(new GridLayout(4, 2, 10, 10));
+            assignPanel.add(new JLabel("设备编号:"));
+            assignPanel.add(equipmentField);
+            assignPanel.add(new JLabel("病床号:"));
+            assignPanel.add(bedField);
+            assignPanel.add(new JLabel("病房:"));
+            assignPanel.add(wardField);
+
+            JTextArea unassignedEquipmentArea = new JTextArea(5, 20);
+            unassignedEquipmentArea.setText(doctor.getAllBedInfo());
+            unassignedEquipmentArea.setEditable(false);
+            assignPanel.add(new JLabel("病房信息:"));
+            assignPanel.add(new JScrollPane(unassignedEquipmentArea));
+
+            int result = JOptionPane.showConfirmDialog(DoctorUI.this, assignPanel, "分配设备", JOptionPane.OK_CANCEL_OPTION);
+            if (result == JOptionPane.OK_OPTION) {
+                int equipmentId = Integer.parseInt(equipmentField.getText());
+                int bedId = Integer.parseInt(bedField.getText());
+                int wardId = Integer.parseInt(wardField.getText());
+                // 分配设备
+                doctor.assignEquipmentToPatient(equipmentId, bedId, wardId);
+                equipment_add=false;
+                JOptionPane.showMessageDialog(DoctorUI.this, "设备已分配");
+            }
+        }
+        private void assignBedAndWard(int row,String gender) {
 
             JTextField bedField = new JTextField();
             JTextField wardField = new JTextField();
@@ -548,7 +576,7 @@ public class DoctorUI extends JFrame implements ActionListener {
             assignPanel.add(wardField);
 
             JTextArea unassignedPatientsArea = new JTextArea(5, 20);
-            unassignedPatientsArea.setText(getUnassignedPatientsInfo());
+            unassignedPatientsArea.setText(getUnassignedPatientsInfo(gender));
             unassignedPatientsArea.setEditable(false);
             assignPanel.add(new JLabel("未分配病床:"));
             assignPanel.add(new JScrollPane(unassignedPatientsArea));
@@ -564,7 +592,7 @@ public class DoctorUI extends JFrame implements ActionListener {
                 JOptionPane.showMessageDialog(DoctorUI.this, "病床和病房已分配");
             }
         }
-        private String getUnassignedPatientsInfo() {
+        private String getUnassignedPatientsInfo(String gender) {
             StringBuilder info = new StringBuilder();
             if(doctor.getUnassignedBedList()==null){
                 doctor.searchUnassignedBedList();
@@ -572,6 +600,7 @@ public class DoctorUI extends JFrame implements ActionListener {
             List<Bed> unassignedBed = doctor.getUnassignedBedList();
             int num=1;
             for (Bed bed : unassignedBed) {
+                if(doctor.seachGender(bed.getWard_id()))
                 info.append("序号: ").append(num++)
                         .append(" 病床号: ").append(bed.getBed_id())
                         .append(" 病房号: ").append(bed.getWard_id())
@@ -612,35 +641,6 @@ public class DoctorUI extends JFrame implements ActionListener {
                     model.setValueAt(notesField.getText(), row, 6);
                 }
                 JOptionPane.showMessageDialog(DoctorUI.this, "病人信息已更新");
-            }
-        }
-
-        // 修改 editEquipment 方法中的类型转换
-        private void editEquipment(int row) {
-            int equipment_id = Integer.parseInt(model.getValueAt(row, 0).toString());
-            String bedNumber = model.getValueAt(row, 2).toString();
-            String ward = model.getValueAt(row, 3).toString();
-
-            JTextField bedField = new JTextField(bedNumber);
-            JTextField wardField = new JTextField(ward);
-
-            JPanel editPanel = new JPanel(new GridLayout(2, 2, 10, 10));
-            editPanel.add(new JLabel("使用病床:"));
-            editPanel.add(bedField);
-            editPanel.add(new JLabel("使用病房:"));
-            editPanel.add(wardField);
-
-            int result = JOptionPane.showConfirmDialog(DoctorUI.this, editPanel, "编辑设备信息", JOptionPane.OK_CANCEL_OPTION);
-            if (result == JOptionPane.OK_OPTION) {
-                // 更新表格数据
-                if(!bedNumber.equals(bedField.getText())||!ward.equals(wardField.getText())){//修改了信息要更新数据库
-                    doctor.updateEquipment(equipment_id, Integer.parseInt(bedField.getText()), Integer.parseInt(wardField.getText()));
-                    model.setValueAt(bedField.getText(), row, 2);
-                    model.setValueAt(wardField.getText(), row, 3);
-                    JOptionPane.showMessageDialog(DoctorUI.this, "设备信息已更新");
-                }else{
-                    JOptionPane.showMessageDialog(DoctorUI.this, "设备信息未修改");
-                }
             }
         }
 
