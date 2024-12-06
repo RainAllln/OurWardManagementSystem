@@ -409,17 +409,6 @@ public class NurseUI extends JFrame implements ActionListener {
                 JOptionPane.showMessageDialog(this, "手机号不能为空");
             }
         } // TODO: 处理其他按钮和菜单项的事件
-//        else if (source == editPatientButton) {
-//            // 处理修改病人信息
-//            int selectedRow = patientTable.getSelectedRow();
-//            if (selectedRow >= 0) {
-//                String name = (String) patientTable.getValueAt(selectedRow, 0);
-//                String newName = JOptionPane.showInputDialog(this, "修改病人姓名", name);
-//                if (newName != null && !newName.trim().isEmpty()) {
-//                    patientTable.setValueAt(newName, selectedRow, 0);
-//                }
-//            }
-//        }
 //        else if (source == assignEquipmentButton) {
 //            // 处理设备分配
 //            int selectedRow = equipmentTable.getSelectedRow();
@@ -480,7 +469,7 @@ public class NurseUI extends JFrame implements ActionListener {
     }
     class ButtonEditor extends AbstractCellEditor implements TableCellEditor {
         private JPanel panel = new JPanel();
-        private JButton editButton = new JButton("编辑");
+        private JButton editButton = new JButton("编辑备注");
         //private JButton deleteButton = new JButton("删除");
         private JButton assignButton = new JButton("分配");
         private JButton cleanButton = new JButton("清理");
@@ -530,6 +519,28 @@ public class NurseUI extends JFrame implements ActionListener {
                 fireEditingStopped();
             });
         }
+        private void assignEquipment(int row){
+            return;
+        }
+        private void cleanBed(int row){
+            String bednum = model.getValueAt(row, 0).toString();
+            String wardnum = model.getValueAt(row, 1).toString();
+            boolean usestatus = (boolean)model.getValueAt(row,2);
+            boolean cleanstatus = (boolean)model.getValueAt(row, 3);
+
+            int confirm = JOptionPane.showConfirmDialog(NurseUI.this, "确定要清理该床位吗？", "清理确认", JOptionPane.YES_NO_OPTION);
+            if (confirm == JOptionPane.YES_OPTION) {
+                if(!cleanstatus){
+                    cleanstatus = true;
+                    model.setValueAt(cleanstatus,row,3);
+                    JOptionPane.showMessageDialog(NurseUI.this, "床位清洁成功"," ",JOptionPane.INFORMATION_MESSAGE);
+                    nurse.updateBedstatus(Integer.parseInt(bednum), Integer.parseInt(wardnum),true);
+                }
+                if(cleanstatus){
+                    JOptionPane.showMessageDialog(NurseUI.this, "床位已经清洁，无需再次清洁","",JOptionPane.INFORMATION_MESSAGE);
+                }
+            }
+        }
 
         private void editPatient(int row){
             String bednum = model.getValueAt(row, 3).toString();
@@ -561,12 +572,6 @@ public class NurseUI extends JFrame implements ActionListener {
         public Object getCellEditorValue() {
             return "";
         }
-    }
-
-    private void assignEquipment(int row) {
-    }
-
-    private void cleanBed(int row) {
     }
 }
 

@@ -102,7 +102,24 @@ public class Nurse extends User {
     sqlSession.commit(); // 提交
     sqlSession.close(); // 关闭连接
   }
-
+  public String updateBedstatus(int bed_id, int ward_id, boolean b){
+    // 更新病床状态
+    for (Bed bed : bedList) {
+      if(bed.getBed_id() == bed_id && bed.getWard_id() == ward_id){
+        //bed.setClean();
+        SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
+        BedMapper bedMapper = sqlSession.getMapper(BedMapper.class); // 获取mapper接口
+        int issue= bedMapper.updateBedstatus(bed_id,ward_id,b);
+        sqlSession.commit(); // 提交
+        sqlSession.close(); // 关闭连接
+        if (issue > 0) {
+          return "更新成功";
+        } else
+          return "更新失败";
+      }
+    }
+    return "未找到对应病床";
+  }
   public String updatePatientNote(int bed_id, int ward_id, String notes) {
     // 更新病人备注信息
     for (Patient patient : patientList) {
