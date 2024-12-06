@@ -2,6 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="team.jnu.wardsystem.mapper.BedMapper">
+
     <update id="updateBedStatus" parameterType="map">
         update beds set in_use = #{in_use},clean=#{in_use} where bed_id = #{bed_id} and ward_id=#{ward_id}</update>
     <select id="searchAllBed" resultType="Bed">select bed_id,ward_id,in_use,clean from beds where
@@ -9,5 +10,6 @@
 
     <select id="searchUnassignedBed" resultType="Bed">
         select * from beds where in_use is false</select>
+
 
 </mapper>
