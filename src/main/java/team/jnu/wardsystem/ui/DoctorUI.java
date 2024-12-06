@@ -41,6 +41,8 @@ public class DoctorUI extends JFrame implements ActionListener {
     private JTextField departmentField;
     private JButton editPasswordButton;
     private JButton editPhoneButton;
+    //查看所属科室详情的按钮
+    private JButton departmentDetailButton;
 
     // 病人信息组件
     private JTable patientTable;
@@ -149,6 +151,8 @@ public class DoctorUI extends JFrame implements ActionListener {
         departmentField = new JTextField(20);
         departmentField.setText(doctor.getDepartment_name());
         departmentField.setEditable(false);
+        departmentDetailButton = new JButton("查看详情");
+        departmentDetailButton.addActionListener(this );
 
         // 添加到面板
         gbc.gridx = 0;
@@ -196,6 +200,9 @@ public class DoctorUI extends JFrame implements ActionListener {
         panel.add(departmentLabel, gbc);
         gbc.gridx = 1;
         panel.add(departmentField, gbc);
+        gbc.gridx = 2;
+        panel.add(departmentDetailButton, gbc);
+
 
         return panel;
     }
@@ -406,6 +413,9 @@ public class DoctorUI extends JFrame implements ActionListener {
             } else {
                 JOptionPane.showMessageDialog(this, "手机号不能为空");
             }
+        }else if(source==departmentDetailButton){
+            //查看所属科室详情
+            JOptionPane.showMessageDialog(this,doctor.getDepartmentDetail(doctor.getDepartment_id()));
         }
         // TODO: 处理其他按钮和菜单项的事件
     }
