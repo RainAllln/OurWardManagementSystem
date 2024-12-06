@@ -6,7 +6,6 @@ import team.jnu.wardsystem.pojo.Patient;
 import team.jnu.wardsystem.pojo.User;
 import team.jnu.wardsystem.ui.DoctorUI;
 import team.jnu.wardsystem.ui.LoginUI;
-import team.jnu.wardsystem.ui.NurseUI;
 import team.jnu.wardsystem.ui.PatientUI;
 
 public class App {

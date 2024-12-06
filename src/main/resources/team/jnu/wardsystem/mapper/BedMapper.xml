@@ -7,9 +7,8 @@
         update beds set in_use = #{in_use},clean=#{in_use} where bed_id = #{bed_id} and ward_id=#{ward_id}</update>
     <select id="searchAllBed" resultType="Bed">select bed_id,ward_id,in_use,clean from beds where
         nurse_id=#{nurse_id}</select>
-
     <select id="searchUnassignedBed" resultType="Bed">
         select * from beds where in_use is false</select>
-
-
+    <select id="searchBedById" resultType="Bed">
+        select * from beds where bed_id=#{bed_id} and ward_id=#{ward_id}</select>
 </mapper>
