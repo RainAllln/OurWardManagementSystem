@@ -36,6 +36,7 @@ public class Patient extends User {
   private Department department;  //科室
   private Ward ward;  //病房信息
   private Bed bed;    //床位信息
+  private boolean helpStatus=false; //是否需要帮助
 
   public Patient(int patient_id, String username, String password) {
     // 登录时创建对象只需要id和用户名密码
