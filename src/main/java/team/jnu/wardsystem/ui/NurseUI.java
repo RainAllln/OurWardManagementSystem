@@ -530,6 +530,7 @@ public class NurseUI extends JFrame implements ActionListener {
                 fireEditingStopped();
             });
         }
+
         private void editPatient(int row){
             String bednum = model.getValueAt(row, 3).toString();
             String wardnum = model.getValueAt(row, 4).toString();
@@ -560,6 +561,12 @@ public class NurseUI extends JFrame implements ActionListener {
         public Object getCellEditorValue() {
             return "";
         }
+    }
+
+    private void assignEquipment(int row) {
+    }
+
+    private void cleanBed(int row) {
     }
 }
 

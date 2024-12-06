@@ -1,6 +1,7 @@
 package team.jnu.wardsystem.mapper;
 
 import org.apache.ibatis.annotations.Param;
+import team.jnu.wardsystem.pojo.Department;
 import team.jnu.wardsystem.pojo.Doctor;
 import team.jnu.wardsystem.pojo.Equipment;
 import team.jnu.wardsystem.pojo.Patient;
@@ -14,4 +15,5 @@ public interface DoctorMapper {
 
     String searchDepartmentName(int department_id);
 
+    Department getDepartmentDetail(int departmentId);
 }
