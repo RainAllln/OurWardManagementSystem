@@ -362,6 +362,37 @@ public class PatientUI extends JFrame implements ActionListener {
             }
         }else if(btn == editPasswordButton){
             editPassword();
+        }else if(btn == nurseDetailsButton){
+            if (patient.getNurse_id() != 0) {
+                Nurse nurse = patient.getNurse();
+                String NurseDetails = "护士姓名: " + nurse.getNurse_name() + "\n" +
+                        "性别: " + nurse.getGender() + "\n" +
+                        "电话: " + nurse.getPhone();
+                JOptionPane.showMessageDialog(this, NurseDetails, "护士详情", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "您还未分配病床。没有管床护士", "提示", JOptionPane.WARNING_MESSAGE);
+            }
+        }else if(btn == cleanRequestButton){
+            if (patient.sendNeedHelp()) {
+                JOptionPane.showMessageDialog(this, "请求已发送", "提示", JOptionPane.INFORMATION_MESSAGE);
+            }else{
+                JOptionPane.showMessageDialog(this, "请求发送失败,请再试", "错误", JOptionPane.ERROR_MESSAGE);
+            }
+        }else if(btn == totalPaymentButton){
+            String paymentDetails = "总金额 = 住院天数(入院至今) * 病房费用" + "\n" +
+                    "入院日期 = " + patient.getAdmission_date() + "\n" +
+                    "住院天数 = " + patient.getDay_length() + "天" + "\n" +
+                    "病房费用 = " + patient.getWardFee() + "元/天" + "\n" +
+                    "总金额 = " + patient.getTotal_amount() + "元";
+            JOptionPane.showMessageDialog(this, paymentDetails, "缴费详情", JOptionPane.INFORMATION_MESSAGE);
+        }else if(btn == payButton){
+            int fee = Integer.parseInt(JOptionPane.showInputDialog(this, "请输入缴费金额:"));
+            if(patient.pay(fee)){
+                JOptionPane.showMessageDialog(this, "缴费成功", "成功", JOptionPane.INFORMATION_MESSAGE);
+                paymentButton.doClick();   //自动更新缴费信息
+            }else{
+                JOptionPane.showMessageDialog(this, "缴费超过待缴金额", "错误", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 

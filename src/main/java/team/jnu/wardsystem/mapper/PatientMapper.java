@@ -32,4 +32,6 @@ public interface PatientMapper {
     double getPaidAmount(int patientId);
 
     void updatePatientPhone(@Param("patient_id") int patientId,@Param("new_phone") String newPhone);
+
+    void updatePaidAmount(@Param("patient_id") int patientId,@Param("paid_amount") double paidAmount);
 }

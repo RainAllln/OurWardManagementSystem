@@ -470,6 +470,7 @@ public class NurseUI extends JFrame implements ActionListener {
     class ButtonEditor extends AbstractCellEditor implements TableCellEditor {
         private JPanel panel = new JPanel();
         private JButton editButton = new JButton("编辑备注");
+        private JButton helpButton = new JButton("帮助");
         //private JButton deleteButton = new JButton("删除");
         private JButton assignButton = new JButton("分配");
         private JButton cleanButton = new JButton("清理");
@@ -488,6 +489,7 @@ public class NurseUI extends JFrame implements ActionListener {
                 panel.add(assignButton);
             }else if(type.equals("patient")){
                 panel.add(editButton);
+                panel.add(helpButton);
             }
             // 编辑按钮事件
             editButton.addActionListener(e -> {
@@ -495,6 +497,15 @@ public class NurseUI extends JFrame implements ActionListener {
                 if (row >= 0) {
                     if (type.equals("patient")) {
                         editPatient(row);
+                    }
+                }
+                fireEditingStopped();
+            });
+            helpButton.addActionListener(e -> {
+                int row = table.getSelectedRow();
+                if(row>= 0){
+                    if(type.equals("patient")){
+                        helpPatient(row);
                     }
                 }
                 fireEditingStopped();
@@ -518,6 +529,27 @@ public class NurseUI extends JFrame implements ActionListener {
                 }
                 fireEditingStopped();
             });
+        }
+        private void helpPatient(int row){
+            String bed_id = model.getValueAt(row,3).toString();
+            String ward_id = model.getValueAt(row,4).toString();
+            boolean status = nurse.findBedStatus(Integer.parseInt(bed_id), Integer.parseInt(ward_id));
+            if(!status){
+                helpButton.setBackground(Color.RED);
+                helpButton.setForeground(Color.WHITE);
+            }
+            int confirm = JOptionPane.showConfirmDialog(NurseUI.this, "确定要帮助该病人吗？", "帮助确认", JOptionPane.YES_NO_OPTION);
+            if (confirm == JOptionPane.YES_OPTION) {
+                if(!status){
+                    status = true;
+                    model.setValueAt(true,row,3);
+                    JOptionPane.showMessageDialog(NurseUI.this, "帮助成功"," ",JOptionPane.INFORMATION_MESSAGE);
+                    nurse.updateBed_cleanStatus(Integer.parseInt(bed_id), Integer.parseInt(ward_id),true);
+                }
+                if(status){
+                    JOptionPane.showMessageDialog(NurseUI.this, "病人无需帮助"," ",JOptionPane.INFORMATION_MESSAGE);
+                }
+            }
         }
         private void assignEquipment(int row){
             int equipment_id = Integer.parseInt(model.getValueAt(row, 0).toString());
@@ -558,7 +590,7 @@ public class NurseUI extends JFrame implements ActionListener {
                     cleanstatus = true;
                     model.setValueAt(true,row,3);
                     JOptionPane.showMessageDialog(NurseUI.this, "床位清洁成功"," ",JOptionPane.INFORMATION_MESSAGE);
-                    nurse.updateBedstatus(Integer.parseInt(bednum), Integer.parseInt(wardnum),true);
+                    nurse.updateBed_cleanStatus(Integer.parseInt(bednum), Integer.parseInt(wardnum),true);
                 }
                 if(cleanstatus){
                     JOptionPane.showMessageDialog(NurseUI.this, "床位已经清洁，无需再次清洁","",JOptionPane.INFORMATION_MESSAGE);

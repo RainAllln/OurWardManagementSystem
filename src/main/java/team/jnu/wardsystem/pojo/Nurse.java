@@ -98,14 +98,14 @@ public class Nurse extends User {
     sqlSession.commit(); // 提交
     sqlSession.close(); // 关闭连接
   }
-  public String updateBedstatus(int bed_id, int ward_id, boolean b){
+  public String updateBed_cleanStatus(int bed_id, int ward_id, boolean b){
     // 更新病床状态
     for (Bed bed : bedList) {
       if(bed.getBed_id() == bed_id && bed.getWard_id() == ward_id){
         //bed.setClean();
         SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
         BedMapper bedMapper = sqlSession.getMapper(BedMapper.class); // 获取mapper接口
-        int issue= bedMapper.updateBedstatus(bed_id,ward_id,b);
+        int issue= bedMapper.updateBedclean(bed_id,ward_id,b);
         sqlSession.commit(); // 提交
         sqlSession.close(); // 关闭连接
         if (issue > 0) {
@@ -160,5 +160,14 @@ public class Nurse extends User {
             "科室电话：" + department.getTel() + "\n" +
             "科室备注：" + department.getNotes();
     return departmentDetail;
+  }
+  public Boolean findBedStatus(int bed_id, int ward_id) {
+    // 查找病床状态
+    for (Bed bed : bedList) {
+      if(bed.getBed_id() == bed_id && bed.getWard_id() == ward_id){
+        return bed.isClean();
+      }
+    }
+    return true;//true表示已清洁即已帮助
   }
 }
