@@ -362,6 +362,22 @@ public class PatientUI extends JFrame implements ActionListener {
             }
         }else if(btn == editPasswordButton){
             editPassword();
+        }else if(btn == nurseDetailsButton){
+            if (patient.getNurse_id() != 0) {
+                Nurse nurse = patient.getNurse();
+                String NurseDetails = "护士姓名: " + nurse.getNurse_name() + "\n" +
+                        "性别: " + nurse.getGender() + "\n" +
+                        "电话: " + nurse.getPhone();
+                JOptionPane.showMessageDialog(this, NurseDetails, "护士详情", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "您还未分配病床。没有管床护士", "提示", JOptionPane.WARNING_MESSAGE);
+            }
+        }else if(btn == cleanRequestButton){
+            if (patient.sendNeedHelp()) {
+                JOptionPane.showMessageDialog(this, "请求已发送", "提示", JOptionPane.INFORMATION_MESSAGE);
+            }else{
+                JOptionPane.showMessageDialog(this, "请求发送失败,请再试", "错误", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 

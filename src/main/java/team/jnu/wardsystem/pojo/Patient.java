@@ -223,4 +223,18 @@ public class Patient extends User {
     sqlSession.commit(); // 提交
     sqlSession.close(); // 关闭连接
   }
+
+  public boolean sendNeedHelp() {
+    SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
+    BedMapper bedMapper = sqlSession.getMapper(BedMapper.class); // 获取mapper接口
+    int updateline = bedMapper.updateBedstatus(bed_id, ward_id, false);
+    if(updateline > 0) {
+      sqlSession.commit(); // 提交
+      sqlSession.close(); // 关闭连接
+      return true;
+    } else {
+      sqlSession.close(); // 关闭连接
+      return false;
+    }
+  }
 }
