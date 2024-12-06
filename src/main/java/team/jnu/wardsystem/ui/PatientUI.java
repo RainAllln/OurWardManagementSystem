@@ -162,19 +162,19 @@ public class PatientUI extends JFrame implements ActionListener {
         gbc.gridy = 6;
         panel.add(new JLabel("入院时间:"), gbc);
         gbc.gridx = 1;
-        //panel.add(new JLabel(patient.getAdmission_date().toString()), gbc);
+        panel.add(new JLabel(patient.getAdmission_date().toString()), gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 7;
         panel.add(new JLabel("床号:"), gbc);
         gbc.gridx = 1;
-        //panel.add(new JLabel(String.valueOf(patient.getBed_id())), gbc);
+        panel.add(new JLabel(String.valueOf(patient.getBed_id())), gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 8;
         panel.add(new JLabel("病房号:"), gbc);
         gbc.gridx = 1;
-        //panel.add(new JLabel(String.valueOf(patient.getWard_id())), gbc);
+        panel.add(new JLabel(String.valueOf(patient.getWard_id())), gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 9;
@@ -189,7 +189,7 @@ public class PatientUI extends JFrame implements ActionListener {
         gbc.gridy = 10;
         panel.add(new JLabel("医生名:"), gbc);
         gbc.gridx = 1;
-        //panel.add(new JLabel(patient.getDoctor().getDoctor_name()), gbc); // Replace with actual doctor name
+        panel.add(new JLabel(patient.getManagingDoctorName()), gbc); // Replace with actual doctor name
         gbc.gridx = 2;
         doctorDetailsButton = new JButton("详情");
         panel.add(doctorDetailsButton, gbc);
@@ -266,7 +266,7 @@ public class PatientUI extends JFrame implements ActionListener {
         gbc.gridy = 2;
         infoPanel.add(new JLabel("管床护士名:"), gbc);
         gbc.gridx = 1;
-        //infoPanel.add(new JLabel(patient.getNurse().getNurse_name()), gbc); // Replace with actual nurse name
+        infoPanel.add(new JLabel(patient.getManagingNurseName()), gbc); // Replace with actual nurse name
         gbc.gridx = 2;
         nurseDetailsButton = new JButton("查看详情");
         infoPanel.add(nurseDetailsButton, gbc);
@@ -290,13 +290,11 @@ public class PatientUI extends JFrame implements ActionListener {
         //处理按钮事件监听器
         Object btn = e.getSource();
         if(btn == personalInfoButton) {
-            //patient.searchPersonalInfo();
-            //patient.getManagingDoctor();
-            //patient.getManagingNurse();
+            patient.searchPersonalInfo();
             cardLayout.show(mainPanel, "PersonalInfo");
             setButtonColor(personalInfoButton);
         }else if(btn == paymentButton) {
-            //patient.calculateUnpaidAmount();
+            patient.calculateUnpaidAmount();
             cardLayout.show(mainPanel, "Payment");
             setButtonColor(paymentButton);
         }else if(btn == bedInfoButton) {
