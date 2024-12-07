@@ -272,6 +272,9 @@ public class Doctor extends User {
 
   public String getAllBedInfo() {
     StringBuilder info = new StringBuilder();
+    if(patientList == null){
+        searchAllPatient(doctor_id);
+    }
     for (Patient patient : patientList) {
       info.append("病人姓名：").append(patient.getPatient_name()).append("\t").append("床号：").append(patient.getBed_id())
           .append("\t").append("病房号：").append(patient.getWard_id()).append("\n");
@@ -302,5 +305,35 @@ public class Doctor extends User {
     sqlSession.close(); // 关闭连接
     return gender;
   }
+
+  public void unassignEquipment(int department_id) {
+    // 取消分配设备
+    for (Equipment equipment : equipmentList) {
+      if (equipment.getEquipment_id() == department_id) {
+        equipment.setBed_id(0);
+        equipment.setWard_id(0);
+        SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
+        EquipmentMapper equipmentMapper = sqlSession.getMapper(EquipmentMapper.class);
+        equipmentMapper.updateEquipment(equipment.getEquipment_id(), 0, 0);
+        sqlSession.commit(); // 提交
+        sqlSession.close(); // 关闭连接
+      }
+    }
+  }
+
+
+  public String checkEquipment(int bedId, int wardId) {
+    for(Patient patient: patientList){
+        if(patient.getBed_id() == bedId ){
+            if(patient.getWard_id() == wardId){
+                return "";
+        }else{
+            return "病房号错误！";}
+        }
+      }
+    return "病床号错误！";
+    }
+
+
 
 }
