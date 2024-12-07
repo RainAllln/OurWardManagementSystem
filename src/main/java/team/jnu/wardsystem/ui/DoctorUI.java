@@ -450,9 +450,9 @@ public class DoctorUI extends JFrame implements ActionListener {
             if (type.equals("patient")) {
                 add(editButton);
                 add(deleteButton);
-            } else if(type.equals("unassignedPatient")){
+            } else if (type.equals("unassignedPatient")) {
                 add(assignButton);
-            }else{
+            } else {
                 add(assignButton);
                 add(unassignButton);
             }
@@ -472,21 +472,21 @@ public class DoctorUI extends JFrame implements ActionListener {
         private JButton deleteButton = new JButton("删除");
         private JButton assignButton = new JButton("分配");
         private JButton unassignButton = new JButton("取消");
-        private JTable table;
+        // private JTable table;
         private DefaultTableModel model;
-        private String type; // "patient" 或 "equipment" or "unassignedPatient"
+        // private String type; // "patient" 或 "equipment" or "unassignedPatient"
 
         public ButtonEditor(JCheckBox checkBox, JTable table, DefaultTableModel model, String type) {
-            this.table = table;
+            // this.table = table;
             this.model = model;
-            this.type = type;
+            // this.type = type;
             panel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 0));
             if (type.equals("patient")) {
                 panel.add(editButton);
                 panel.add(deleteButton);
-            } else if(type.equals("unassignedPatient")){
+            } else if (type.equals("unassignedPatient")) {
                 panel.add(assignButton);
-            }else{
+            } else {
                 panel.add(assignButton);
                 panel.add(unassignButton);
             }
@@ -505,7 +505,7 @@ public class DoctorUI extends JFrame implements ActionListener {
                             JOptionPane.YES_NO_OPTION);
                     if (confirm == JOptionPane.YES_OPTION) {
                         doctor.unassignEquipment(Integer.parseInt(model.getValueAt(row, 0).toString()));
-                        //将那两列设置为空值
+                        // 将那两列设置为空值
                         model.setValueAt("", row, 2);
                         model.setValueAt("", row, 3);
                         JOptionPane.showMessageDialog(DoctorUI.this, "设备已取消分配");
@@ -578,9 +578,9 @@ public class DoctorUI extends JFrame implements ActionListener {
                 int equipmentId = Integer.parseInt(equipmentField.getText());
                 int bedId = Integer.parseInt(bedField.getText());
                 int wardId = Integer.parseInt(wardField.getText());
-                //判断输入的输入的设备编号、bedId和wardid是否存在
-                String notice=doctor.checkEquipment(bedId,wardId);
-                if(notice!=null){
+                // 判断输入的输入的设备编号、bedId和wardid是否存在
+                String notice = doctor.checkEquipment(bedId, wardId);
+                if (notice != null) {
                     JOptionPane.showMessageDialog(DoctorUI.this, notice);
                     return;
                 }

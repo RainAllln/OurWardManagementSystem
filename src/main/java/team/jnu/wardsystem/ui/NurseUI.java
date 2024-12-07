@@ -514,14 +514,14 @@ public class NurseUI extends JFrame implements ActionListener {
         // private JButton deleteButton = new JButton("删除");
         private JButton assignButton = new JButton("分配");
         private JButton cleanButton = new JButton("清理");
-        private JTable table;
+        // private JTable table;
         private DefaultTableModel model;
-        private String type; // "patient" 或 "equipment" or "unassignedPatient"
+        // private String type; // "patient" 或 "equipment" or "unassignedPatient"
 
         public ButtonEditor(JCheckBox checkBox, JTable table, DefaultTableModel model, String type) {
-            this.table = table;
+            // this.table = table;
             this.model = model;
-            this.type = type;
+            // this.type = type;
             panel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 0));
             if (type.equals("bed")) {
                 panel.add(cleanButton);
