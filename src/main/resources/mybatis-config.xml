@@ -5,7 +5,6 @@
         <!--包扫描，这样写mapper.xml时返回类型可以直接使用类名-->
         <package name="team.jnu.wardsystem.pojo" />
     </typeAliases>
-
     <environments default="development">
         <environment id="development">
             <transactionManager type="JDBC" />

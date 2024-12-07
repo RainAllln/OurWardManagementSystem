@@ -2,8 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="team.jnu.wardsystem.mapper.NurseMapper">
-    <select id="searchNurseById" resultType="Nurse">
-        select * from nurses where nurse_id=#{nurse_id}</select>
+    <select id="searchNurseById" resultType="Nurse"> select * from nurses where nurse_id=#{nurse_id}</select>
     <update id="updatePhone"> UPDATE nurses SET phone = #{phone} WHERE nurse_id = #{nurse_id} </update>
     <select id="searchDepartmentName" resultType="String"> select department_name from departments
         where department_id=#{department_id}</select>

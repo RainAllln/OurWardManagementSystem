@@ -3,9 +3,8 @@
 
 <mapper namespace="team.jnu.wardsystem.mapper.EquipmentMapper">
     <select id="searchAllEquipment" resultType="Equipment">select * from equipments</select>
-    <select id="searchEquipmentList" resultType="Equipment">
-        select * from equipments where ward_id=#{ward_id} and bed_id=#{bed_id}
-    </select>
+    <select id="searchEquipmentList" resultType="Equipment"> select * from equipments where
+        ward_id=#{ward_id} and bed_id=#{bed_id} </select>
     <update id="updateEquipment" parameterType="map"> UPDATE equipments SET bed_id = #{bed_id},
         ward_id = #{ward_id} WHERE equipment_id = #{equipment_id} </update>
     <delete id="deleteEquipment">delete from equipments where equipment_id=#{equipment_id} </delete>
