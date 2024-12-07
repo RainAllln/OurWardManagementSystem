@@ -447,7 +447,7 @@ public class NurseUI extends JFrame implements ActionListener {
         equipmentInfoButton.setBackground(null);
         bedInfoButton.setBackground(null);
 
-        selectedButton.setBackground(Color.orange);
+        selectedButton.setBackground(Color.LIGHT_GRAY);
     }
 
     class ButtonRenderer extends JPanel implements TableCellRenderer {
