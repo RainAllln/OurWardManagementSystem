@@ -22,10 +22,12 @@ public class PatientUI extends JFrame implements ActionListener {
     private JButton bedInfoButton;
 
     // 个人信息组件
+    private JPasswordField PersonalPasswordField;
     private JButton editPasswordButton;
     private JButton editPhoneButton;
     private JButton departmentDetailsButton;
     private JButton doctorDetailsButton;
+    private JButton logoutButton;
 
     // 缴费组件
     private JButton payButton;
@@ -45,7 +47,7 @@ public class PatientUI extends JFrame implements ActionListener {
 
         initMenu(); // 菜单栏创建
         initMainPanel(); // 主面板创建
-        // createBackGroundPanel(); // 背景面板创建
+        setButtonColor(personalInfoButton); // 默认选中个人信息
 
         this.setVisible(true);
     }
@@ -96,11 +98,9 @@ public class PatientUI extends JFrame implements ActionListener {
         gbc.gridy = 1;
         panel.add(new JLabel("密码:"), gbc);
         gbc.gridx = 1;
-        StringBuilder star_password = new StringBuilder();
-        for (int i = 0; i < patient.getPassword().length(); i++) {
-            star_password.append("*");
-        }
-        panel.add(new JLabel(star_password.toString()), gbc);
+        PersonalPasswordField = new JPasswordField(20);
+        PersonalPasswordField.setText(patient.getPassword());
+        PersonalPasswordField.setEditable(false);
         gbc.gridx = 2;
         editPasswordButton = new JButton("编辑");
         editPasswordButton.addActionListener(this);
@@ -179,6 +179,12 @@ public class PatientUI extends JFrame implements ActionListener {
         departmentDetailsButton = new JButton("详情");
         departmentDetailsButton.addActionListener(this);
         panel.add(departmentDetailsButton, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 11;
+        logoutButton = new JButton("退出登录");
+        logoutButton.addActionListener(this);
+        panel.add(logoutButton, gbc);
 
         return panel;
     }
@@ -359,6 +365,13 @@ public class PatientUI extends JFrame implements ActionListener {
                 paymentButton.doClick(); // 自动更新缴费信息
             } else {
                 JOptionPane.showMessageDialog(this, "缴费超过待缴金额", "错误", JOptionPane.ERROR_MESSAGE);
+            }
+        } else if (btn == logoutButton) {
+            // 退出登录
+            int confirm = JOptionPane.showConfirmDialog(this, "确定要退出登录吗？", "确认退出", JOptionPane.YES_NO_OPTION);
+            if (confirm == JOptionPane.YES_OPTION) {
+                this.dispose();
+                new LoginUI();
             }
         }
     }
