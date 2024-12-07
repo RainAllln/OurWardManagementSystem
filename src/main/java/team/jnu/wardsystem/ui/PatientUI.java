@@ -37,32 +37,21 @@ public class PatientUI extends JFrame implements ActionListener {
     private DefaultTableModel equipmentTableModel;
 
     public PatientUI(Patient patient) {
+        super("尊敬的 " + patient.getPatient_name() + "，欢迎您！");
         this.patient = patient;
-        setTitle("Patient UI");
-        setSize(1200, 800);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
+        this.setSize(1200, 800);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setLocationRelativeTo(null);
 
-        createMenuPanel(); // 菜单栏创建
-        createMainPanel(); // 主面板创建
-        createBackGroundPanel(); // 背景面板创建
+        initMenu(); // 菜单栏创建
+        initMainPanel(); // 主面板创建
+        // createBackGroundPanel(); // 背景面板创建
 
-        setVisible(true);
-    }
-
-    private void createBackGroundPanel() {
-        // 创建背景板
-        BackgroundPanel backgroundPanel = new BackgroundPanel("../picture/login.jpg");
-        backgroundPanel.setLayout(new BorderLayout());
-        backgroundPanel.add(mainPanel, BorderLayout.CENTER);
-        backgroundPanel.add(menuPanel, BorderLayout.WEST);
-
-        // 设置背景板为内容面板
-        setContentPane(backgroundPanel);
+        this.setVisible(true);
     }
 
     // 左边菜单栏创建
-    private void createMenuPanel() {
+    private void initMenu() {
         menuPanel = new JPanel(new GridLayout(3, 1));
         personalInfoButton = new JButton("查询个人信息");
         paymentButton = new JButton("缴费");
@@ -80,25 +69,14 @@ public class PatientUI extends JFrame implements ActionListener {
     }
 
     // 右边主界面创建
-    private void createMainPanel() {
+    private void initMainPanel() {
         // Create the main panel with CardLayout
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
 
-        mainPanel.add(createInitialPanel(), "Initial");
+        mainPanel.add(createPersonalInfoPanel(), "PersonalInfo");
 
         this.add(mainPanel, BorderLayout.CENTER);
-    }
-
-    // 一开始的初始图片
-    private JPanel createInitialPanel() {
-        // 加载一张图片和文字“欢迎来带病床管理系统”到初始界面上
-        JPanel panel = new JPanel();
-        JLabel label = new JLabel();
-        label.setIcon(new ImageIcon("../picture/login.jpg"));
-        label.setText("欢迎来带病床管理系统");
-        panel.add(label);
-        return panel;
     }
 
     // 个人信息模块
@@ -437,26 +415,5 @@ public class PatientUI extends JFrame implements ActionListener {
             equipmentTableModel.addRow(new Object[] { equipment.getEquipment_id(), equipment.getEquipment_type() });
         }
         return new JScrollPane(equipmentTable);
-    }
-
-    // 背景图片
-    class BackgroundPanel extends JPanel {
-        private Image backgroundImage;
-
-        public BackgroundPanel(String fileName) {
-            try {
-                backgroundImage = new ImageIcon(fileName).getImage();
-            } catch (Exception e) {
-                System.out.println("背景图片加载失败: " + e.getMessage());
-            }
-        }
-
-        @Override
-        protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
-            if (backgroundImage != null) {
-                g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
-            }
-        }
     }
 }

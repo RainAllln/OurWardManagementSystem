@@ -1,6 +1,7 @@
 package team.jnu.wardsystem.ui;
 
 import javax.swing.*;
+import java.net.URL;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -31,7 +32,7 @@ public class LoginUI extends JFrame implements ActionListener {
 
     public void LoginFrame() {
         // 创建自定义背景面板
-        BackgroundPanel panel = new BackgroundPanel("../picture/login.jpg"); // 使用类路径资源
+        BackgroundPanel panel = new BackgroundPanel(getClass().getResource("/picture/login.jpg"));
         panel.setLayout(new GridBagLayout()); // 使用GridBagLayout以灵活安排控件
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -186,10 +187,10 @@ public class LoginUI extends JFrame implements ActionListener {
     class BackgroundPanel extends JPanel {
         private Image backgroundImage;
 
-        public BackgroundPanel(String fileName) {
+        public BackgroundPanel(URL imageUrl) {
             // 使用类路径资源加载图片
             try {
-                backgroundImage = new ImageIcon(getClass().getResource(fileName)).getImage();
+                backgroundImage = new ImageIcon(imageUrl).getImage();
             } catch (Exception e) {
                 System.out.println("背景图片加载失败: " + e.getMessage());
             }
