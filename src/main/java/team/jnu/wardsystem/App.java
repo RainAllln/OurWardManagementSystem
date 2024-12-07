@@ -7,3 +7,5 @@ public class App {
     LoginUI loginUI = new LoginUI();
   }
 }
+//设备取消分配
+//判断输入的是不是正确的

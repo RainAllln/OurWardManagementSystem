@@ -441,15 +441,20 @@ public class DoctorUI extends JFrame implements ActionListener {
     class ButtonRenderer extends JPanel implements TableCellRenderer {
         private JButton editButton = new JButton("编辑");
         private JButton deleteButton = new JButton("删除");
+
         private JButton assignButton = new JButton("分配");
+        private JButton unassignButton = new JButton("取消");
 
         public ButtonRenderer(String type) {
             setLayout(new FlowLayout(FlowLayout.CENTER, 5, 0));
             if (type.equals("patient")) {
                 add(editButton);
                 add(deleteButton);
-            } else {
+            } else if(type.equals("unassignedPatient")){
                 add(assignButton);
+            }else{
+                add(assignButton);
+                add(unassignButton);
             }
         }
 
@@ -466,6 +471,7 @@ public class DoctorUI extends JFrame implements ActionListener {
         private JButton editButton = new JButton("编辑");
         private JButton deleteButton = new JButton("删除");
         private JButton assignButton = new JButton("分配");
+        private JButton unassignButton = new JButton("取消");
         private JTable table;
         private DefaultTableModel model;
         private String type; // "patient" 或 "equipment" or "unassignedPatient"
@@ -478,8 +484,11 @@ public class DoctorUI extends JFrame implements ActionListener {
             if (type.equals("patient")) {
                 panel.add(editButton);
                 panel.add(deleteButton);
-            } else {
+            } else if(type.equals("unassignedPatient")){
                 panel.add(assignButton);
+            }else{
+                panel.add(assignButton);
+                panel.add(unassignButton);
             }
             // 编辑按钮事件
             editButton.addActionListener(e -> {
@@ -488,6 +497,21 @@ public class DoctorUI extends JFrame implements ActionListener {
                     editPatient(row);
                 }
                 // fireEditingStopped();
+            });
+            unassignButton.addActionListener(e -> {
+                int row = table.getSelectedRow();
+                if (row >= 0) {
+                    int confirm = JOptionPane.showConfirmDialog(DoctorUI.this, "确定要取消分配此设备吗？", "确认取消",
+                            JOptionPane.YES_NO_OPTION);
+                    if (confirm == JOptionPane.YES_OPTION) {
+                        doctor.unassignEquipment(Integer.parseInt(model.getValueAt(row, 0).toString()));
+                        //将那两列设置为空值
+                        model.setValueAt("", row, 2);
+                        model.setValueAt("", row, 3);
+                        JOptionPane.showMessageDialog(DoctorUI.this, "设备已取消分配");
+                    }
+                }
+                fireEditingStopped();
             });
             // 删除按钮事件
             deleteButton.addActionListener(e -> {
@@ -533,7 +557,7 @@ public class DoctorUI extends JFrame implements ActionListener {
             JTextField equipmentField = new JTextField();
             JTextField bedField = new JTextField();
             JTextField wardField = new JTextField();
-
+            // 设置文本框的尺寸
             JPanel assignPanel = new JPanel(new GridLayout(4, 2, 10, 10));
             assignPanel.add(new JLabel("设备编号:"));
             assignPanel.add(equipmentField);
@@ -554,6 +578,12 @@ public class DoctorUI extends JFrame implements ActionListener {
                 int equipmentId = Integer.parseInt(equipmentField.getText());
                 int bedId = Integer.parseInt(bedField.getText());
                 int wardId = Integer.parseInt(wardField.getText());
+                //判断输入的输入的设备编号、bedId和wardid是否存在
+                String notice=doctor.checkEquipment(bedId,wardId);
+                if(notice!=null){
+                    JOptionPane.showMessageDialog(DoctorUI.this, notice);
+                    return;
+                }
                 // 分配设备
                 doctor.assignEquipmentToPatient(equipmentId, bedId, wardId);
                 equipment_add = false;
