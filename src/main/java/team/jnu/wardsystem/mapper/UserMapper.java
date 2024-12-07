@@ -1,10 +1,7 @@
 package team.jnu.wardsystem.mapper;
 
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Update;
-import team.jnu.wardsystem.pojo.User;
-
 import java.util.List;
+import team.jnu.wardsystem.pojo.User;
 
 public interface UserMapper {
 

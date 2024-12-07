@@ -1,14 +1,11 @@
 package team.jnu.wardsystem.pojo;
 
-import lombok.AllArgsConstructor;
+import java.util.List;
 import lombok.Data;
-import lombok.Getter;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.apache.ibatis.session.SqlSession;
 import team.jnu.wardsystem.mapper.*;
-import java.util.List;
-
 import static team.jnu.wardsystem.pojo.Doctor.searchDoctorById;
 
 @Data
@@ -58,12 +55,12 @@ public class Nurse extends User {
 
   public String searchdepartment_name(int department_id) {
     // 根据department_id查询department_name
-      SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
-      NurseMapper nurseMapper = sqlSession.getMapper(NurseMapper.class); // 获取mapper接口
-      String department_name = nurseMapper.searchDepartmentName(department_id); // 获取病人列表
-      sqlSession.close(); // 关闭连接
-      return department_name;
-    }
+    SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
+    NurseMapper nurseMapper = sqlSession.getMapper(NurseMapper.class); // 获取mapper接口
+    String department_name = nurseMapper.searchDepartmentName(department_id); // 获取病人列表
+    sqlSession.close(); // 关闭连接
+    return department_name;
+  }
 
   public void searchAllPatient(int nurse_id) {
     // 查询所有病人,并且将信息存入patientList
@@ -98,14 +95,15 @@ public class Nurse extends User {
     sqlSession.commit(); // 提交
     sqlSession.close(); // 关闭连接
   }
-  public String updateBedstatus(int bed_id, int ward_id, boolean b){
+
+  public String updateBedstatus(int bed_id, int ward_id, boolean b) {
     // 更新病床状态
     for (Bed bed : bedList) {
-      if(bed.getBed_id() == bed_id && bed.getWard_id() == ward_id){
-        //bed.setClean();
+      if (bed.getBed_id() == bed_id && bed.getWard_id() == ward_id) {
+        // bed.setClean();
         SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
         BedMapper bedMapper = sqlSession.getMapper(BedMapper.class); // 获取mapper接口
-        int issue= bedMapper.updateBedstatus(bed_id,ward_id,b);
+        int issue = bedMapper.updateBedstatus(bed_id, ward_id, b);
         sqlSession.commit(); // 提交
         sqlSession.close(); // 关闭连接
         if (issue > 0) {
@@ -116,15 +114,16 @@ public class Nurse extends User {
     }
     return "未找到对应病床";
   }
+
   public String getAllBedInfo() {
     StringBuilder info = new StringBuilder();
     for (Patient patient : patientList) {
-      info.append("病人姓名：").append(patient.getPatient_name()).append("\t")
-              .append("床号：").append(patient.getBed_id()).append("\t")
-              .append("病房号：").append(patient.getWard_id()).append("\n");
+      info.append("病人姓名：").append(patient.getPatient_name()).append("\t").append("床号：").append(patient.getBed_id())
+          .append("\t").append("病房号：").append(patient.getWard_id()).append("\n");
     }
     return info.toString();
   }
+
   public void assignEquipmentToPatient(int equipmentId, int bedId, int wardId) {
     // 分配设备给病人
     for (Equipment equipment : equipmentList) {
@@ -139,6 +138,7 @@ public class Nurse extends User {
       }
     }
   }
+
   public String updatePatientNote(int bed_id, int ward_id, String notes) {
     // 更新病人备注信息
     for (Patient patient : patientList) {
@@ -157,34 +157,35 @@ public class Nurse extends User {
     }
     return "未找到对应病人";
   }
+
   public String getDepartmentDetail(int department_id) {
     // 获取科室详细信息
     SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
     DepartmentMapper departmentMapper = sqlSession.getMapper(DepartmentMapper.class); // 获取mapper接口
     Department department = departmentMapper.getDepartmentDetail(department_id); // 获取科室列表
     sqlSession.close(); // 关闭连接
-    //将所有信息拼接成字符串返回
-    String departmentDetail = "科室名称：" + department.getDepartment_name() + "\n" +
-            "科室主任：" + searchDoctorById(department.getHead_id()).getDoctor_name() + "\n" +
-            "科室电话：" + department.getTel() + "\n" +
-            "科室备注：" + department.getNotes();
+    // 将所有信息拼接成字符串返回
+    String departmentDetail = "科室名称：" + department.getDepartment_name() + "\n" + "科室主任："
+        + searchDoctorById(department.getHead_id()).getDoctor_name() + "\n" + "科室电话：" + department.getTel() + "\n"
+        + "科室备注：" + department.getNotes();
     return departmentDetail;
   }
+
   public Boolean findBedClean(int bed_id, int ward_id) {
     searchAllBed(nurse_id);
     // 查找病床状态
     for (Bed bed : bedList) {
-      if(bed.getBed_id() == bed_id && bed.getWard_id() == ward_id){
+      if (bed.getBed_id() == bed_id && bed.getWard_id() == ward_id) {
         return bed.isClean();
       }
     }
-    return true;//true表示已清洁即已帮助
+    return true;// true表示已清洁即已帮助
   }
 
   public Boolean findBedUse(int bed_id, int ward_id) {
     searchAllBed(nurse_id);
     for (Bed bed : bedList) {
-      if(bed.getBed_id() == bed_id && bed.getWard_id() == ward_id){
+      if (bed.getBed_id() == bed_id && bed.getWard_id() == ward_id) {
         return bed.isIn_use();
       }
     }

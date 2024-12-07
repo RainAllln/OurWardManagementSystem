@@ -1,15 +1,13 @@
 package team.jnu.wardsystem.pojo;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.EqualsAndHashCode;
-import org.apache.ibatis.session.SqlSession;
-import team.jnu.wardsystem.mapper.*;
-
-import java.time.LocalDateTime;
 import java.sql.Date;
 import java.util.Iterator;
 import java.util.List;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import org.apache.ibatis.session.SqlSession;
+import team.jnu.wardsystem.mapper.*;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -176,13 +174,13 @@ public class Doctor extends User {
     }
   }
 
-  public String deletePatient(int bed_id, int ward_id ,Date time) {
+  public String deletePatient(int bed_id, int ward_id, Date time) {
     // 删除病人
     Iterator<Patient> iterator = patientList.iterator();
     while (iterator.hasNext()) {
       Patient patient = iterator.next();
       if (patient.getBed_id() == bed_id && patient.getWard_id() == ward_id) {
-        if(!patient.isCheck_out(time)){
+        if (!patient.isCheck_out(time)) {
           return "";
         }
         iterator.remove();
@@ -201,7 +199,6 @@ public class Doctor extends User {
     }
     return null;
   }
-
 
   public void searchUnassignedPatient() {
     // 查询未分配病人
@@ -222,8 +219,8 @@ public class Doctor extends User {
         break;
       }
     }
-    //删除unsignedPatientList中的病人
-    Patient patient=new Patient();
+    // 删除unsignedPatientList中的病人
+    Patient patient = new Patient();
     Iterator<Patient> iterator1 = unassignedPatientList.iterator();
     while (iterator1.hasNext()) {
       patient = iterator1.next();
@@ -242,13 +239,13 @@ public class Doctor extends User {
     patientMapper.updatePatientStatus(patient);
     sqlSession.commit(); // 提交
     sqlSession.close(); // 关闭连接
-    //更新床的状态
+    // 更新床的状态
     sqlSession = sqlSessionFactory.openSession(); // 打开链接
     BedMapper bedMapper = sqlSession.getMapper(BedMapper.class); // 获取mapper接口
     bedMapper.updateBedStatus(bedId, wardId, true);
     sqlSession.commit(); // 提交
     sqlSession.close(); // 关闭连接
-    //更新病人的表
+    // 更新病人的表
     patientList.add(patient);
   }
 
@@ -266,20 +263,18 @@ public class Doctor extends User {
     DepartmentMapper departmentMapper = sqlSession.getMapper(DepartmentMapper.class); // 获取mapper接口
     Department department = departmentMapper.getDepartmentDetail(department_id); // 获取病人列表
     sqlSession.close(); // 关闭连接
-    //将所有信息拼接成字符串返回
-    String departmentDetail = "科室名称：" + department.getDepartment_name() + "\n" +
-            "科室负责人：" +searchDoctorById(department.getHead_id()).doctor_name + "\n" +
-            "科室电话：" + department.getTel() + "\n" +
-            "科室备注：" + department.getNotes();
+    // 将所有信息拼接成字符串返回
+    String departmentDetail = "科室名称：" + department.getDepartment_name() + "\n" + "科室负责人："
+        + searchDoctorById(department.getHead_id()).doctor_name + "\n" + "科室电话：" + department.getTel() + "\n" + "科室备注："
+        + department.getNotes();
     return departmentDetail;
   }
 
   public String getAllBedInfo() {
     StringBuilder info = new StringBuilder();
     for (Patient patient : patientList) {
-      info.append("病人姓名：").append(patient.getPatient_name()).append("\t")
-              .append("床号：").append(patient.getBed_id()).append("\t")
-              .append("病房号：").append(patient.getWard_id()).append("\n");
+      info.append("病人姓名：").append(patient.getPatient_name()).append("\t").append("床号：").append(patient.getBed_id())
+          .append("\t").append("病房号：").append(patient.getWard_id()).append("\n");
     }
     return info.toString();
   }

@@ -1,16 +1,10 @@
 package team.jnu.wardsystem.pojo;
 
+import java.util.List;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
-import team.jnu.wardsystem.mapper.BedMapper;
-import team.jnu.wardsystem.mapper.EquipmentMapper;
-
-import java.io.InputStream;
-import java.util.List;
 
 @Data
 @Setter

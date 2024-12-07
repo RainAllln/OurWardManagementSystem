@@ -1,27 +1,23 @@
 package team.jnu.wardsystem.ui;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import lombok.Getter;
-import org.apache.ibatis.session.SqlSession;
 import team.jnu.wardsystem.pojo.Doctor;
 import team.jnu.wardsystem.pojo.Nurse;
 import team.jnu.wardsystem.pojo.Patient;
 import team.jnu.wardsystem.pojo.User;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 public class LoginUI extends JFrame implements ActionListener {
-    private JTextField userText;         // 用户名输入框
+    private JTextField userText; // 用户名输入框
     private JPasswordField passwordText; // 密码输入框
-    private JButton loginButton;         // 登录按钮
-    private JButton registerButton;      // 注册按钮
+    private JButton loginButton; // 登录按钮
+    private JButton registerButton; // 注册按钮
 
     @Getter
-    private User user;                   // 对应的用户
+    private User user; // 对应的用户
 
     // 构造函数
     public LoginUI() {
@@ -119,21 +115,21 @@ public class LoginUI extends JFrame implements ActionListener {
                 JOptionPane.showMessageDialog(this, LoginMsg);
                 this.dispose(); // 关闭登录界面
                 // 可以在这里打开主界面，例如
-                if(user.getUser_id() / 10000 == 1) {
+                if (user.getUser_id() / 10000 == 1) {
                     // 病人
                     Patient patient = Patient.searchPatientById(user.getUser_id());
                     patient.setUsername(username);
                     patient.setPassword(User.getMD5Str(password));
                     patient.setUser_id(user.getUser_id());
                     new PatientUI(patient);
-                } else if(user.getUser_id() / 10000 == 2) {
+                } else if (user.getUser_id() / 10000 == 2) {
                     // 医生
                     Doctor doctor = Doctor.searchDoctorById(user.getUser_id());
                     doctor.setUsername(username);
                     doctor.setPassword(password);
                     doctor.setUser_id(user.getUser_id());
                     new DoctorUI(doctor);
-                } else if(user.getUser_id() / 10000 == 3) {
+                } else if (user.getUser_id() / 10000 == 3) {
                     // 护士
                     Nurse nurse = Nurse.searchNurseById(user.getUser_id());
                     nurse.setUsername(username);
@@ -152,31 +148,25 @@ public class LoginUI extends JFrame implements ActionListener {
             JTextField newGenderText = new JTextField();
             JTextField newAgeText = new JTextField();
             JTextField newPhoneText = new JTextField();
-            Object[] message = {
-                    "用户名:", newUserText,
-                    "密码:", newPasswordText,
-                    "真实姓名",newNameText,
-                    "性别",newGenderText,
-                    "年龄",newAgeText,
-                    "手机号",newPhoneText
-            };
+            Object[] message = { "用户名:", newUserText, "密码:", newPasswordText, "真实姓名", newNameText, "性别", newGenderText,
+                    "年龄", newAgeText, "手机号", newPhoneText };
             int option = JOptionPane.showConfirmDialog(this, message, "注册", JOptionPane.OK_CANCEL_OPTION);
             if (option == JOptionPane.OK_OPTION) {
                 String newUsername = newUserText.getText();
-                String newPassword = User.getMD5Str(new String(newPasswordText.getPassword())) ;
+                String newPassword = User.getMD5Str(new String(newPasswordText.getPassword()));
                 String newName = newNameText.getText();
                 String newGender = newGenderText.getText();
                 int newAge = Integer.parseInt(newAgeText.getText());
                 String newPhone = newPhoneText.getText();
                 // 创建新用户和病人对象
                 Patient patient = new Patient(newUsername, newPassword, newAge, newGender, newName, newPhone);
-                User newUser = patient;   // 向上转型,从patient对象中提取出用户名和密码
+                User newUser = patient; // 向上转型,从patient对象中提取出用户名和密码
                 // 插入新用户和新病人到数据库中
                 try {
                     patient.insertPatient();
                     if (!newUser.isExistUser(newUsername)) {
                         newUser.register();
-                    }else{
+                    } else {
                         JOptionPane.showMessageDialog(this, "用户名已存在");
                         return;
                     }
@@ -185,7 +175,7 @@ public class LoginUI extends JFrame implements ActionListener {
                     return;
                 }
                 JOptionPane.showMessageDialog(this, "注册成功");
-                //直接登录病人界面
+                // 直接登录病人界面
                 this.dispose(); // 关闭登录界面
                 new PatientUI(patient);
             }

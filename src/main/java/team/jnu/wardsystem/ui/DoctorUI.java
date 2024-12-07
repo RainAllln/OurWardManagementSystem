@@ -17,13 +17,12 @@ import java.util.List;
 
 // DoctorUI类实现医生界面，包括个人信息、病人信息和设备信息
 public class DoctorUI extends JFrame implements ActionListener {
-    private boolean patient_add =false;
-    private boolean equipment_add=false;
-    private boolean unpatient_add=false;
+    private boolean patient_add = false;
+    private boolean equipment_add = false;
+    private boolean unpatient_add = false;
     private Doctor doctor; // 当前登录的医生
-    private Bed bed;
     private JPanel menuPanel;
-   private JPanel mainPanel;
+    private JPanel mainPanel;
 
     private CardLayout cardLayout;
 
@@ -43,7 +42,7 @@ public class DoctorUI extends JFrame implements ActionListener {
     private JTextField departmentField;
     private JButton editPasswordButton;
     private JButton editPhoneButton;
-    //查看所属科室详情的按钮
+    // 查看所属科室详情的按钮
     private JButton departmentDetailButton;
 
     private JButton logoutButton;
@@ -103,8 +102,8 @@ public class DoctorUI extends JFrame implements ActionListener {
 
         // 初始化个人信息功能面板
         mainPanel.add(initPersonalInfoPanel(), "personalInfo");
-        //mainPanel.add(initPatientInfoPanel(), "patientInfo");
-        //mainPanel.add(initEquipmentInfoPanel(), "equipmentInfo");
+        // mainPanel.add(initPatientInfoPanel(), "patientInfo");
+        // mainPanel.add(initEquipmentInfoPanel(), "equipmentInfo");
 
         this.add(mainPanel, BorderLayout.CENTER);
     }
@@ -156,7 +155,7 @@ public class DoctorUI extends JFrame implements ActionListener {
         departmentField.setText(doctor.getDepartment_name());
         departmentField.setEditable(false);
         departmentDetailButton = new JButton("查看详情");
-        departmentDetailButton.addActionListener(this );
+        departmentDetailButton.addActionListener(this);
 
         // Add the logout button
         logoutButton = new JButton("退出登录");
@@ -225,7 +224,7 @@ public class DoctorUI extends JFrame implements ActionListener {
         JPanel panel = new JPanel(new BorderLayout());
 
         // 表格模型
-        String[] columns = {"姓名", "性别", "年龄", "病床号", "病房","电话","备注", "操作"};
+        String[] columns = { "姓名", "性别", "年龄", "病床号", "病房", "电话", "备注", "操作" };
         patientTableModel = new DefaultTableModel(columns, 0) {
             // 使表格不可编辑除了"操作"列
             @Override
@@ -245,7 +244,8 @@ public class DoctorUI extends JFrame implements ActionListener {
 
         // 设置"操作"列的渲染器和编辑器
         patientTable.getColumn("操作").setCellRenderer(new ButtonRenderer("patient"));
-        patientTable.getColumn("操作").setCellEditor(new ButtonEditor(new JCheckBox(), patientTable, patientTableModel, "patient"));
+        patientTable.getColumn("操作")
+                .setCellEditor(new ButtonEditor(new JCheckBox(), patientTable, patientTableModel, "patient"));
 
         // 设置表格行高
         patientTable.setRowHeight(30);
@@ -260,7 +260,7 @@ public class DoctorUI extends JFrame implements ActionListener {
         JPanel panel = new JPanel(new BorderLayout());
 
         // 表格模型
-        String[] columns = {"设备编号", "设备类型", "使用病床","使用病房","操作"};
+        String[] columns = { "设备编号", "设备类型", "使用病床", "使用病房", "操作" };
         equipmentTableModel = new DefaultTableModel(columns, 0) {
             // 使表格不可编辑除了"操作"列
             @Override
@@ -280,7 +280,8 @@ public class DoctorUI extends JFrame implements ActionListener {
 
         // 设置"操作"列的渲染器和编辑器
         equipmentTable.getColumn("操作").setCellRenderer(new ButtonRenderer("equipment"));
-        equipmentTable.getColumn("操作").setCellEditor(new ButtonEditor(new JCheckBox(), equipmentTable, equipmentTableModel, "equipment"));
+        equipmentTable.getColumn("操作")
+                .setCellEditor(new ButtonEditor(new JCheckBox(), equipmentTable, equipmentTableModel, "equipment"));
 
         // 设置表格行高
         equipmentTable.setRowHeight(30);
@@ -289,11 +290,12 @@ public class DoctorUI extends JFrame implements ActionListener {
 
         return panel;
     }
+
     private JPanel initUnassignedPatientPanel() {
         JPanel panel = new JPanel(new BorderLayout());
 
         // Table model
-        String[] columns = {"姓名", "性别", "年龄", "电话", "操作"};
+        String[] columns = { "姓名", "性别", "年龄", "电话", "操作" };
         DefaultTableModel unassignedPatientTableModel = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -305,7 +307,8 @@ public class DoctorUI extends JFrame implements ActionListener {
 
         // Set cell renderer and editor for "操作" column
         unassignedPatientTable.getColumn("操作").setCellRenderer(new ButtonRenderer("unassignedPatient"));
-        unassignedPatientTable.getColumn("操作").setCellEditor(new ButtonEditor(new JCheckBox(), unassignedPatientTable, unassignedPatientTableModel, "unassignedPatient"));
+        unassignedPatientTable.getColumn("操作").setCellEditor(new ButtonEditor(new JCheckBox(), unassignedPatientTable,
+                unassignedPatientTableModel, "unassignedPatient"));
 
         // Set row height
         unassignedPatientTable.setRowHeight(30);
@@ -314,55 +317,42 @@ public class DoctorUI extends JFrame implements ActionListener {
 
         return panel;
     }
+
     private void loadUnassignedPatientData(DefaultTableModel model) {
-        if(doctor.getUnassignedPatientList()==null){
+        if (doctor.getUnassignedPatientList() == null) {
             doctor.searchUnassignedPatient();
         }
         List<Patient> unassignedPatients = doctor.getUnassignedPatientList();
-        if(unassignedPatients==null){
+        if (unassignedPatients == null) {
             return;
         }
         for (Patient patient : unassignedPatients) {
-            model.addRow(new Object[]{
-                    patient.getPatient_name(),
-                    patient.getGender(),
-                    patient.getAge(),
-                    patient.getPhone(),
-            });
+            model.addRow(new Object[] { patient.getPatient_name(), patient.getGender(), patient.getAge(),
+                    patient.getPhone(), });
         }
     }
+
     private void loadPatientData() {
         // 将病人数据添加到表格
-        if(doctor.getPatientList()==null){
+        if (doctor.getPatientList() == null) {
             doctor.searchAllPatient(doctor.getDoctor_id());
         }
-        List<Patient> patients=doctor.getPatientList();
+        List<Patient> patients = doctor.getPatientList();
         for (Patient patient : patients) {
-            patientTableModel.addRow(new Object[]{
-                    patient.getPatient_name(),
-                    patient.getGender(),
-                    patient.getAge(),
-                    patient.getBed_id(),
-                    patient.getWard_id(),
-                    patient.getPhone(),
-                    patient.getNotes()
-            });
+            patientTableModel.addRow(new Object[] { patient.getPatient_name(), patient.getGender(), patient.getAge(),
+                    patient.getBed_id(), patient.getWard_id(), patient.getPhone(), patient.getNotes() });
         }
     }
 
     private void loadEquipmentData() {
         // 将设备数据添加到表格
-        if(doctor.getEquipmentList()==null){
+        if (doctor.getEquipmentList() == null) {
             doctor.searchAllEquipment();
         }
-        List<Equipment> equipments=doctor.getEquipmentList();
+        List<Equipment> equipments = doctor.getEquipmentList();
         for (Equipment equipment : equipments) {
-            equipmentTableModel.addRow(new Object[]{
-                    equipment.getEquipment_id(),
-                    equipment.getEquipment_type(),
-                    equipment.getBed_id(),
-                    equipment.getWard_id()
-            });
+            equipmentTableModel.addRow(new Object[] { equipment.getEquipment_id(), equipment.getEquipment_type(),
+                    equipment.getBed_id(), equipment.getWard_id() });
         }
     }
 
@@ -373,35 +363,34 @@ public class DoctorUI extends JFrame implements ActionListener {
             cardLayout.show(mainPanel, "personalInfo");
             setButtonColor(personalInfoButton);
         } else if (source == patientInfoButton) {
-            if(!patient_add){//点击才能加载数据
+            if (!patient_add) {// 点击才能加载数据
                 mainPanel.add(initPatientInfoPanel(), "patientInfo");
-                patient_add=true;
+                patient_add = true;
             }
             cardLayout.show(mainPanel, "patientInfo");
             setButtonColor(patientInfoButton);
         } else if (source == equipmentInfoButton) {
-            if(!equipment_add){//点击才能加载数据
+            if (!equipment_add) {// 点击才能加载数据
                 mainPanel.add(initEquipmentInfoPanel(), "equipmentInfo");
-                equipment_add=true;
+                equipment_add = true;
             }
             cardLayout.show(mainPanel, "equipmentInfo");
             setButtonColor(equipmentInfoButton);
-        } else if(source==unassignedPatientButton){
-            if(!unpatient_add){//点击才能加载数据
+        } else if (source == unassignedPatientButton) {
+            if (!unpatient_add) {// 点击才能加载数据
                 mainPanel.add(initUnassignedPatientPanel(), "unassignedPatient");
-                unpatient_add=true;
+                unpatient_add = true;
             }
             cardLayout.show(mainPanel, "unassignedPatient");
             setButtonColor(unassignedPatientButton);
-        }
-        else if (source == editPasswordButton) {
+        } else if (source == editPasswordButton) {
             // 处理修改密码
             JPasswordField newPasswordField = new JPasswordField(20);
             int option = JOptionPane.showConfirmDialog(this, newPasswordField, "请输入新密码:", JOptionPane.OK_CANCEL_OPTION);
             if (option == JOptionPane.OK_OPTION) {
                 String newPassword = new String(newPasswordField.getPassword());
                 if (!newPassword.trim().isEmpty()) {
-                    if(doctor.getPassword().equals(newPassword)){
+                    if (doctor.getPassword().equals(newPassword)) {
                         JOptionPane.showMessageDialog(this, "新密码不能与旧密码相同");
                         return;
                     }
@@ -416,7 +405,7 @@ public class DoctorUI extends JFrame implements ActionListener {
             // 处理修改手机号
             String newPhone = JOptionPane.showInputDialog(this, "请输入新手机号:");
             if (newPhone != null && !newPhone.trim().isEmpty()) {
-                if(doctor.getPhone().equals(newPhone)){
+                if (doctor.getPhone().equals(newPhone)) {
                     JOptionPane.showMessageDialog(this, "新手机号不能与旧手机号相同");
                     return;
                 }
@@ -426,10 +415,10 @@ public class DoctorUI extends JFrame implements ActionListener {
             } else {
                 JOptionPane.showMessageDialog(this, "手机号不能为空");
             }
-        }else if(source==departmentDetailButton){
-            //查看所属科室详情
-            JOptionPane.showMessageDialog(this,doctor.getDepartmentDetail(doctor.getDepartment_id()));
-        }else if(source==logoutButton){
+        } else if (source == departmentDetailButton) {
+            // 查看所属科室详情
+            JOptionPane.showMessageDialog(this, doctor.getDepartmentDetail(doctor.getDepartment_id()));
+        } else if (source == logoutButton) {
             // 退出登录
             int confirm = JOptionPane.showConfirmDialog(this, "确定要退出登录吗？", "确认退出", JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.YES_OPTION) {
@@ -437,7 +426,6 @@ public class DoctorUI extends JFrame implements ActionListener {
                 new LoginUI();
             }
         }
-        // TODO: 处理其他按钮和菜单项的事件
     }
 
     // 设置菜单按钮的背景颜色，激活当前模块
@@ -457,16 +445,17 @@ public class DoctorUI extends JFrame implements ActionListener {
 
         public ButtonRenderer(String type) {
             setLayout(new FlowLayout(FlowLayout.CENTER, 5, 0));
-            if(type.equals("patient")){
+            if (type.equals("patient")) {
                 add(editButton);
                 add(deleteButton);
-            }else {
+            } else {
                 add(assignButton);
             }
         }
 
         @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+                int row, int column) {
             return this;
         }
     }
@@ -486,10 +475,10 @@ public class DoctorUI extends JFrame implements ActionListener {
             this.model = model;
             this.type = type;
             panel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 0));
-            if(type.equals("patient")){
+            if (type.equals("patient")) {
                 panel.add(editButton);
                 panel.add(deleteButton);
-            }else {
+            } else {
                 panel.add(assignButton);
             }
             // 编辑按钮事件
@@ -498,18 +487,21 @@ public class DoctorUI extends JFrame implements ActionListener {
                 if (row >= 0) {
                     editPatient(row);
                 }
-                //fireEditingStopped();
+                // fireEditingStopped();
             });
             // 删除按钮事件
             deleteButton.addActionListener(e -> {
                 int row = table.getSelectedRow();
                 if (row >= 0) {
-                    int confirm = JOptionPane.showConfirmDialog(DoctorUI.this, "确定要删除此条记录吗？", "确认删除", JOptionPane.YES_NO_OPTION);
+                    int confirm = JOptionPane.showConfirmDialog(DoctorUI.this, "确定要删除此条记录吗？", "确认删除",
+                            JOptionPane.YES_NO_OPTION);
                     if (confirm == JOptionPane.YES_OPTION) {
                         if (type.equals("patient")) {
-                            //根据病人姓名和病床号删除病人
-                            String notice=doctor.deletePatient(Integer.parseInt(model.getValueAt(row, 3).toString()), Integer.parseInt(model.getValueAt(row, 4).toString()),new Date(System.currentTimeMillis()));
-                            if(notice==null){
+                            // 根据病人姓名和病床号删除病人
+                            String notice = doctor.deletePatient(Integer.parseInt(model.getValueAt(row, 3).toString()),
+                                    Integer.parseInt(model.getValueAt(row, 4).toString()),
+                                    new Date(System.currentTimeMillis()));
+                            if (notice == null) {
                                 JOptionPane.showMessageDialog(DoctorUI.this, "病人还没缴费！");
                                 return;
                             }
@@ -523,18 +515,19 @@ public class DoctorUI extends JFrame implements ActionListener {
             // 分配按钮事件
             assignButton.addActionListener(e -> {
                 int row = table.getSelectedRow();
-                if (row >=0) {
-                    if(type.equals("unassignedPatient")){
+                if (row >= 0) {
+                    if (type.equals("unassignedPatient")) {
                         // 分配病床和病房
-                    assignBedAndWard(row,model.getValueAt(row,1).toString());
-                }else {
-                        //分配设备
+                        assignBedAndWard(row, model.getValueAt(row, 1).toString());
+                    } else {
+                        // 分配设备
                         assignEquipment(row);
                     }
                 }
-                //fireEditingStopped();
+                // fireEditingStopped();
             });
         }
+
         // 弹出分配病床和病房的对话框
         private void assignEquipment(int row) {
             JTextField equipmentField = new JTextField();
@@ -555,18 +548,20 @@ public class DoctorUI extends JFrame implements ActionListener {
             assignPanel.add(new JLabel("病房信息:"));
             assignPanel.add(new JScrollPane(unassignedEquipmentArea));
 
-            int result = JOptionPane.showConfirmDialog(DoctorUI.this, assignPanel, "分配设备", JOptionPane.OK_CANCEL_OPTION);
+            int result = JOptionPane.showConfirmDialog(DoctorUI.this, assignPanel, "分配设备",
+                    JOptionPane.OK_CANCEL_OPTION);
             if (result == JOptionPane.OK_OPTION) {
                 int equipmentId = Integer.parseInt(equipmentField.getText());
                 int bedId = Integer.parseInt(bedField.getText());
                 int wardId = Integer.parseInt(wardField.getText());
                 // 分配设备
                 doctor.assignEquipmentToPatient(equipmentId, bedId, wardId);
-                equipment_add=false;
+                equipment_add = false;
                 JOptionPane.showMessageDialog(DoctorUI.this, "设备已分配");
             }
         }
-        private void assignBedAndWard(int row,String gender) {
+
+        private void assignBedAndWard(int row, String gender) {
 
             JTextField bedField = new JTextField();
             JTextField wardField = new JTextField();
@@ -583,39 +578,40 @@ public class DoctorUI extends JFrame implements ActionListener {
             assignPanel.add(new JLabel("未分配病床:"));
             assignPanel.add(new JScrollPane(unassignedPatientsArea));
 
-            int result = JOptionPane.showConfirmDialog(DoctorUI.this, assignPanel, "分配病床和病房", JOptionPane.OK_CANCEL_OPTION);
+            int result = JOptionPane.showConfirmDialog(DoctorUI.this, assignPanel, "分配病床和病房",
+                    JOptionPane.OK_CANCEL_OPTION);
             if (result == JOptionPane.OK_OPTION) {
                 int bedId = Integer.parseInt(bedField.getText());
                 int wardId = Integer.parseInt(wardField.getText());
                 // 分配病床和病房
                 doctor.assignBedAndWardToPatient(bedId, wardId);
                 model.removeRow(row);
-                patient_add=false;
+                patient_add = false;
                 JOptionPane.showMessageDialog(DoctorUI.this, "病床和病房已分配");
             }
         }
+
         private String getUnassignedPatientsInfo(String gender) {
             StringBuilder info = new StringBuilder();
-            if(doctor.getUnassignedBedList()==null){
+            if (doctor.getUnassignedBedList() == null) {
                 doctor.searchUnassignedBedList();
             }
             List<Bed> unassignedBed = doctor.getUnassignedBedList();
-            int num=1;
+            int num = 1;
             for (Bed bed : unassignedBed) {
-                if((doctor.seachGender(bed.getWard_id())).equals(gender))
-                info.append("序号: ").append(num++)
-                        .append(" 病床号: ").append(bed.getBed_id())
-                        .append(" 病房号: ").append(bed.getWard_id())
-                        .append("\n");
+                if ((doctor.seachGender(bed.getWard_id())).equals(gender))
+                    info.append("序号: ").append(num++).append(" 病床号: ").append(bed.getBed_id()).append(" 病房号: ")
+                            .append(bed.getWard_id()).append("\n");
             }
             return info.toString();
         }
+
         // 弹出编辑病人信息的对话框
         // 修改 editPatient 方法中的类型转换
         private void editPatient(int row) {
             String bedNumber = model.getValueAt(row, 3).toString();
             String ward = model.getValueAt(row, 4).toString();
-            String notes = (String)model.getValueAt(row, 6);
+            String notes = (String) model.getValueAt(row, 6);
             JTextField bedField = new JTextField(bedNumber);
             JTextField wardField = new JTextField(ward);
             JTextField notesField = new JTextField(notes);
@@ -628,17 +624,20 @@ public class DoctorUI extends JFrame implements ActionListener {
             editPanel.add(new JLabel("备注:"));
             editPanel.add(notesField);
 
-            int result = JOptionPane.showConfirmDialog(DoctorUI.this, editPanel, "编辑病人信息", JOptionPane.OK_CANCEL_OPTION);
+            int result = JOptionPane.showConfirmDialog(DoctorUI.this, editPanel, "编辑病人信息",
+                    JOptionPane.OK_CANCEL_OPTION);
             if (result == JOptionPane.OK_OPTION) {
-                if(!bedNumber.equals(bedField.getText())){//修改了信息要更新数据库
-                    doctor.updatePatientBed(Integer.parseInt(bedNumber), Integer.parseInt(ward), Integer.parseInt(bedField.getText()));
+                if (!bedNumber.equals(bedField.getText())) {// 修改了信息要更新数据库
+                    doctor.updatePatientBed(Integer.parseInt(bedNumber), Integer.parseInt(ward),
+                            Integer.parseInt(bedField.getText()));
                     model.setValueAt(bedField.getText(), row, 3);
                 }
-                if(!ward.equals(wardField.getText())){//修改了信息要更新数据库
-                    doctor.updatePatientWard(Integer.parseInt(bedNumber), Integer.parseInt(ward), Integer.parseInt(wardField.getText()));
+                if (!ward.equals(wardField.getText())) {// 修改了信息要更新数据库
+                    doctor.updatePatientWard(Integer.parseInt(bedNumber), Integer.parseInt(ward),
+                            Integer.parseInt(wardField.getText()));
                     model.setValueAt(wardField.getText(), row, 4);
                 }
-                if(!notes.equals(notesField.getText())){//修改了信息要更新数据库
+                if (!notes.equals(notesField.getText())) {// 修改了信息要更新数据库
                     doctor.updatePatientNote(Integer.parseInt(bedNumber), Integer.parseInt(ward), notesField.getText());
                     model.setValueAt(notesField.getText(), row, 6);
                 }
@@ -647,7 +646,8 @@ public class DoctorUI extends JFrame implements ActionListener {
         }
 
         @Override
-        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row,
+                int column) {
             return panel;
         }
 

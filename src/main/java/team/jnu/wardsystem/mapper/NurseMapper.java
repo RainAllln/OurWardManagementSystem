@@ -1,7 +1,6 @@
 package team.jnu.wardsystem.mapper;
 
 import org.apache.ibatis.annotations.Param;
-import team.jnu.wardsystem.pojo.Doctor;
 import team.jnu.wardsystem.pojo.Nurse;
 
 public interface NurseMapper {

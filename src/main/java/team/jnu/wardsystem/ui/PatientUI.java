@@ -2,43 +2,38 @@ package team.jnu.wardsystem.ui;
 
 import team.jnu.wardsystem.pojo.*;
 
-import javax.print.Doc;
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableCellEditor;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.List;
 
 public class PatientUI extends JFrame implements ActionListener {
-    private Patient patient;        //病人
+    private Patient patient; // 病人
 
-    //画布组件
+    // 画布组件
     private JPanel mainPanel;
     private JPanel menuPanel;
     private CardLayout cardLayout;
 
-    //菜单按钮
+    // 菜单按钮
     private JButton personalInfoButton;
     private JButton paymentButton;
     private JButton bedInfoButton;
 
-    //个人信息组件
+    // 个人信息组件
     private JButton editPasswordButton;
     private JButton editPhoneButton;
     private JButton departmentDetailsButton;
     private JButton doctorDetailsButton;
 
-    //缴费组件
+    // 缴费组件
     private JButton payButton;
     private JButton totalPaymentButton;
 
-    //病床信息组件
+    // 病床信息组件
     private JButton cleanRequestButton;
     private JButton nurseDetailsButton;
-    private JTable equipmentTable;
     private DefaultTableModel equipmentTableModel;
 
     public PatientUI(Patient patient) {
@@ -48,9 +43,9 @@ public class PatientUI extends JFrame implements ActionListener {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        createMenuPanel();  //菜单栏创建
-        createMainPanel();  //主面板创建
-        createBackGroundPanel();  //背景面板创建
+        createMenuPanel(); // 菜单栏创建
+        createMainPanel(); // 主面板创建
+        createBackGroundPanel(); // 背景面板创建
 
         setVisible(true);
     }
@@ -66,7 +61,7 @@ public class PatientUI extends JFrame implements ActionListener {
         setContentPane(backgroundPanel);
     }
 
-    //左边菜单栏创建
+    // 左边菜单栏创建
     private void createMenuPanel() {
         menuPanel = new JPanel(new GridLayout(3, 1));
         personalInfoButton = new JButton("查询个人信息");
@@ -83,7 +78,8 @@ public class PatientUI extends JFrame implements ActionListener {
 
         this.add(menuPanel, BorderLayout.WEST);
     }
-    //右边主界面创建
+
+    // 右边主界面创建
     private void createMainPanel() {
         // Create the main panel with CardLayout
         cardLayout = new CardLayout();
@@ -94,9 +90,9 @@ public class PatientUI extends JFrame implements ActionListener {
         this.add(mainPanel, BorderLayout.CENTER);
     }
 
-    //一开始的初始图片
+    // 一开始的初始图片
     private JPanel createInitialPanel() {
-        //加载一张图片和文字“欢迎来带病床管理系统”到初始界面上
+        // 加载一张图片和文字“欢迎来带病床管理系统”到初始界面上
         JPanel panel = new JPanel();
         JLabel label = new JLabel();
         label.setIcon(new ImageIcon("../picture/login.jpg"));
@@ -105,7 +101,7 @@ public class PatientUI extends JFrame implements ActionListener {
         return panel;
     }
 
-    //个人信息模块
+    // 个人信息模块
     private JPanel createPersonalInfoPanel() {
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -123,7 +119,7 @@ public class PatientUI extends JFrame implements ActionListener {
         panel.add(new JLabel("密码:"), gbc);
         gbc.gridx = 1;
         StringBuilder star_password = new StringBuilder();
-        for(int i = 0; i < patient.getPassword().length(); i++){
+        for (int i = 0; i < patient.getPassword().length(); i++) {
             star_password.append("*");
         }
         panel.add(new JLabel(star_password.toString()), gbc);
@@ -170,9 +166,9 @@ public class PatientUI extends JFrame implements ActionListener {
         gbc.gridy = 7;
         panel.add(new JLabel("床号:"), gbc);
         gbc.gridx = 1;
-        if(patient.getBed_id() != 0) {
+        if (patient.getBed_id() != 0) {
             panel.add(new JLabel(String.valueOf(patient.getBed_id())), gbc);
-        }else {
+        } else {
             panel.add(new JLabel("未分配床位"), gbc);
         }
 
@@ -209,7 +205,7 @@ public class PatientUI extends JFrame implements ActionListener {
         return panel;
     }
 
-    //缴费模块
+    // 缴费模块
     private JPanel createPaymentPanel() {
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -247,7 +243,7 @@ public class PatientUI extends JFrame implements ActionListener {
         return panel;
     }
 
-    //查询病床模块
+    // 查询病床模块
     private JPanel createBedInfoPanel() {
         JPanel panel = new JPanel(new BorderLayout());
         JPanel infoPanel = new JPanel(new GridBagLayout());
@@ -288,7 +284,7 @@ public class PatientUI extends JFrame implements ActionListener {
         return panel;
     }
 
-    private void setButtonColor(JButton activeBtn){
+    private void setButtonColor(JButton activeBtn) {
         personalInfoButton.setBackground(null);
         paymentButton.setBackground(null);
         bedInfoButton.setBackground(null);
@@ -297,106 +293,99 @@ public class PatientUI extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        //处理按钮事件监听器
+        // 处理按钮事件监听器
         Object btn = e.getSource();
-        if(btn == personalInfoButton) {
+        if (btn == personalInfoButton) {
             patient.searchPersonalInfo();
             mainPanel.add(createPersonalInfoPanel(), "PersonalInfo");
             cardLayout.show(mainPanel, "PersonalInfo");
             setButtonColor(personalInfoButton);
-        }else if(btn == paymentButton) {
-            if(!patient.calculateUnpaidAmount()){
+        } else if (btn == paymentButton) {
+            if (!patient.calculateUnpaidAmount()) {
                 JOptionPane.showMessageDialog(this, "您还未办理住院", "提示", JOptionPane.WARNING_MESSAGE);
-            }else{
+            } else {
                 mainPanel.add(createPaymentPanel(), "Payment");
                 cardLayout.show(mainPanel, "Payment");
                 setButtonColor(paymentButton);
             }
-        }else if(btn == bedInfoButton) {
-            if(!patient.searchBedInfo()){
+        } else if (btn == bedInfoButton) {
+            if (!patient.searchBedInfo()) {
                 JOptionPane.showMessageDialog(this, "您还未办理住院", "提示", JOptionPane.WARNING_MESSAGE);
-            }else{
+            } else {
                 mainPanel.add(createBedInfoPanel(), "BedInfo");
                 cardLayout.show(mainPanel, "BedInfo");
                 setButtonColor(bedInfoButton);
             }
-        }else if(btn == doctorDetailsButton){
+        } else if (btn == doctorDetailsButton) {
             if (patient.getDoctor_id() != 0) {
                 Doctor doctor = patient.getDoctor();
-                String doctorDetails = "医生姓名: " + doctor.getDoctor_name() + "\n" +
-                        "医生编号: " + doctor.getDoctor_id() + "\n" +
-                        "性别: " + doctor.getGender() + "\n" +
-                        "电话: " + doctor.getPhone();
+                String doctorDetails = "医生姓名: " + doctor.getDoctor_name() + "\n" + "医生编号: " + doctor.getDoctor_id()
+                        + "\n" + "性别: " + doctor.getGender() + "\n" + "电话: " + doctor.getPhone();
                 JOptionPane.showMessageDialog(this, doctorDetails, "医生详情", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 JOptionPane.showMessageDialog(this, "您还未分配医生", "提示", JOptionPane.WARNING_MESSAGE);
             }
-        }else if(btn == departmentDetailsButton){
+        } else if (btn == departmentDetailsButton) {
             if (patient.getDoctor_id() != 0) {
                 Department department = patient.getDepartment();
-                String departmentDetails = "科室名称: " + department.getDepartment_name() + "\n" +
-                        "科室编号: " + department.getDepartment_id() + "\n" +
-                        "科室主任: " + department.getHead_name() + "\n" +
-                        "电话: " + department.getTel() + "\n" +
-                        "备注: " + department.getNotes();
+                String departmentDetails = "科室名称: " + department.getDepartment_name() + "\n" + "科室编号: "
+                        + department.getDepartment_id() + "\n" + "科室主任: " + department.getHead_name() + "\n" + "电话: "
+                        + department.getTel() + "\n" + "备注: " + department.getNotes();
                 JOptionPane.showMessageDialog(this, departmentDetails, "科室详情", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 JOptionPane.showMessageDialog(this, "您还未分配医生", "提示", JOptionPane.WARNING_MESSAGE);
             }
-        }else if(btn == editPhoneButton){
+        } else if (btn == editPhoneButton) {
             String newPhone = JOptionPane.showInputDialog(this, "请输入新的手机号:");
-            if(newPhone != null) {
-                if(newPhone.equals(patient.getPhone())) {
+            if (newPhone != null) {
+                if (newPhone.equals(patient.getPhone())) {
                     JOptionPane.showMessageDialog(this, "输入的手机号与原先的手机号相同", "错误", JOptionPane.ERROR_MESSAGE);
-                } else if(newPhone.length() != 11) {
+                } else if (newPhone.length() != 11) {
                     JOptionPane.showMessageDialog(this, "输入的手机号不正确", "错误", JOptionPane.ERROR_MESSAGE);
                 } else {
                     int confirm = JOptionPane.showConfirmDialog(this, "确定要更改手机号吗?", "确认", JOptionPane.YES_NO_OPTION);
-                    if(confirm == JOptionPane.YES_OPTION) {
+                    if (confirm == JOptionPane.YES_OPTION) {
                         patient.setPhone(newPhone);
                         patient.updatePhone(newPhone);
                         JOptionPane.showMessageDialog(this, "手机号已成功更改", "成功", JOptionPane.INFORMATION_MESSAGE);
-                        personalInfoButton.doClick();   //自动更新个人信息
+                        personalInfoButton.doClick(); // 自动更新个人信息
                     }
                 }
             }
-        }else if(btn == editPasswordButton){
+        } else if (btn == editPasswordButton) {
             editPassword();
-        }else if(btn == nurseDetailsButton){
+        } else if (btn == nurseDetailsButton) {
             if (patient.getNurse_id() != 0) {
                 Nurse nurse = patient.getNurse();
-                String NurseDetails = "护士姓名: " + nurse.getNurse_name() + "\n" +
-                        "性别: " + nurse.getGender() + "\n" +
-                        "电话: " + nurse.getPhone();
+                String NurseDetails = "护士姓名: " + nurse.getNurse_name() + "\n" + "性别: " + nurse.getGender() + "\n"
+                        + "电话: " + nurse.getPhone();
                 JOptionPane.showMessageDialog(this, NurseDetails, "护士详情", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 JOptionPane.showMessageDialog(this, "您还未分配病床。没有管床护士", "提示", JOptionPane.WARNING_MESSAGE);
             }
-        }else if(btn == cleanRequestButton){
+        } else if (btn == cleanRequestButton) {
             if (patient.sendNeedHelp()) {
                 JOptionPane.showMessageDialog(this, "请求已发送", "提示", JOptionPane.INFORMATION_MESSAGE);
-            }else{
+            } else {
                 JOptionPane.showMessageDialog(this, "请求发送失败,请再试", "错误", JOptionPane.ERROR_MESSAGE);
             }
-        }else if(btn == totalPaymentButton){
-            String paymentDetails = "总金额 = 住院天数(入院至今) * 病房费用" + "\n" +
-                    "入院日期 = " + patient.getAdmission_date() + "\n" +
-                    "住院天数 = " + patient.getDay_length() + "天" + "\n" +
-                    "病房费用 = " + patient.getWardFee() + "元/天" + "\n" +
-                    "总金额 = " + patient.getTotal_amount() + "元";
+        } else if (btn == totalPaymentButton) {
+            String paymentDetails = "总金额 = 住院天数(入院至今) * 病房费用" + "\n" + "入院日期 = " + patient.getAdmission_date() + "\n"
+                    + "住院天数 = " + patient.getDay_length() + "天" + "\n" + "病房费用 = " + patient.getWardFee() + "元/天" + "\n"
+                    + "总金额 = " + patient.getTotal_amount() + "元";
             JOptionPane.showMessageDialog(this, paymentDetails, "缴费详情", JOptionPane.INFORMATION_MESSAGE);
-        }else if(btn == payButton){
+        } else if (btn == payButton) {
             int fee = Integer.parseInt(JOptionPane.showInputDialog(this, "请输入缴费金额:"));
-            if(patient.pay(fee)){
+            if (patient.pay(fee)) {
                 JOptionPane.showMessageDialog(this, "缴费成功", "成功", JOptionPane.INFORMATION_MESSAGE);
-                paymentButton.doClick();   //自动更新缴费信息
-            }else{
+                paymentButton.doClick(); // 自动更新缴费信息
+            } else {
                 JOptionPane.showMessageDialog(this, "缴费超过待缴金额", "错误", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
 
-    private void editPassword(){
+    private void editPassword() {
         JPanel panel = new JPanel(new GridLayout(3, 2));
         JLabel oldPasswordLabel = new JLabel("原密码:");
         JPasswordField oldPasswordField = new JPasswordField();
@@ -412,7 +401,8 @@ public class PatientUI extends JFrame implements ActionListener {
         panel.add(confirmPasswordLabel);
         panel.add(confirmPasswordField);
 
-        int result = JOptionPane.showConfirmDialog(this, panel, "更改密码", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        int result = JOptionPane.showConfirmDialog(this, panel, "更改密码", JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE);
         if (result == JOptionPane.OK_OPTION) {
             String oldPassword = new String(oldPasswordField.getPassword());
             String oldPassword_md5 = User.getMD5Str(oldPassword);
@@ -431,27 +421,25 @@ public class PatientUI extends JFrame implements ActionListener {
                     patient.setPassword(newPassword);
                     patient.updatePassword(newPassword);
                     JOptionPane.showMessageDialog(this, "密码已成功更改", "成功", JOptionPane.INFORMATION_MESSAGE);
-                    personalInfoButton.doClick();   //自动更新个人信息
+                    personalInfoButton.doClick(); // 自动更新个人信息
                 }
             }
         }
     }
 
-    private JScrollPane setEquipmentTable(){
-        //设置设备表格
-        String[] columnNames = {"设备编号", "设备类型"};
+    private JScrollPane setEquipmentTable() {
+        // 设置设备表格
+        String[] columnNames = { "设备编号", "设备类型" };
         equipmentTableModel = new DefaultTableModel(columnNames, 0);
         JTable equipmentTable = new JTable(equipmentTableModel);
         List<Equipment> equipmentList = patient.getEquipmentList();
-        for(Equipment equipment : equipmentList){
-            equipmentTableModel.addRow(new Object[]{
-                    equipment.getEquipment_id(),
-                    equipment.getEquipment_type()
-            });
+        for (Equipment equipment : equipmentList) {
+            equipmentTableModel.addRow(new Object[] { equipment.getEquipment_id(), equipment.getEquipment_type() });
         }
         return new JScrollPane(equipmentTable);
     }
-    //背景图片
+
+    // 背景图片
     class BackgroundPanel extends JPanel {
         private Image backgroundImage;
 
