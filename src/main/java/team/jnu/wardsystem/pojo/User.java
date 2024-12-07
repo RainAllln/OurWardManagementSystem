@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.Getter;
+import org.apache.ibatis.datasource.pooled.PooledDataSource;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -34,11 +35,50 @@ public class User {
     protected static final InputStream inputStream;
     protected static final SqlSessionFactory sqlSessionFactory;
 
+//    static {
+//        try {
+//            resource = "mybatis-config.xml";
+//            inputStream = Resources.getResourceAsStream(resource);
+//            sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
+
     static {
         try {
             resource = "mybatis-config.xml";
             inputStream = Resources.getResourceAsStream(resource);
+            String key = "WnzsbFGY2aMQDEPKBBZ1+w=="; // Use the same key as used for encryption
+
+            // Decrypt the encrypted values
+            String encryptedUrl = "LTvr7at4spXuMU+Psg9E4ZQolqDM2Dlnro0fzjDuaEt+aKqAwR/txiCJB0kiTxCi";
+            String encryptedUsername = "fclzmIrNceSdbh7KrXEN4w==";
+            String encryptedPassword = "Hh//0vMaQvqyixoMtoTnlA==";
+
+            String url = null;
+            String DBusername = null;
+            String DBpassword = null;
+            try {
+                url = EncryptionUtil.decrypt(encryptedUrl, key);
+                DBusername = EncryptionUtil.decrypt(encryptedUsername, key);
+                DBpassword = EncryptionUtil.decrypt(encryptedPassword, key);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+            // Configure the data source with decrypted values
+            PooledDataSource dataSource = new PooledDataSource();
+            dataSource.setDriver("org.postgresql.Driver");
+            dataSource.setUrl(url);
+            dataSource.setUsername(DBusername);
+            dataSource.setPassword(DBpassword);
+
             sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+            sqlSessionFactory.getConfiguration().setEnvironment(
+                    new org.apache.ibatis.mapping.Environment("development",
+                            sqlSessionFactory.getConfiguration().getEnvironment().getTransactionFactory(),
+                            dataSource));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
