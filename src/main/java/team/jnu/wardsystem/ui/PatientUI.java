@@ -99,10 +99,11 @@ public class PatientUI extends JFrame implements ActionListener {
     panel.add(new JLabel("密码:"), gbc);
     gbc.gridx = 1;
     PersonalPasswordField = new JPasswordField(20);
-    PersonalPasswordField.setText(patient.getPassword());
+    PersonalPasswordField.setText("********");
     PersonalPasswordField.setEditable(false);
+    panel.add(PersonalPasswordField, gbc);
     gbc.gridx = 2;
-    editPasswordButton = new JButton("编辑");
+    editPasswordButton = new JButton("修改");
     editPasswordButton.addActionListener(this);
     panel.add(editPasswordButton, gbc);
 
