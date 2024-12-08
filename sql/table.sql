@@ -36,8 +36,6 @@ CREATE TABLE Patients
     -- 病房号
     doctor_id INT,
     -- 主治医生编号
-    nurse_id INT,
-    -- 主管护士编号
     paid_amount DECIMAL(10, 2),
     -- 已缴费用
     CHECK(gender IN ('男', '女'))
@@ -104,7 +102,7 @@ CREATE TABLE Beds
     -- 病房号
     in_use BOOLEAN NOT NULL,
     -- 使用状态
-    clean BOOLEAN NOT NULL,
+    help BOOLEAN NOT NULL,
     -- 清洁状态
     nurse_id INT,
     -- 负责护士编号

@@ -525,7 +525,7 @@ public class DoctorUI extends JFrame implements ActionListener {
                             String notice = doctor.deletePatient(Integer.parseInt(model.getValueAt(row, 3).toString()),
                                     Integer.parseInt(model.getValueAt(row, 4).toString()),
                                     new Date(System.currentTimeMillis()));
-                            if (notice == null) {
+                            if (notice.equals("")) {
                                 JOptionPane.showMessageDialog(DoctorUI.this, "病人还没缴费！");
                                 return;
                             }
@@ -675,8 +675,12 @@ public class DoctorUI extends JFrame implements ActionListener {
             JPanel editPanel = new JPanel(new GridLayout(3, 2, 10, 10));
             editPanel.add(new JLabel("病床号:"));
             editPanel.add(bedField);
+            //改为不可编辑
+            bedField.setEditable(false);
             editPanel.add(new JLabel("病房:"));
             editPanel.add(wardField);
+            //改为不可编辑
+            wardField.setEditable(false);
             editPanel.add(new JLabel("备注:"));
             editPanel.add(notesField);
 
