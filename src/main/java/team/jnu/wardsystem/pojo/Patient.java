@@ -87,6 +87,7 @@ public class Patient extends User {
       ward_id = finded_patient.getWard_id();
       doctor_id = finded_patient.getDoctor_id();
       nurse_id = finded_patient.findNurse_id(bed_id,ward_id);
+      System.out.println(nurse_id);
       phone = finded_patient.getPhone();
       paid_amount = finded_patient.getPaid_amount();
       sqlSession.close(); // 关闭连接
