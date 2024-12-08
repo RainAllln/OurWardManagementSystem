@@ -194,6 +194,10 @@ public class Doctor extends User {
         bedMapper.updateBedStatus(bed_id, ward_id, false);
         sqlSession.commit(); // 提交
         sqlSession.close(); // 关闭连接
+        UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+        userMapper.deleteUser(patient.getPatient_id());
+        sqlSession.commit(); // 提交
+        sqlSession.close(); // 关闭连接
         return "删除成功";
       }
     }

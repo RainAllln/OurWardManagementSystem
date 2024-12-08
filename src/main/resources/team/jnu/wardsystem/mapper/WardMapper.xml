@@ -6,4 +6,6 @@
         where ward_id=#{ward_id} </select>
     <select id="searchWardType" resultType="java.lang.String"> select ward_type from wards where
         ward_id=#{ward_id} </select>
+    <delete id="deleteUser" parameterType="map">delete from patients where bed_id=#{bed_id} and
+        ward_id=#{ward_id} </delete>
 </mapper>

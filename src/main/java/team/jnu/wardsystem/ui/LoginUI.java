@@ -164,12 +164,15 @@ public class LoginUI extends JFrame implements ActionListener {
                 User newUser = patient; // 向上转型,从patient对象中提取出用户名和密码
                 // 插入新用户和新病人到数据库中
                 try {
-                    patient.insertPatient();
-                    if (!newUser.isExistUser(newUsername)) {
-                        newUser.register();
-                    } else {
+                    if (newUser.isExistUser(newUsername)) {
                         JOptionPane.showMessageDialog(this, "用户名已存在");
                         return;
+                    }else if(newPhone.length() != 11) {
+                        JOptionPane.showMessageDialog(this, "手机号格式错误");
+                        return;
+                    }else {
+                        patient.insertPatient();
+                        newUser.register();
                     }
                 } catch (RuntimeException ex) {
                     JOptionPane.showMessageDialog(this, "注册失败");
