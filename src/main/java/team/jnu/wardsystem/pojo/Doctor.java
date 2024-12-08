@@ -276,8 +276,8 @@ public class Doctor extends User {
         searchAllPatient(doctor_id);
     }
     for (Patient patient : patientList) {
-      info.append("病人姓名：").append(patient.getPatient_name()).append("\t").append("床号：").append(patient.getBed_id())
-          .append("\t").append("病房号：").append(patient.getWard_id()).append("\n");
+      info.append("病人姓名：").append(patient.getPatient_name()).append("，").append("病床号：").append(patient.getBed_id())
+          .append("，").append("病房号：").append(patient.getWard_id()).append("\n");
     }
     return info.toString();
   }
