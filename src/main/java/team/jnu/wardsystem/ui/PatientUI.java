@@ -180,9 +180,12 @@ public class PatientUI extends JFrame implements ActionListener {
         departmentDetailsButton.addActionListener(this);
         panel.add(departmentDetailsButton, gbc);
 
-        gbc.gridx = 0;
+        gbc.gridx = 1;
         gbc.gridy = 11;
+        gbc.gridwidth = 3;
         logoutButton = new JButton("退出登录");
+        logoutButton.setBackground(Color.red);
+        logoutButton.setForeground(Color.white);
         logoutButton.addActionListener(this);
         panel.add(logoutButton, gbc);
 
