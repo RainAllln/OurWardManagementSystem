@@ -176,6 +176,7 @@ public class Doctor extends User {
 
   public String deletePatient(int bed_id, int ward_id, Date time) {
     // 删除病人
+
     Iterator<Patient> iterator = patientList.iterator();
     while (iterator.hasNext()) {
       Patient patient = iterator.next();
@@ -233,7 +234,7 @@ public class Doctor extends User {
     patient.setBed_id(bedId);
     patient.setWard_id(wardId);
     patient.setDoctor_id(doctor_id);
-    patient.setNurse_id(bed.getNurse_id());
+    //patient.setNurse_id(bed.getNurse_id());
     SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
     PatientMapper patientMapper = sqlSession.getMapper(PatientMapper.class); // 获取mapper接口
     patientMapper.updatePatientStatus(patient);
