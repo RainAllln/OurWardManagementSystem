@@ -76,7 +76,7 @@ public class Patient extends User {
     SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
     PatientMapper patientMapper = sqlSession.getMapper(PatientMapper.class); // 获取mapper接口
     Patient finded_patient = patientMapper.searchPatientById(patient_id);
-    // 病人每次点击个人信息时都会更新信息，因为医生可以让病人出院，所以每次点击都要更新
+    //缓存里有就不用再查了
     if (finded_patient != null) {
       patient_name = finded_patient.getPatient_name();
       gender = finded_patient.getGender();
@@ -85,15 +85,25 @@ public class Patient extends User {
       admission_date = finded_patient.getAdmission_date();
       bed_id = finded_patient.getBed_id();
       ward_id = finded_patient.getWard_id();
-      nurse_id = finded_patient.getNurse_id();
       doctor_id = finded_patient.getDoctor_id();
+      nurse_id = finded_patient.findNurse_id(bed_id,ward_id);
       phone = finded_patient.getPhone();
       paid_amount = finded_patient.getPaid_amount();
+      sqlSession.close(); // 关闭连接
       return true;
     } else {
+      sqlSession.close(); // 关闭连接
       return false;
     }
 
+  }
+
+  private int findNurse_id(int bed_id, int ward_id) {
+    SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
+    BedMapper bedMapper = sqlSession.getMapper(BedMapper.class); // 获取mapper接口
+    int nurse_id = bedMapper.getNurseId(bed_id, ward_id);
+    sqlSession.close(); // 关闭连接
+    return nurse_id;
   }
 
   public String getManagingDoctorName() {

@@ -8,5 +8,5 @@ public class App {
     loginUI.setVisible(true);
   }
 }
-// 设备取消分配
+// 设备取消分配zhangsa
 // 判断输入的是不是正确的

@@ -286,7 +286,7 @@ public class PatientUI extends JFrame implements ActionListener {
     // 处理按钮事件监听器
     Object btn = e.getSource();
     if (btn == personalInfoButton) {
-      patient.searchPersonalInfo();
+      if(patient.getNurse() != null) patient.searchPersonalInfo();
       mainPanel.add(createPersonalInfoPanel(), "PersonalInfo");
       cardLayout.show(mainPanel, "PersonalInfo");
       setButtonColor(personalInfoButton);
