@@ -468,8 +468,8 @@ public class DoctorUI extends JFrame implements ActionListener {
     // 自定义编辑器类，用于在 "操作" 列中处理按钮点击事件
     class ButtonEditor extends AbstractCellEditor implements TableCellEditor {
         private JPanel panel = new JPanel();
-        private JButton editButton = new JButton("编辑");
-        private JButton deleteButton = new JButton("删除");
+        private JButton editButton = new JButton("备注");
+        private JButton deleteButton = new JButton("出院");
         private JButton assignButton = new JButton("分配");
         private JButton unassignButton = new JButton("取消");
         // private JTable table;
