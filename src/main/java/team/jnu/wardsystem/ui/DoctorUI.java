@@ -439,8 +439,8 @@ public class DoctorUI extends JFrame implements ActionListener {
 
     // 自定义渲染器类，用于在 "操作" 列中渲染两个按钮
     class ButtonRenderer extends JPanel implements TableCellRenderer {
-        private JButton editButton = new JButton("编辑");
-        private JButton deleteButton = new JButton("删除");
+        private JButton editButton = new JButton("备注");
+        private JButton deleteButton = new JButton("出院");
 
         private JButton assignButton = new JButton("分配");
         private JButton unassignButton = new JButton("取消");
@@ -576,7 +576,7 @@ public class DoctorUI extends JFrame implements ActionListener {
             }
             assignPanel.add(new JLabel("病房信息:"));
             assignPanel.add(unassignedEquipmentComboBox);
-            //通过selectedInfo获取bedId和wardId
+            // 通过selectedInfo获取bedId和wardId
             unassignedEquipmentComboBox.addActionListener(e -> {
                 String selectedInfo = (String) unassignedEquipmentComboBox.getSelectedItem();
                 if (selectedInfo != null) {
@@ -596,7 +596,7 @@ public class DoctorUI extends JFrame implements ActionListener {
                 // 分配设备
                 doctor.assignEquipmentToPatient(equipmentId, bedId, wardId);
                 equipment_add = false;
-                //修改表格中的数据
+                // 修改表格中的数据
                 model.setValueAt(bedId, row, 2);
                 model.setValueAt(wardId, row, 3);
                 JOptionPane.showMessageDialog(DoctorUI.this, "设备已分配");
@@ -675,11 +675,11 @@ public class DoctorUI extends JFrame implements ActionListener {
             JPanel editPanel = new JPanel(new GridLayout(3, 2, 10, 10));
             editPanel.add(new JLabel("病床号:"));
             editPanel.add(bedField);
-            //改为不可编辑
+            // 改为不可编辑
             bedField.setEditable(false);
             editPanel.add(new JLabel("病房:"));
             editPanel.add(wardField);
-            //改为不可编辑
+            // 改为不可编辑
             wardField.setEditable(false);
             editPanel.add(new JLabel("备注:"));
             editPanel.add(notesField);
