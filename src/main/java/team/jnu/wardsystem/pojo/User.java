@@ -35,15 +35,15 @@ public class User {
     protected static final InputStream inputStream;
     protected static final SqlSessionFactory sqlSessionFactory;
 
-//    static {
-//        try {
-//            resource = "mybatis-config.xml";
-//            inputStream = Resources.getResourceAsStream(resource);
-//            sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
+    // static {
+    // try {
+    // resource = "mybatis-config.xml";
+    // inputStream = Resources.getResourceAsStream(resource);
+    // sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+    // } catch (IOException e) {
+    // throw new RuntimeException(e);
+    // }
+    // }
 
     static {
         try {
@@ -75,13 +75,17 @@ public class User {
             dataSource.setPassword(DBpassword);
 
             sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
-            sqlSessionFactory.getConfiguration().setEnvironment(
-                    new org.apache.ibatis.mapping.Environment("development",
-                            sqlSessionFactory.getConfiguration().getEnvironment().getTransactionFactory(),
-                            dataSource));
+            sqlSessionFactory.getConfiguration().setEnvironment(new org.apache.ibatis.mapping.Environment("development",
+                    sqlSessionFactory.getConfiguration().getEnvironment().getTransactionFactory(), dataSource));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public User(String username, int user_id, String role) {
+        this.username = username;
+        this.user_id = user_id;
+        this.role = role;
     }
 
     public String Login(String username, String password) {
@@ -89,16 +93,17 @@ public class User {
         SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
         UserMapper userMapper = sqlSession.getMapper(UserMapper.class); // 获取mapper接口
 
-        User finded_user = userMapper.selectByUserName(username);
-        if (finded_user == null)
+        User found_user = userMapper.selectByUserName(username);
+        if (found_user == null)
             return "用户名不存在";// 没有该用户名
 
-        String confirmPassword = finded_user.getPassword();
+        Boolean login_state = userMapper.verifyPassword(username, getMD5Str(password)); // 验证密码
 
         sqlSession.close(); // 关闭连接
 
-        if (confirmPassword.equals(getMD5Str(password))) {
-            user_id = finded_user.getUser_id(); // 获得用户id
+        if (login_state) {
+            user_id = found_user.getUser_id(); // 获得用户id
+            role = found_user.getRole(); // 获得用户角色
             return "登录成功";
         } else {
             return "密码错误";

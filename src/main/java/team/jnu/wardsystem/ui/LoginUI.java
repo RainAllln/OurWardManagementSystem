@@ -116,21 +116,21 @@ public class LoginUI extends JFrame implements ActionListener {
                 JOptionPane.showMessageDialog(this, LoginMsg);
                 this.dispose(); // 关闭登录界面
                 // 可以在这里打开主界面，例如
-                if (user.getUser_id() / 10000 == 1) {
+                if (user.getRole().equals("病人")) {
                     // 病人
                     Patient patient = Patient.searchPatientById(user.getUser_id());
                     patient.setUsername(username);
-                    patient.setPassword(User.getMD5Str(password));
+                    patient.setPassword(password);
                     patient.setUser_id(user.getUser_id());
                     new PatientUI(patient);
-                } else if (user.getUser_id() / 10000 == 2) {
+                } else if (user.getRole().equals("医生")) {
                     // 医生
                     Doctor doctor = Doctor.searchDoctorById(user.getUser_id());
                     doctor.setUsername(username);
                     doctor.setPassword(password);
                     doctor.setUser_id(user.getUser_id());
                     new DoctorUI(doctor);
-                } else if (user.getUser_id() / 10000 == 3) {
+                } else if (user.getRole().equals("护士")) {
                     // 护士
                     Nurse nurse = Nurse.searchNurseById(user.getUser_id());
                     nurse.setUsername(username);
@@ -167,10 +167,10 @@ public class LoginUI extends JFrame implements ActionListener {
                     if (newUser.isExistUser(newUsername)) {
                         JOptionPane.showMessageDialog(this, "用户名已存在");
                         return;
-                    }else if(newPhone.length() != 11) {
+                    } else if (newPhone.length() != 11) {
                         JOptionPane.showMessageDialog(this, "手机号格式错误");
                         return;
-                    }else {
+                    } else {
                         patient.insertPatient();
                         newUser.register();
                     }

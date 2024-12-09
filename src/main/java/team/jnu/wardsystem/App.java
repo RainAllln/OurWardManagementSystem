@@ -8,4 +8,3 @@ public class App {
     loginUI.setVisible(true);
   }
 }
-
