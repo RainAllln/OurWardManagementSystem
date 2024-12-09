@@ -28,9 +28,7 @@ public class User {
     private int user_id;
 
     /*
-        * 静态变量，所有对象共享一个变量
-        * 用于连接数据库
-        * 每个角色用不同的密码登录
+     * 静态变量，所有对象共享一个变量 用于连接数据库 每个角色用不同的密码登录
      */
 
     private static final String resource; // 静态变量，所有对象公用一个变量
@@ -41,23 +39,10 @@ public class User {
         try {
             resource = "mybatis-config.xml";
             inputStream = Resources.getResourceAsStream(resource);
-//            String key = "WnzsbFGY2aMQDEPKBBZ1+w=="; // Use the same key as used for encryption
-
-            // Decrypt the encrypted values
-//            String encryptedUrl = "LTvr7at4spXuMU+Psg9E4ZQolqDM2Dlnro0fzjDuaEt+aKqAwR/txiCJB0kiTxCi";
-//            String encryptedUsername = "fclzmIrNceSdbh7KrXEN4w==";
-//            String encryptedPassword = "Hh//0vMaQvqyixoMtoTnlA==";
 
             String url = "jdbc:postgresql://113.45.207.38:26000/ward";
             String DBusername = "gaussdb";
             String DBpassword = "Gauss123";
-//            try {
-//                url = EncryptionUtil.decrypt(encryptedUrl, key);
-//                DBusername = EncryptionUtil.decrypt(encryptedUsername, key);
-//                DBpassword = EncryptionUtil.decrypt(encryptedPassword, key);
-//            } catch (Exception e) {
-//                throw new RuntimeException(e);
-//            }
 
             // Configure the data source with decrypted values
             PooledDataSource dataSource = new PooledDataSource();
