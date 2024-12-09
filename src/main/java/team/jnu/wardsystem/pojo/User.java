@@ -26,36 +26,38 @@ public class User {
     protected String password;
     private String role;
     private int user_id;
+
     /*
-     * final修饰的变量必须在声明时或构造函数中初始化，初始化后不能再修改
-     * 由于Patient,Doctor,Nurse都继承了User类，所以这里的变量是所有用户共享的
-     * 每次使用的时候只需要让sqlSessionFactory.openSession()之后再获取mapper接口即可 记得关闭连接
+        * 静态变量，所有对象共享一个变量
+        * 用于连接数据库
+        * 每个角色用不同的密码登录
      */
-    protected static final String resource; // 静态变量，所有对象公用一个变量
-    protected static final InputStream inputStream;
-    protected static final SqlSessionFactory sqlSessionFactory;
+
+    private static final String resource; // 静态变量，所有对象公用一个变量
+    private static final InputStream inputStream;
+    private static final SqlSessionFactory sqlSessionFactory;
 
     static {
         try {
             resource = "mybatis-config.xml";
             inputStream = Resources.getResourceAsStream(resource);
-            String key = "WnzsbFGY2aMQDEPKBBZ1+w=="; // Use the same key as used for encryption
+//            String key = "WnzsbFGY2aMQDEPKBBZ1+w=="; // Use the same key as used for encryption
 
             // Decrypt the encrypted values
-            String encryptedUrl = "LTvr7at4spXuMU+Psg9E4ZQolqDM2Dlnro0fzjDuaEt+aKqAwR/txiCJB0kiTxCi";
-            String encryptedUsername = "fclzmIrNceSdbh7KrXEN4w==";
-            String encryptedPassword = "Hh//0vMaQvqyixoMtoTnlA==";
+//            String encryptedUrl = "LTvr7at4spXuMU+Psg9E4ZQolqDM2Dlnro0fzjDuaEt+aKqAwR/txiCJB0kiTxCi";
+//            String encryptedUsername = "fclzmIrNceSdbh7KrXEN4w==";
+//            String encryptedPassword = "Hh//0vMaQvqyixoMtoTnlA==";
 
-            String url = null;
-            String DBusername = null;
-            String DBpassword = null;
-            try {
-                url = EncryptionUtil.decrypt(encryptedUrl, key);
-                DBusername = EncryptionUtil.decrypt(encryptedUsername, key);
-                DBpassword = EncryptionUtil.decrypt(encryptedPassword, key);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+            String url = "jdbc:postgresql://113.45.207.38:26000/ward";
+            String DBusername = "gaussdb";
+            String DBpassword = "Gauss123";
+//            try {
+//                url = EncryptionUtil.decrypt(encryptedUrl, key);
+//                DBusername = EncryptionUtil.decrypt(encryptedUsername, key);
+//                DBpassword = EncryptionUtil.decrypt(encryptedPassword, key);
+//            } catch (Exception e) {
+//                throw new RuntimeException(e);
+//            }
 
             // Configure the data source with decrypted values
             PooledDataSource dataSource = new PooledDataSource();

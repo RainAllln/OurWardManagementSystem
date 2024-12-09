@@ -1,10 +1,16 @@
 package team.jnu.wardsystem.pojo;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.apache.ibatis.datasource.pooled.PooledDataSource;
+import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import team.jnu.wardsystem.mapper.*;
 import static team.jnu.wardsystem.pojo.Doctor.searchDoctorById;
 
@@ -23,6 +29,34 @@ public class Nurse extends User {
   private List<Equipment> equipmentList;
   private String department_name;
   private List<Bed> bedList;
+
+  private static final String resource; // 静态变量，所有对象公用一个变量
+  private static final InputStream inputStream;
+  private static final SqlSessionFactory sqlSessionFactory;
+
+  static {
+    try {
+      resource = "mybatis-config.xml";
+      inputStream = Resources.getResourceAsStream(resource);
+
+      String url = "jdbc:postgresql://113.45.207.38:26000/ward";
+      String DBusername = "nurse";
+      String DBpassword = "Gauss123";
+
+      // Configure the data source with decrypted values
+      PooledDataSource dataSource = new PooledDataSource();
+      dataSource.setDriver("org.postgresql.Driver");
+      dataSource.setUrl(url);
+      dataSource.setUsername(DBusername);
+      dataSource.setPassword(DBpassword);
+
+      sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+      sqlSessionFactory.getConfiguration().setEnvironment(new org.apache.ibatis.mapping.Environment("development",
+              sqlSessionFactory.getConfiguration().getEnvironment().getTransactionFactory(), dataSource));
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
 
   // 构造函数
   public Nurse(String nurse_name, int nurse_id, String gender, String phone, String position, int department_id) {

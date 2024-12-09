@@ -1,12 +1,18 @@
 package team.jnu.wardsystem.pojo;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import lombok.EqualsAndHashCode;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.ibatis.datasource.pooled.PooledDataSource;
+import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import team.jnu.wardsystem.mapper.*;
 
 @Data
@@ -33,6 +39,34 @@ public class Patient extends User {
   private Department department; // 科室
   private Ward ward; // 病房信息
   private Bed bed; // 床位信息
+
+  private static final String resource; // 静态变量，所有对象公用一个变量
+  private static final InputStream inputStream;
+  private static final SqlSessionFactory sqlSessionFactory;
+
+  static {
+    try {
+      resource = "mybatis-config.xml";
+      inputStream = Resources.getResourceAsStream(resource);
+
+      String url = "jdbc:postgresql://113.45.207.38:26000/ward";
+      String DBusername = "patient";
+      String DBpassword = "Gauss123";
+
+      // Configure the data source with decrypted values
+      PooledDataSource dataSource = new PooledDataSource();
+      dataSource.setDriver("org.postgresql.Driver");
+      dataSource.setUrl(url);
+      dataSource.setUsername(DBusername);
+      dataSource.setPassword(DBpassword);
+
+      sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+      sqlSessionFactory.getConfiguration().setEnvironment(new org.apache.ibatis.mapping.Environment("development",
+              sqlSessionFactory.getConfiguration().getEnvironment().getTransactionFactory(), dataSource));
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
 
   public Patient(int patient_id, String username, String password) {
     // 登录时创建对象只需要id和用户名密码
@@ -87,7 +121,6 @@ public class Patient extends User {
       ward_id = finded_patient.getWard_id();
       doctor_id = finded_patient.getDoctor_id();
       nurse_id = finded_patient.findNurse_id(bed_id, ward_id);
-      System.out.println(nurse_id);
       phone = finded_patient.getPhone();
       paid_amount = finded_patient.getPaid_amount();
       sqlSession.close(); // 关闭连接
