@@ -9,5 +9,4 @@ public interface NurseMapper {
     String searchDepartmentName(int department_id);
 
     Nurse searchNurseById(int nurse_id);
-
 }

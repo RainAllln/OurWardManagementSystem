@@ -5,7 +5,6 @@
     <insert id="insertUser"> INSERT INTO users(user_id, username, password, role)
         VALUES(#{user_id},#{username},#{password},'病人'); </insert>
     <delete id="deleteUser"> delete from users where user_id=#{user_id} </delete>
-    <select id="selectAll" resultType="User"> select * from users </select>
     <select id="selectByUserName" parameterType="String" resultType="User"> select username,
         user_id, role from users where username=#{user_name} </select>
     <select id="verifyPassword" parameterType="map" resultType="boolean"> SELECT

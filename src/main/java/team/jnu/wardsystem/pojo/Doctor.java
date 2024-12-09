@@ -238,7 +238,7 @@ public class Doctor extends User {
     patient.setBed_id(bedId);
     patient.setWard_id(wardId);
     patient.setDoctor_id(doctor_id);
-    //patient.setNurse_id(bed.getNurse_id());
+    // patient.setNurse_id(bed.getNurse_id());
     SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
     PatientMapper patientMapper = sqlSession.getMapper(PatientMapper.class); // 获取mapper接口
     patientMapper.updatePatientStatus(patient);
@@ -253,6 +253,7 @@ public class Doctor extends User {
     // 更新病人的表
     patientList.add(patient);
   }
+
   public void searchUnassignedBedList(int department_id) {
     // 查询未分配床位
     SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
@@ -276,8 +277,8 @@ public class Doctor extends User {
 
   public String getAllBedInfo() {
     StringBuilder info = new StringBuilder();
-    if(patientList == null){
-        searchAllPatient(doctor_id);
+    if (patientList == null) {
+      searchAllPatient(doctor_id);
     }
     for (Patient patient : patientList) {
       info.append("病人姓名：").append(patient.getPatient_name()).append("，").append("病床号：").append(patient.getBed_id())
@@ -300,6 +301,7 @@ public class Doctor extends User {
       }
     }
   }
+
   public String seachGender(int wardId) {
     // 查询病房性别
     SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
@@ -308,6 +310,7 @@ public class Doctor extends User {
     sqlSession.close(); // 关闭连接
     return gender;
   }
+
   public void unassignEquipment(int department_id) {
     // 取消分配设备
     for (Equipment equipment : equipmentList) {
@@ -322,15 +325,17 @@ public class Doctor extends User {
       }
     }
   }
+
   public String checkEquipment(int bedId, int wardId) {
-    for(Patient patient: patientList){
-        if(patient.getBed_id() == bedId ){
-            if(patient.getWard_id() == wardId){
-                return "";
-        }else{
-            return "病房号错误！";}
+    for (Patient patient : patientList) {
+      if (patient.getBed_id() == bedId) {
+        if (patient.getWard_id() == wardId) {
+          return "";
+        } else {
+          return "病房号错误！";
         }
       }
-    return "病床号错误！";
     }
+    return "病床号错误！";
+  }
 }

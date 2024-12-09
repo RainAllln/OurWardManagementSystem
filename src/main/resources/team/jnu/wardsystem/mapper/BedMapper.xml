@@ -6,12 +6,12 @@
         #{in_use},clean=#{in_use} where bed_id = #{bed_id} and ward_id=#{ward_id}</update>
     <select id="searchAllBed" resultType="Bed">select bed_id,ward_id,in_use,clean from beds where
         nurse_id=#{nurse_id}</select>
-    <select id="searchUnassignedBed" resultType="Bed"> select * from beds where in_use is false and ward_id in (select ward_id from wards where department_id=#{department_id})</select>
+    <select id="searchUnassignedBed" resultType="Bed"> select * from beds where in_use is false and
+        ward_id in (select ward_id from wards where department_id=#{department_id})</select>
     <update id="updateBedstatus" parameterType="map"> update beds set clean=#{clean} where
         bed_id=#{bed_id} and ward_id=#{ward_id}</update>
     <select id="searchBedById" resultType="Bed"> select * from beds where bed_id=#{bed_id} and
         ward_id=#{ward_id}</select>
-    <select id="getNurseId" resultType="java.lang.Integer">
-        select nurse_id from beds where bed_id=#{bed_id} and ward_id=#{ward_id}
-    </select>
+    <select id="getNurseId" resultType="java.lang.Integer"> select nurse_id from beds where
+        bed_id=#{bed_id} and ward_id=#{ward_id} </select>
 </mapper>

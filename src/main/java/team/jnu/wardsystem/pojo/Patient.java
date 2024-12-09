@@ -76,7 +76,7 @@ public class Patient extends User {
     SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
     PatientMapper patientMapper = sqlSession.getMapper(PatientMapper.class); // 获取mapper接口
     Patient finded_patient = patientMapper.searchPatientById(patient_id);
-    //缓存里有就不用再查了
+    // 缓存里有就不用再查了
     if (finded_patient != null) {
       patient_name = finded_patient.getPatient_name();
       gender = finded_patient.getGender();
@@ -86,7 +86,7 @@ public class Patient extends User {
       bed_id = finded_patient.getBed_id();
       ward_id = finded_patient.getWard_id();
       doctor_id = finded_patient.getDoctor_id();
-      nurse_id = finded_patient.findNurse_id(bed_id,ward_id);
+      nurse_id = finded_patient.findNurse_id(bed_id, ward_id);
       System.out.println(nurse_id);
       phone = finded_patient.getPhone();
       paid_amount = finded_patient.getPaid_amount();
@@ -102,11 +102,11 @@ public class Patient extends User {
   private int findNurse_id(int bed_id, int ward_id) {
     SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
     BedMapper bedMapper = sqlSession.getMapper(BedMapper.class); // 获取mapper接口
-      int nurse_id=0;
-      if (bed_id != 0 && ward_id != 0) {
-          nurse_id = bedMapper.getNurseId(bed_id, ward_id);
-      }
-      sqlSession.close(); // 关闭连接
+    int nurse_id = 0;
+    if (bed_id != 0 && ward_id != 0) {
+      nurse_id = bedMapper.getNurseId(bed_id, ward_id);
+    }
+    sqlSession.close(); // 关闭连接
     return nurse_id;
   }
 

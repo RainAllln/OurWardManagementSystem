@@ -5,10 +5,8 @@
     <select id="searchAllEquipment" resultType="Equipment">select * from equipments</select>
     <select id="searchEquipmentList" resultType="Equipment"> select * from equipments where
         ward_id=#{ward_id} and bed_id=#{bed_id} </select>
-    <update id="updateEquipment" parameterType="map">
-        UPDATE equipments SET bed_id = CASE WHEN #{bed_id} = 0 THEN NULL ELSE #{bed_id} END,
-        ward_id = CASE WHEN #{ward_id} = 0 THEN NULL ELSE #{ward_id} END
-        WHERE equipment_id = #{equipment_id}
-    </update>
+    <update id="updateEquipment" parameterType="map"> UPDATE equipments SET bed_id = CASE WHEN
+        #{bed_id} = 0 THEN NULL ELSE #{bed_id} END, ward_id = CASE WHEN #{ward_id} = 0 THEN NULL
+        ELSE #{ward_id} END WHERE equipment_id = #{equipment_id} </update>
     <delete id="deleteEquipment">delete from equipments where equipment_id=#{equipment_id} </delete>
 </mapper>

@@ -1,9 +1,8 @@
 package team.jnu.wardsystem.mapper;
 
+import java.util.List;
 import org.apache.ibatis.annotations.Param;
 import team.jnu.wardsystem.pojo.Patient;
-
-import java.util.List;
 
 public interface PatientMapper {
     List<Patient> selectAllPatients(int doctor_id);
@@ -11,10 +10,6 @@ public interface PatientMapper {
     List<Patient> selectAllPatient(int nurse_id);
 
     Patient searchPatientById(int patient_id);
-
-    // int updatePatientNote(@Param("patient_id") int patientId, @Param("ward_id")
-    // int ward_id,
-    // @Param("notes") String notes);
 
     int updatePatientNote(@Param("bed_id") int bed_id, @Param("ward_id") int ward_id, @Param("notes") String notes);
 

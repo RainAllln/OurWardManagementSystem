@@ -35,16 +35,6 @@ public class User {
     protected static final InputStream inputStream;
     protected static final SqlSessionFactory sqlSessionFactory;
 
-    // static {
-    // try {
-    // resource = "mybatis-config.xml";
-    // inputStream = Resources.getResourceAsStream(resource);
-    // sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
-    // } catch (IOException e) {
-    // throw new RuntimeException(e);
-    // }
-    // }
-
     static {
         try {
             resource = "mybatis-config.xml";

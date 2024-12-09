@@ -15,5 +15,5 @@ public interface BedMapper {
 
     Bed searchBedById(@Param("bed_id") int bedId, @Param("ward_id") int wardId);
 
-    int getNurseId(@Param("bed_id") int bedId,@Param("ward_id") int wardId);
+    int getNurseId(@Param("bed_id") int bedId, @Param("ward_id") int wardId);
 }
