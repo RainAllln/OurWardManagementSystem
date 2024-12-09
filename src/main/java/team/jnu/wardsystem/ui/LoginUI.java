@@ -154,7 +154,7 @@ public class LoginUI extends JFrame implements ActionListener {
             int option = JOptionPane.showConfirmDialog(this, message, "注册", JOptionPane.OK_CANCEL_OPTION);
             if (option == JOptionPane.OK_OPTION) {
                 String newUsername = newUserText.getText();
-                String newPassword = User.getMD5Str(new String(newPasswordText.getPassword()));
+                String newPassword = new String(newPasswordText.getPassword());
                 String newName = newNameText.getText();
                 String newGender = newGenderText.getText();
                 int newAge = Integer.parseInt(newAgeText.getText());
@@ -162,6 +162,7 @@ public class LoginUI extends JFrame implements ActionListener {
                 // 创建新用户和病人对象
                 Patient patient = new Patient(newUsername, newPassword, newAge, newGender, newName, newPhone);
                 User newUser = patient; // 向上转型,从patient对象中提取出用户名和密码
+                newUser.setPassword(User.getMD5Str(newPassword)); // 对密码进行MD5加密
                 // 插入新用户和新病人到数据库中
                 try {
                     if (newUser.isExistUser(newUsername)) {
