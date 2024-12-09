@@ -102,8 +102,11 @@ public class Patient extends User {
   private int findNurse_id(int bed_id, int ward_id) {
     SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
     BedMapper bedMapper = sqlSession.getMapper(BedMapper.class); // 获取mapper接口
-    int nurse_id = bedMapper.getNurseId(bed_id, ward_id);
-    sqlSession.close(); // 关闭连接
+      int nurse_id=0;
+      if (bed_id != 0 && ward_id != 0) {
+          nurse_id = bedMapper.getNurseId(bed_id, ward_id);
+      }
+      sqlSession.close(); // 关闭连接
     return nurse_id;
   }
 

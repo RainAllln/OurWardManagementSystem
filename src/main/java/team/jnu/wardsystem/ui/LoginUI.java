@@ -182,6 +182,7 @@ public class LoginUI extends JFrame implements ActionListener {
                 JOptionPane.showMessageDialog(this, "注册成功");
                 // 直接登录病人界面
                 this.dispose(); // 关闭登录界面
+                patient.setPassword(newPassword);
                 new PatientUI(patient);
             }
         }
