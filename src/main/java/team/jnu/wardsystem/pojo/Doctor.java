@@ -253,12 +253,11 @@ public class Doctor extends User {
     // 更新病人的表
     patientList.add(patient);
   }
-
-  public void searchUnassignedBedList() {
+  public void searchUnassignedBedList(int department_id) {
     // 查询未分配床位
     SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
     BedMapper bedMapper = sqlSession.getMapper(BedMapper.class); // 获取mapper接口
-    unassignedBedList = bedMapper.searchUnassignedBed(); // 获取病人列表
+    unassignedBedList = bedMapper.searchUnassignedBed(department_id); // 获取病人列表
     sqlSession.close(); // 关闭连接
   }
 
@@ -301,7 +300,6 @@ public class Doctor extends User {
       }
     }
   }
-
   public String seachGender(int wardId) {
     // 查询病房性别
     SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
@@ -310,7 +308,6 @@ public class Doctor extends User {
     sqlSession.close(); // 关闭连接
     return gender;
   }
-
   public void unassignEquipment(int department_id) {
     // 取消分配设备
     for (Equipment equipment : equipmentList) {
@@ -325,8 +322,6 @@ public class Doctor extends User {
       }
     }
   }
-
-
   public String checkEquipment(int bedId, int wardId) {
     for(Patient patient: patientList){
         if(patient.getBed_id() == bedId ){
@@ -338,7 +333,4 @@ public class Doctor extends User {
       }
     return "病床号错误！";
     }
-
-
-
 }

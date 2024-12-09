@@ -650,7 +650,7 @@ public class DoctorUI extends JFrame implements ActionListener {
         private String getUnassignedPatientsInfo(String gender) {
             StringBuilder info = new StringBuilder();
             if (doctor.getUnassignedBedList() == null) {
-                doctor.searchUnassignedBedList();
+                doctor.searchUnassignedBedList(doctor.getDepartment_id());
             }
             List<Bed> unassignedBed = doctor.getUnassignedBedList();
             int num = 1;

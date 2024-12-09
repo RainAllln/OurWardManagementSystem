@@ -8,3 +8,4 @@ public class App {
     loginUI.setVisible(true);
   }
 }
+//分配病床要分配对应的科室。
