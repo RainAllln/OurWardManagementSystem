@@ -47,6 +47,7 @@ public class PatientUI extends JFrame implements ActionListener {
 
     initMenu(); // 菜单栏创建
     initMainPanel(); // 主面板创建
+    personalInfoButton.doClick(); // 默认选中个人信息
     setButtonColor(personalInfoButton); // 默认选中个人信息
 
     this.setVisible(true);
@@ -286,7 +287,7 @@ public class PatientUI extends JFrame implements ActionListener {
     // 处理按钮事件监听器
     Object btn = e.getSource();
     if (btn == personalInfoButton) {
-      patient.searchPersonalInfo();
+      if(patient.getNurse() == null) patient.searchPersonalInfo();
       mainPanel.add(createPersonalInfoPanel(), "PersonalInfo");
       cardLayout.show(mainPanel, "PersonalInfo");
       setButtonColor(personalInfoButton);

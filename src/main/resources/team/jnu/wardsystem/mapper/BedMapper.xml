@@ -11,4 +11,7 @@
         bed_id=#{bed_id} and ward_id=#{ward_id}</update>
     <select id="searchBedById" resultType="Bed"> select * from beds where bed_id=#{bed_id} and
         ward_id=#{ward_id}</select>
+    <select id="getNurseId" resultType="java.lang.Integer">
+        select nurse_id from beds where bed_id=#{bed_id} and ward_id=#{ward_id}
+    </select>
 </mapper>

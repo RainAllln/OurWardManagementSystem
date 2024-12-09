@@ -11,10 +11,6 @@ ALTER TABLE Patients
 ADD CONSTRAINT fk_patients_doctor
 FOREIGN KEY (doctor_id) REFERENCES Doctors(doctor_id);
 
-ALTER TABLE Patients
-ADD CONSTRAINT fk_patients_nurse
-FOREIGN KEY (nurse_id) REFERENCES Nurses(nurse_id);
-
 -- Nurses 表外键
 ALTER TABLE Nurses
 ADD CONSTRAINT fk_nurses_department

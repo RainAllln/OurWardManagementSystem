@@ -14,4 +14,6 @@ public interface BedMapper {
     List<Bed> searchUnassignedBed(int department_id);
 
     Bed searchBedById(@Param("bed_id") int bedId, @Param("ward_id") int wardId);
+
+    int getNurseId(@Param("bed_id") int bedId,@Param("ward_id") int wardId);
 }
