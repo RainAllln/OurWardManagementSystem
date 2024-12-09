@@ -146,17 +146,17 @@ public class LoginUI extends JFrame implements ActionListener {
             JTextField newUserText = new JTextField();
             JPasswordField newPasswordText = new JPasswordField();
             JTextField newNameText = new JTextField();
-            JTextField newGenderText = new JTextField();
+            JComboBox<String> newGenderComboBox = new JComboBox<>(new String[] { "男", "女" });
             JTextField newAgeText = new JTextField();
             JTextField newPhoneText = new JTextField();
-            Object[] message = { "用户名:", newUserText, "密码:", newPasswordText, "真实姓名", newNameText, "性别", newGenderText,
-                    "年龄", newAgeText, "手机号", newPhoneText };
+            Object[] message = { "用户名:", newUserText, "密码:", newPasswordText, "真实姓名", newNameText, "性别",
+                    newGenderComboBox, "年龄", newAgeText, "手机号", newPhoneText };
             int option = JOptionPane.showConfirmDialog(this, message, "注册", JOptionPane.OK_CANCEL_OPTION);
             if (option == JOptionPane.OK_OPTION) {
                 String newUsername = newUserText.getText();
                 String newPassword = new String(newPasswordText.getPassword());
                 String newName = newNameText.getText();
-                String newGender = newGenderText.getText();
+                String newGender = (String) newGenderComboBox.getSelectedItem();
                 int newAge = Integer.parseInt(newAgeText.getText());
                 String newPhone = newPhoneText.getText();
                 // 创建新用户和病人对象
