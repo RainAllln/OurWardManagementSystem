@@ -100,7 +100,7 @@ public class PatientUI extends JFrame implements ActionListener {
     panel.add(new JLabel("密码:"), gbc);
     gbc.gridx = 1;
     PersonalPasswordField = new JPasswordField(20);
-    PersonalPasswordField.setText("********");
+    PersonalPasswordField.setText(patient.getPassword());
     PersonalPasswordField.setEditable(false);
     panel.add(PersonalPasswordField, gbc);
     gbc.gridx = 2;
@@ -287,7 +287,8 @@ public class PatientUI extends JFrame implements ActionListener {
     // 处理按钮事件监听器
     Object btn = e.getSource();
     if (btn == personalInfoButton) {
-      if(patient.getNurse() == null) patient.searchPersonalInfo();
+      if (patient.getNurse() == null)
+        patient.searchPersonalInfo();
       mainPanel.add(createPersonalInfoPanel(), "PersonalInfo");
       cardLayout.show(mainPanel, "PersonalInfo");
       setButtonColor(personalInfoButton);
