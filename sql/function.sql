@@ -13,3 +13,21 @@ BEGIN
     END IF;
 END;
 $$ LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION check_user_id_exists()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NOT EXISTS (SELECT * FROM Patients WHERE patient_id = NEW.user_id) AND
+       NOT EXISTS (SELECT * FROM Doctors WHERE doctor_id = NEW.user_id) AND
+       NOT EXISTS (SELECT * FROM Nurses WHERE nurse_id = NEW.user_id) THEN
+        RAISE EXCEPTION 'user_id % does not exist in Patients, Doctors, or Nurses', NEW.user_id;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER check_user_id_before_insert
+BEFORE INSERT ON Users
+FOR EACH ROW
+EXECUTE PROCEDURE check_user_id_exists();
