@@ -408,7 +408,7 @@ public class PatientUI extends JFrame implements ActionListener {
       String newPassword = new String(newPasswordField.getPassword());
       String confirmPassword = new String(confirmPasswordField.getPassword());
 
-      if (!oldPassword_md5.equals(patient.getPassword())) {
+      if (!oldPassword_md5.equals(User.getMD5Str(patient.getPassword()))) {
         JOptionPane.showMessageDialog(this, "原密码不正确", "错误", JOptionPane.ERROR_MESSAGE);
       } else if (newPassword.equals(oldPassword)) {
         JOptionPane.showMessageDialog(this, "新密码不能与原密码相同", "错误", JOptionPane.ERROR_MESSAGE);
