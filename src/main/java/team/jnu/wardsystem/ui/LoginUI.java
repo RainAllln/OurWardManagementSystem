@@ -32,7 +32,7 @@ public class LoginUI extends JFrame implements ActionListener {
 
     public void LoginFrame() {
         // 创建自定义背景面板
-        BackgroundPanel panel = new BackgroundPanel(getClass().getResource("/picture/login.jpg"));
+        BackgroundPanel panel = new BackgroundPanel(getClass().getResource("/assets/login.jpg"));
         panel.setLayout(new GridBagLayout()); // 使用GridBagLayout以灵活安排控件
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
