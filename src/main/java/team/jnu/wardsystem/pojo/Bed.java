@@ -14,7 +14,7 @@ public class Bed {
   private int bed_id;
   private int ward_id;
   private boolean in_use;
-  private boolean clean;
+  private boolean help;
   private int nurse_id;
   private List<Equipment> equipmentList;
 }

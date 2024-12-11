@@ -7,7 +7,7 @@ import team.jnu.wardsystem.pojo.Patient;
 public interface PatientMapper {
     List<Patient> selectAllPatients(int doctor_id);
 
-    List<Patient> selectAllPatient(int nurse_id);
+    Patient searchPatient(int bed_id,int ward_id);
 
     Patient searchPatientById(int patient_id);
 

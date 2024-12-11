@@ -122,12 +122,12 @@ public class NurseUI extends JFrame implements ActionListener {
         JPanel panel = new JPanel(new BorderLayout());
 
         // 表格模型
-        String[] columns = { "病床号", "病房号", "使用状态", "清洁状态", "操作" };
+        String[] columns = { "病床号", "病房号", "帮助状态", "操作" };
         bedTableModel = new DefaultTableModel(columns, 0) {
             // 使表格不可编辑除了"操作"列
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column == 4;
+                return column == 3;
             }
         };
         bedTable = new JTable(bedTableModel);
@@ -337,8 +337,10 @@ public class NurseUI extends JFrame implements ActionListener {
     }
 
     private void loadPatientData() {
-        if (nurse.getPatientList() == null) {
-            nurse.searchAllPatient(nurse.getNurse_id());
+        nurse.searchAllBed(nurse.getNurse_id());
+        List<Bed> beds = nurse.getBedList();
+        for (Bed bed : beds) {
+            nurse.searchAllPatient(bed.getBed_id(),bed.getWard_id());//用病床号和病房号查找病人
         }
         List<Patient> patients = nurse.getPatientList();
         for (Patient patient : patients) {
@@ -365,8 +367,10 @@ public class NurseUI extends JFrame implements ActionListener {
         }
         List<Bed> beds = nurse.getBedList();
         for (Bed bed : beds) {
-            bedTableModel.addRow(new Object[] { bed.getBed_id(), bed.getWard_id(), bed.isIn_use() ? "正在使用" : "未使用",
-                    bed.isClean() ? "已清洁" : "未清洁" });
+            if(bed.isIn_use()) {
+                bedTableModel.addRow(new Object[]{bed.getBed_id(), bed.getWard_id(),
+                        bed.isHelp() ? "已帮助" : "未帮助"});
+            }
         }
     }
 
@@ -550,33 +554,6 @@ public class NurseUI extends JFrame implements ActionListener {
                 }
                 fireEditingStopped();
             });
-            // helpButton.addMouseListener(new MouseAdapter(){
-            // @Override
-            // public void mouseEntered(MouseEvent e) {
-            // int row = table.getSelectedRow(); // 当前选中的行
-            // if (row >= 0 && "patient".equals(type)) {
-            // String bedId = model.getValueAt(row, 3).toString();
-            // String wardId = model.getValueAt(row, 4).toString();
-            //
-            // boolean cleanStatus = nurse.findBedClean(Integer.parseInt(bedId),
-            // Integer.parseInt(wardId));
-            // boolean useStatus = nurse.findBedUse(Integer.parseInt(bedId),
-            // Integer.parseInt(wardId));
-            //
-            // if (!cleanStatus && useStatus) {
-            // helpButton.setToolTipText("床位正在使用且未清洁，请立即处理！");
-            // } else if (cleanStatus && useStatus) {
-            // helpButton.setToolTipText("床位已清洁，正在使用中。");
-            // } else {
-            // helpButton.setToolTipText("床位当前未被使用。");
-            // }
-            // }
-            // }
-            // @Override
-            // public void mouseExited(MouseEvent e) {
-            // helpButton.setToolTipText(null); // 鼠标离开时清除工具提示
-            // }
-            // });
             cleanButton.addActionListener(e -> {
                 int row = table.getSelectedRow();
                 if (row >= 0) {

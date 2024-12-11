@@ -96,11 +96,11 @@ public class Nurse extends User {
     return department_name;
   }
 
-  public void searchAllPatient(int nurse_id) {
+  public void searchAllPatient(int bed_id,int ward_id) {
     // 查询所有病人,并且将信息存入patientList
     SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
     PatientMapper patientMapper = sqlSession.getMapper(PatientMapper.class); // 获取mapper接口
-    patientList = patientMapper.selectAllPatient(nurse_id); // 获取病人列表
+    patientList.add(patientMapper.searchPatient(bed_id, ward_id)); // 获取病人列表
     sqlSession.close(); // 关闭连接
   }
 
@@ -210,7 +210,7 @@ public class Nurse extends User {
     // 查找病床状态
     for (Bed bed : bedList) {
       if (bed.getBed_id() == bed_id && bed.getWard_id() == ward_id) {
-        return bed.isClean();
+        return bed.isHelp();
       }
     }
     return true;// true表示已清洁即已帮助
