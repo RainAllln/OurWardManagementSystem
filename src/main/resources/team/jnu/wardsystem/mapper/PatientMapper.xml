@@ -26,7 +26,7 @@
     <select id="getPaidAmount" resultType="java.lang.Double"> select paid_amount from patients where
         patient_id = #{patient_id} </select>
     <update id="updatePatientStatus"> UPDATE patients SET bed_id = #{bed_id} , ward_id =
-        #{ward_id},nurse_id = #{nurse_id},doctor_id = #{doctor_id} WHERE patient_id = #{patient_id} </update>
+        #{ward_id},doctor_id = #{doctor_id} WHERE patient_id = #{patient_id} </update>
     <update id="updatePatientPhone"> update patients set phone = #{new_phone} where patient_id =
         #{patient_id} </update>
     <update id="updatePaidAmount"> update patients set paid_amount = #{paid_amount} where patient_id
