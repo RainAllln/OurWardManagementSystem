@@ -576,6 +576,14 @@ public class DoctorUI extends JFrame implements ActionListener {
             }
             assignPanel.add(new JLabel("病房信息:"));
             assignPanel.add(unassignedEquipmentComboBox);
+            //默认选中第一个
+            unassignedEquipmentComboBox.setSelectedIndex(0);
+            String selectedInfo1 = (String) unassignedEquipmentComboBox.getSelectedItem();
+            String[] parts1 = selectedInfo1.split("，");
+            int bedId1 = Integer.parseInt(parts1[1].split("：")[1]);
+            int wardId1 = Integer.parseInt(parts1[2].split("：")[1]);
+            bedField.setText(String.valueOf(bedId1));
+            wardField.setText(String.valueOf(wardId1));
             // 通过selectedInfo获取bedId和wardId
             unassignedEquipmentComboBox.addActionListener(e -> {
                 String selectedInfo = (String) unassignedEquipmentComboBox.getSelectedItem();
@@ -620,15 +628,24 @@ public class DoctorUI extends JFrame implements ActionListener {
             for (String bedInfo : getUnassignedPatientsInfo(gender).split("\n")) {
                 unassignedPatientsComboBox.addItem(bedInfo);
             }
+            // 默认选中第一个
+            unassignedPatientsComboBox.setSelectedIndex(0);
+            String selectedInfo = (String) unassignedPatientsComboBox.getSelectedItem();
+            String[] parts = selectedInfo.split("，");
+            int bedId = Integer.parseInt(parts[1].split(":")[1].trim());
+            int wardId = Integer.parseInt(parts[2].split(":")[1].trim());
+            bedField.setText(String.valueOf(bedId));
+            wardField.setText(String.valueOf(wardId));
             unassignedPatientsComboBox.addActionListener(e -> {
-                String selectedInfo = (String) unassignedPatientsComboBox.getSelectedItem();
-
+                String selectedInfo1 = (String) unassignedPatientsComboBox.getSelectedItem();
                 if (selectedInfo != null) {
-                    String[] parts = selectedInfo.split("，");
-                    int bedId = Integer.parseInt(parts[1].split(":")[1].trim());
-                    int wardId = Integer.parseInt(parts[2].split(":")[1].trim());
-                    bedField.setText(String.valueOf(bedId));
-                    wardField.setText(String.valueOf(wardId));
+                    String[] parts1 = selectedInfo1.split("，");
+                    int bedId1 = Integer.parseInt(parts1[1].split(":")[1].trim());
+                    int wardId1 = Integer.parseInt(parts1[2].split(":")[1].trim());
+                    bedField.setText(String.valueOf(bedId1));
+                    wardField.setText(String.valueOf(wardId1));
+                }else{
+                    JOptionPane.showMessageDialog(DoctorUI.this, "没有可分配的病床和病房");
                 }
             });
             assignPanel.add(new JLabel("未分配病床:"));
@@ -637,8 +654,8 @@ public class DoctorUI extends JFrame implements ActionListener {
             int result = JOptionPane.showConfirmDialog(DoctorUI.this, assignPanel, "分配病床和病房",
                     JOptionPane.OK_CANCEL_OPTION);
             if (result == JOptionPane.OK_OPTION) {
-                int bedId = Integer.parseInt(bedField.getText());
-                int wardId = Integer.parseInt(wardField.getText());
+                bedId = Integer.parseInt(bedField.getText());
+                wardId = Integer.parseInt(wardField.getText());
                 // 分配病床和病房
                 doctor.assignBedAndWardToPatient(bedId, wardId);
                 model.removeRow(row);
