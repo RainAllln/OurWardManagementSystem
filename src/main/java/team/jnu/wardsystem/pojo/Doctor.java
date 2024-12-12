@@ -224,11 +224,13 @@ public class Doctor extends User {
         patientMapper.deletePatient(bed_id, ward_id);
         sqlSession.commit(); // 提交
         sqlSession.close(); // 关闭连接
+
         sqlSession = sqlSessionFactory.openSession(); // 打开链接
         BedMapper bedMapper = sqlSession.getMapper(BedMapper.class);
         bedMapper.updateBedStatus(bed_id, ward_id, false);
         sqlSession.commit(); // 提交
         sqlSession.close(); // 关闭连接
+        sqlSession = sqlSessionFactory.openSession(); // 打开链接
         UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
         userMapper.deleteUser(patient.getPatient_id());
         sqlSession.commit(); // 提交
