@@ -100,7 +100,10 @@ public class Nurse extends User {
     // 查询所有病人,并且将信息存入patientList
     SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
     PatientMapper patientMapper = sqlSession.getMapper(PatientMapper.class); // 获取mapper接口
-    patientList.add(patientMapper.searchPatient(bed_id, ward_id)); // 获取病人列表
+    if(patientMapper.searchPatient(bed_id, ward_id)!=null) {
+      System.out.println(bed_id+" "+ward_id);
+      patientList.add(patientMapper.searchPatient(bed_id, ward_id)); // 获取病人列表
+    }
     sqlSession.close(); // 关闭连接
   }
 
@@ -151,6 +154,13 @@ public class Nurse extends User {
 
   public String getAllBedInfo() {
     StringBuilder info = new StringBuilder();
+    if (patientList == null){
+      searchAllBed(nurse_id);
+      List<Bed> beds = bedList;
+      for (Bed bed : beds) {
+        searchAllPatient(bed.getBed_id(),bed.getWard_id());//用病床号和病房号查找病人
+      }
+    }
     for (Patient patient : patientList) {
       info.append("病人姓名：").append(patient.getPatient_name()).append("\t").append("床号：").append(patient.getBed_id())
           .append("\t").append("病房号：").append(patient.getWard_id()).append("\n");
@@ -205,7 +215,7 @@ public class Nurse extends User {
     return departmentDetail;
   }
 
-  public Boolean findBedClean(int bed_id, int ward_id) {
+  public Boolean findBedHelp(int bed_id, int ward_id) {
     searchAllBed(nurse_id);
     // 查找病床状态
     for (Bed bed : bedList) {
