@@ -395,10 +395,7 @@ public class NurseUI extends JFrame implements ActionListener {
             cardLayout.show(mainPanel, "equipmentInfo");
             setButtonColor(equipmentInfoButton);
         } else if (source == bedInfoButton) {
-            if (!bed_add) {// 点击才能加载数据
-                mainPanel.add(initBedInfoPanel(), "bedInfo");
-                bed_add = true;
-            }
+            mainPanel.add(initBedInfoPanel(), "bedInfo");
             cardLayout.show(mainPanel, "bedInfo");
             setButtonColor(bedInfoButton);
         } else if (source == editPasswordButton) {
@@ -574,7 +571,6 @@ public class NurseUI extends JFrame implements ActionListener {
                 if (!helpStatus && useStatus) {
                     model.setValueAt("已帮助", row, 2);
                     JOptionPane.showMessageDialog(NurseUI.this, "帮助成功", " ", JOptionPane.INFORMATION_MESSAGE);
-                    bed_add = false;
                     nurse.updateBedstatus(Integer.parseInt(bed_id), Integer.parseInt(ward_id), true);
                 } else if (helpStatus) {
                     JOptionPane.showMessageDialog(NurseUI.this, "病人无需帮助", " ", JOptionPane.INFORMATION_MESSAGE);
