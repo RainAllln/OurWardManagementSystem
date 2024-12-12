@@ -375,10 +375,10 @@ public class DoctorUI extends JFrame implements ActionListener {
             cardLayout.show(mainPanel, "equipmentInfo");
             setButtonColor(equipmentInfoButton);
         } else if (source == unassignedPatientButton) {
-            if (!unpatient_add) {// 点击才能加载数据
+            //if (!unpatient_add) {// 点击才能加载数据
                 mainPanel.add(initUnassignedPatientPanel(), "unassignedPatient");
-                unpatient_add = true;
-            }
+            //    unpatient_add = true;
+            //}
             cardLayout.show(mainPanel, "unassignedPatient");
             setButtonColor(unassignedPatientButton);
         } else if (source == editPasswordButton) {
