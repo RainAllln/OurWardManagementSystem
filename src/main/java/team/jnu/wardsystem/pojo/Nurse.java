@@ -13,7 +13,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import team.jnu.wardsystem.mapper.*;
 import static team.jnu.wardsystem.pojo.Doctor.searchDoctorById;
-
+import java.util.ArrayList;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
@@ -25,7 +25,7 @@ public class Nurse extends User {
   private String phone;
   private String position;
   private int department_id;
-  private List<Patient> patientList;
+  private List<Patient> patientList;;
   private List<Equipment> equipmentList;
   private String department_name;
   private List<Bed> bedList;
@@ -98,10 +98,12 @@ public class Nurse extends User {
 
   public void searchAllPatient(int bed_id,int ward_id) {
     // 查询所有病人,并且将信息存入patientList
+    if(patientList==null){
+      patientList = new ArrayList<>();
+    }
     SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
     PatientMapper patientMapper = sqlSession.getMapper(PatientMapper.class); // 获取mapper接口
     if(patientMapper.searchPatient(bed_id, ward_id)!=null) {
-      System.out.println(bed_id+" "+ward_id);
       patientList.add(patientMapper.searchPatient(bed_id, ward_id)); // 获取病人列表
     }
     sqlSession.close(); // 关闭连接
