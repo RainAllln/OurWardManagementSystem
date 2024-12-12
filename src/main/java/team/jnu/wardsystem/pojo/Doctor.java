@@ -285,6 +285,9 @@ public class Doctor extends User {
     sqlSession.commit(); // 提交
     sqlSession.close(); // 关闭连接
     // 更新病人的表
+    if(patientList == null){
+      searchAllPatient(doctor_id);
+    }
     patientList.add(patient);
   }
 
