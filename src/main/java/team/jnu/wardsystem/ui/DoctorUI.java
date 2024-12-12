@@ -532,7 +532,7 @@ public class DoctorUI extends JFrame implements ActionListener {
                         JOptionPane.showMessageDialog(DoctorUI.this, "记录已删除");
                     }
                 }
-                fireEditingStopped();
+                //fireEditingStopped();
             });
             // 分配按钮事件
             assignButton.addActionListener(e -> {
