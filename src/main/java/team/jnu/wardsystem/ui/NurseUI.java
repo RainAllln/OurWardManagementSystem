@@ -488,7 +488,7 @@ public class NurseUI extends JFrame implements ActionListener {
             // 确保类型是 "bed"
             if ("bed".equals(type)) {
                 // 获取 bed_id 和 ward_id
-                if (table.getValueAt(row, 3) != null && table.getValueAt(row, 4) != null) {
+                if (table.getValueAt(row, 0) != null && table.getValueAt(row, 1) != null) {
                     String bedId = table.getValueAt(row, 0).toString();
                     String wardId = table.getValueAt(row, 1).toString();
                     boolean helpStatus = nurse.findBedHelp(Integer.parseInt(bedId), Integer.parseInt(wardId));
@@ -575,6 +575,7 @@ public class NurseUI extends JFrame implements ActionListener {
             int confirm = JOptionPane.showConfirmDialog(NurseUI.this, "确定要帮助该病人吗？", "帮助确认", JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.YES_OPTION) {
                 if (!helpStatus && useStatus) {
+                    model.setValueAt("已帮助", row, 2);
                     JOptionPane.showMessageDialog(NurseUI.this, "帮助成功", " ", JOptionPane.INFORMATION_MESSAGE);
                     bed_add = false;
                     nurse.updateBedstatus(Integer.parseInt(bed_id), Integer.parseInt(ward_id), true);
@@ -602,8 +603,18 @@ public class NurseUI extends JFrame implements ActionListener {
             wardField.setEditable(false);
 
             JComboBox<String> unassignedEquipmentComboBox = new JComboBox<>();
-            for (String bedInfo : nurse.getAllBedInfo().split("\n")) {
+            String[] bedInfoArray = nurse.getAllBedInfo().split("\n");
+            for (String bedInfo : bedInfoArray) {
                 unassignedEquipmentComboBox.addItem(bedInfo);
+            }
+            // 默认设置为第一个病人的病床号和病房号
+            if (bedInfoArray.length > 0) {
+                String defaultInfo = bedInfoArray[0]; // 获取第一个病人信息
+                String[] parts = defaultInfo.split("，");
+                int defaultBedId = Integer.parseInt(parts[1].split("：")[1]);
+                int defaultWardId = Integer.parseInt(parts[2].split("：")[1]);
+                bedField.setText(String.valueOf(defaultBedId));
+                wardField.setText(String.valueOf(defaultWardId));
             }
             assignPanel.add(new JLabel("病房信息:"));
             assignPanel.add(unassignedEquipmentComboBox);

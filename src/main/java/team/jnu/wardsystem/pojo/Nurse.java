@@ -98,12 +98,12 @@ public class Nurse extends User {
 
   public void searchAllPatient(int bed_id,int ward_id) {
     // 查询所有病人,并且将信息存入patientList
-    if(patientList==null){
+    if (patientList == null) {
       patientList = new ArrayList<>();
     }
     SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
     PatientMapper patientMapper = sqlSession.getMapper(PatientMapper.class); // 获取mapper接口
-    if(patientMapper.searchPatient(bed_id, ward_id)!=null) {
+    if (patientMapper.searchPatient(bed_id, ward_id) != null) {
       patientList.add(patientMapper.searchPatient(bed_id, ward_id)); // 获取病人列表
     }
     sqlSession.close(); // 关闭连接
@@ -164,8 +164,8 @@ public class Nurse extends User {
       }
     }
     for (Patient patient : patientList) {
-      info.append("病人姓名：").append(patient.getPatient_name()).append("\t").append("床号：").append(patient.getBed_id())
-          .append("\t").append("病房号：").append(patient.getWard_id()).append("\n");
+      info.append("病人姓名：").append(patient.getPatient_name()).append("，").append("床号：").append(patient.getBed_id())
+          .append("，").append("病房号：").append(patient.getWard_id()).append("\n");
     }
     return info.toString();
   }
