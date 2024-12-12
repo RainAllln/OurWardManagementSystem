@@ -319,9 +319,7 @@ public class DoctorUI extends JFrame implements ActionListener {
     }
 
     private void loadUnassignedPatientData(DefaultTableModel model) {
-        if (doctor.getUnassignedPatientList() == null) {
-            doctor.searchUnassignedPatient();
-        }
+        doctor.searchUnassignedPatient();
         List<Patient> unassignedPatients = doctor.getUnassignedPatientList();
         if (unassignedPatients == null) {
             return;
@@ -363,10 +361,10 @@ public class DoctorUI extends JFrame implements ActionListener {
             cardLayout.show(mainPanel, "personalInfo");
             setButtonColor(personalInfoButton);
         } else if (source == patientInfoButton) {
-            if (!patient_add) {// 点击才能加载数据
+            //if (!patient_add) {// 点击才能加载数据
                 mainPanel.add(initPatientInfoPanel(), "patientInfo");
-                patient_add = true;
-            }
+            //    patient_add = true;
+            //}
             cardLayout.show(mainPanel, "patientInfo");
             setButtonColor(patientInfoButton);
         } else if (source == equipmentInfoButton) {
@@ -377,10 +375,10 @@ public class DoctorUI extends JFrame implements ActionListener {
             cardLayout.show(mainPanel, "equipmentInfo");
             setButtonColor(equipmentInfoButton);
         } else if (source == unassignedPatientButton) {
-            if (!unpatient_add) {// 点击才能加载数据
+            //if (!unpatient_add) {// 点击才能加载数据
                 mainPanel.add(initUnassignedPatientPanel(), "unassignedPatient");
-                unpatient_add = true;
-            }
+            //    unpatient_add = true;
+            //}
             cardLayout.show(mainPanel, "unassignedPatient");
             setButtonColor(unassignedPatientButton);
         } else if (source == editPasswordButton) {

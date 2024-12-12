@@ -370,9 +370,8 @@ public class NurseUI extends JFrame implements ActionListener {
         }
         List<Bed> beds = nurse.getBedList();
         for (Bed bed : beds) {
-            if(bed.isIn_use()) {
-                bedTableModel.addRow(new Object[]{bed.getBed_id(), bed.getWard_id(),
-                        bed.isHelp() ? "已帮助" : "未帮助"});
+            if (bed.isIn_use()) {
+                bedTableModel.addRow(new Object[] { bed.getBed_id(), bed.getWard_id(), bed.isHelp() ? "已帮助" : "未帮助" });
             }
         }
     }
@@ -459,7 +458,7 @@ public class NurseUI extends JFrame implements ActionListener {
         private JButton editButton = new JButton("编辑");
         // private JButton deleteButton = new JButton("删除");
         private JButton assignButton = new JButton("分配");
-        //private JButton cleanButton = new JButton("清理");
+        // private JButton cleanButton = new JButton("清理");
         private JButton helpButton = new JButton("帮助");
         private String type;
 
@@ -517,7 +516,7 @@ public class NurseUI extends JFrame implements ActionListener {
         private JButton helpButton = new JButton("帮助");
         // private JButton deleteButton = new JButton("删除");
         private JButton assignButton = new JButton("分配");
-        //private JButton cleanButton = new JButton("清理");
+        // private JButton cleanButton = new JButton("清理");
         // private JTable table;
         private DefaultTableModel model;
         // private String type; // "patient" 或 "equipment" or "unassignedPatient"
@@ -627,8 +626,7 @@ public class NurseUI extends JFrame implements ActionListener {
                     wardField.setText(String.valueOf(wardId));
                 }
             });
-            int result = JOptionPane.showConfirmDialog(NurseUI.this, assignPanel, "分配设备",
-                    JOptionPane.OK_CANCEL_OPTION);
+            int result = JOptionPane.showConfirmDialog(NurseUI.this, assignPanel, "分配设备", JOptionPane.OK_CANCEL_OPTION);
             if (result == JOptionPane.OK_OPTION) {
                 int equipmentId = Integer.parseInt(equipmentField.getText());
                 int bedId = Integer.parseInt(bedField.getText());
@@ -640,28 +638,6 @@ public class NurseUI extends JFrame implements ActionListener {
                 model.setValueAt(bedId, row, 2);
                 model.setValueAt(wardId, row, 3);
                 JOptionPane.showMessageDialog(NurseUI.this, "设备已分配");
-            }
-        }
-
-        private void cleanBed(int row) { //no use
-            // 床未清洁且未使用才可被清洁
-            String bednum = model.getValueAt(row, 0).toString();
-            String wardnum = model.getValueAt(row, 1).toString();
-            boolean usestatus = model.getValueAt(row, 2).toString().equals("正在使用");
-            boolean cleanstatus = model.getValueAt(row, 3).toString().equals("已清洁");
-
-            int confirm = JOptionPane.showConfirmDialog(NurseUI.this, "确定要清理该床位吗？", "清理确认", JOptionPane.YES_NO_OPTION);
-            if (confirm == JOptionPane.YES_OPTION) {
-                if (!cleanstatus && !usestatus) {// 未清洁且床未使用
-                    model.setValueAt("已清洁", row, 3);
-                    JOptionPane.showMessageDialog(NurseUI.this, "床位清洁成功", " ", JOptionPane.INFORMATION_MESSAGE);
-                    bed_add = false;
-                    nurse.updateBedstatus(Integer.parseInt(bednum), Integer.parseInt(wardnum), true);
-                } else if (cleanstatus) {
-                    JOptionPane.showMessageDialog(NurseUI.this, "床位已经清洁，无需再次清洁", " ", JOptionPane.INFORMATION_MESSAGE);
-                } else if (!cleanstatus && usestatus) {// 未清洁但床被使用
-                    JOptionPane.showMessageDialog(NurseUI.this, "床位正在使用，无法清洁", " ", JOptionPane.INFORMATION_MESSAGE);
-                }
             }
         }
 
