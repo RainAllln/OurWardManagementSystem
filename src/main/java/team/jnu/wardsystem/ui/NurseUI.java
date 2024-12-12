@@ -337,13 +337,13 @@ public class NurseUI extends JFrame implements ActionListener {
     }
 
     private void loadPatientData() {
-        if(nurse.getPatientList() == null){
+        if(nurse.getBedList() == null){
             nurse.searchAllBed(nurse.getNurse_id());
-            List<Bed> beds = nurse.getBedList();
-            for (Bed bed : beds) {
-                //System.out.println(bed.getBed_id()+" "+bed.getWard_id());
-                nurse.searchAllPatient(bed.getBed_id(),bed.getWard_id());//用病床号和病房号查找病人
-            }
+        }
+        List<Bed> beds = nurse.getBedList();
+        nurse.setPatientList(null);
+        for (Bed bed : beds) {
+            nurse.searchAllPatient(bed.getBed_id(), bed.getWard_id());//用病床号和病房号查找病人
         }
         List<Patient> patients = nurse.getPatientList();
         for (Patient patient : patients) {
@@ -384,10 +384,8 @@ public class NurseUI extends JFrame implements ActionListener {
             cardLayout.show(mainPanel, "personalInfo");
             setButtonColor(personalInfoButton);
         } else if (source == patientInfoButton) {
-            if (!patient_add) {// 点击才能加载数据
-                mainPanel.add(initPatientInfoPanel(), "patientInfo");
-                patient_add = true;
-            }
+            mainPanel.add(initPatientInfoPanel(), "patientInfo");
+            patient_add = true;
             cardLayout.show(mainPanel, "patientInfo");
             setButtonColor(patientInfoButton);
         } else if (source == equipmentInfoButton) {

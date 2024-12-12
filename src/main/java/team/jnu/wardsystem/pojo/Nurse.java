@@ -98,13 +98,13 @@ public class Nurse extends User {
 
   public void searchAllPatient(int bed_id,int ward_id) {
     // 查询所有病人,并且将信息存入patientList
-    if (patientList == null) {
+    if (patientList == null){
       patientList = new ArrayList<>();
     }
     SqlSession sqlSession = sqlSessionFactory.openSession(); // 打开链接
     PatientMapper patientMapper = sqlSession.getMapper(PatientMapper.class); // 获取mapper接口
     if (patientMapper.searchPatient(bed_id, ward_id) != null) {
-      patientList.add(patientMapper.searchPatient(bed_id, ward_id)); // 获取病人列表
+        patientList.add(patientMapper.searchPatient(bed_id, ward_id)); // 获取病人列表
     }
     sqlSession.close(); // 关闭连接
   }
