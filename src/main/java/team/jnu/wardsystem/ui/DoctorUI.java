@@ -574,9 +574,14 @@ public class DoctorUI extends JFrame implements ActionListener {
             }
             assignPanel.add(new JLabel("病房信息:"));
             assignPanel.add(unassignedEquipmentComboBox);
-            //默认选中第一个
             unassignedEquipmentComboBox.setSelectedIndex(0);
+
             String selectedInfo1 = (String) unassignedEquipmentComboBox.getSelectedItem();
+            if (selectedInfo1.equals("")) {
+                JOptionPane.showMessageDialog(DoctorUI.this, "没有可分配的病床和病房");
+                return;
+            }
+            //System.out.println("zheshi"+selectedInfo1);
             String[] parts1 = selectedInfo1.split("，");
             int bedId1 = Integer.parseInt(parts1[1].split("：")[1]);
             int wardId1 = Integer.parseInt(parts1[2].split("：")[1]);
